@@ -1,4 +1,0 @@
-# Entorno: Python 3.12 en Windows 11
-# Crear el entorno:  py -3.12 -m venv .venv
-# Activarlo:         .venv\Scripts\activate
-# Instalar:          pip install -r requirements.txt
