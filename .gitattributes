@@ -1,0 +1,2 @@
+# Mismos saltos de línea (LF) en Windows, Linux y WSL, para que git no marque como cambiados archivos sin tocar
+* text=auto eol=lf
