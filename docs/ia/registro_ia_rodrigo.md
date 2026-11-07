@@ -445,3 +445,291 @@ En la entrada de este prompt he copiado tu mensaje, pero no la transcripción pe
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
+
+## 2026-11-06 17:07:31 +0100 · Claude Code
+
+- **Captura:** manual
+
+**Prompt literal**
+
+````text
+Para seguir con el analisis, quiero hacer una matriz de correlación, sé que se hace con .corr, pero qué opciones podría meterle? Cuáles pueden convenir más?
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final**
+
+````markdown
+`DataFrame.corr()` tiene tres parámetros:
+
+| Parámetro | Valores | Para qué sirve |
+|---|---|---|
+| `method` | `'pearson'` (por defecto), `'spearman'`, `'kendall'` o una función propia | Tipo de correlación |
+| `numeric_only` | `False` (por defecto) o `True` | Usar solo las columnas numéricas |
+| `min_periods` | un entero | Mínimo de pares sin `NaN` para calcular cada valor |
+
+**`method`: el que más importa**
+
+- **Pearson** mide relaciones *lineales*. Le afectan mucho los valores extremos y las distribuciones asimétricas.
+- **Spearman** aplica Pearson a los rangos (la posición de cada valor una vez ordenados), así que mide relaciones *monótonas*: si una variable sube, la otra tiende a subir (o a bajar), aunque no sea en línea recta. Aguanta mejor los outliers y la asimetría.
+- **Kendall** también usa rangos y es todavía más robusto, pero es más lento y suele dar valores más pequeños en valor absoluto, así que cuesta compararlo con los otros dos. Con 2.254 filas, Spearman suele ser suficiente.
+
+¿Cuál te conviene? En datos clínicos es habitual que variables como los triglicéridos, la PCR o el consumo de alcohol estén sesgadas y tengan valores extremos. Además, el objetivo (0, 1, 2) es ordinal. Las dos cosas favorecen a **Spearman**. Eso sí, compruébalo con tus datos (histogramas, `datos.skew()`) antes de afirmarlo en la memoria. Lo mejor es calcular Pearson y Spearman: si para un par de variables dan valores muy distintos, es una pista de que hay outliers o una relación no lineal.
+
+**`numeric_only=True`: en tu caso, casi obligatorio**
+
+Tienes 3 columnas de texto. En pandas 3, si no lo pones, `corr()` da error al intentar convertir `'Mediterránea'` en un número.
+
+**`min_periods`**
+
+`corr()` calcula cada par solo con las filas en las que ninguna de las dos variables es `NaN`. Con tus nulos no hace falta tocarlo. Solo serviría si alguna variable tuviera muchísimos.
+
+**Qué variables entran y cuáles no**
+
+- Las booleanas (0/1) sí. La correlación de Pearson entre una variable binaria y una continua equivale a la correlación punto-biserial, así que tiene sentido.
+- Las categóricas nominales, como `tipo_alimentacion`, no. No tienen orden, así que la correlación no significa nada aunque las codifiques como 0, 1, 2, 3. Para relacionarlas con el objetivo se usa una tabla de contingencia (`pd.crosstab`) con chi-cuadrado o la V de Cramér.
+- `nivel_actividad` sí tiene orden (de Sedentario a Muy activo). Si la codificas respetándolo, puedes meterla con Spearman.
+
+**Código**
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
+# Correlación de Spearman entre todas las variables numéricas (incluye booleanas y objetivo)
+corr = datos.corr(method='spearman', numeric_only=True)
+
+# Máscara para ocultar el triángulo superior, que repite el inferior
+mascara = np.triu(np.ones_like(corr, dtype=bool))
+
+plt.figure(figsize=(16, 13))
+sns.heatmap(corr, mask=mascara, cmap='coolwarm', vmin=-1, vmax=1, center=0,
+            annot=True, fmt='.2f', annot_kws={'size': 7}, square=True)
+plt.title('Matriz de correlación (Spearman)')
+plt.tight_layout()
+plt.show()
+```
+
+- `vmin=-1, vmax=1, center=0` fijan la escala de colores: el blanco siempre es 0 y puedes comparar los colores entre gráficos.
+- Con 25 variables, los números salen pequeños. Si molestan, quita `annot=True` y mira los valores en las tablas de abajo.
+
+Estas dos tablas se leen mejor que el mapa de calor:
+
+```python
+# Correlación de cada variable con el objetivo, ordenada por valor absoluto
+corr['riesgo_cardiovascular'].drop('riesgo_cardiovascular').sort_values(key=abs, ascending=False)
+
+# Pares de variables de entrada muy correlacionadas entre sí (posible redundancia)
+entradas = corr.drop(index='riesgo_cardiovascular', columns='riesgo_cardiovascular')
+inferior = np.tril(np.ones_like(entradas, dtype=bool), k=-1)  # triángulo inferior, sin la diagonal
+pares = entradas.where(inferior).stack().dropna()  # en pandas 3, stack() no quita los NaN solo
+pares[pares.abs() > 0.7].sort_values(key=abs, ascending=False)
+```
+
+El umbral de 0,7 es una convención habitual, no una regla fija.
+
+**Cómo interpretarla**
+
+- Si una variable tiene una correlación alta con el objetivo, es informativa. Pero que la tenga baja no basta para descartarla: Pearson y Spearman solo detectan relaciones monótonas, y los modelos de árboles pueden aprovechar otro tipo de relaciones e interacciones.
+- Si dos variables de entrada están muy correlacionadas, aportan información parecida (multicolinealidad). Afecta sobre todo a los modelos lineales, como la regresión logística: sus coeficientes se vuelven inestables y difíciles de interpretar. A los ensembles de árboles les afecta mucho menos.
+- Para explorar y describir el dataset puedes usar todos los datos. Pero si usas la correlación para decidir qué variables quitar, esa decisión aprende de los datos y, según [AGENTS.md](AGENTS.md), tiene que tomarse solo con el train o dentro del `Pipeline`.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md), porque el hook sigue sin guardar nada.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-07 11:28:38 +0100 · Claude Code
+
+- **Captura:** manual
+
+**Prompt literal**
+
+````text
+mi compañero ha hecho eda tmb en una rama aparte, la rama es pablo/eda-clinico, puedes revisarlo y ver si se puede usar algo para mi eda o en el caso de ser conveptos muy diferentes, dejarlo por separado?
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final**
+
+````markdown
+He revisado `pablo/eda-clinico`. Pablo no ha tocado tu notebook: su trabajo está en otro archivo, `src/eda_clinico.ipynb`, que solo existe en su rama. Así que no hay conflictos de git.
+
+**Recomendación:** no son conceptos tan distintos. Los dos estáis haciendo el EDA, pero cada uno ha profundizado en una parte, así que se complementan bastante. Aun así, yo no copiaría ahora su código en tu notebook: duplicaría trabajo y, como la profesora audita el historial, quedaría como tuyo algo que hizo él. Mantened los notebooks separados por ahora y decidid en la reunión cómo juntarlos. Él mismo termina con una tabla de «conclusiones abiertas para la reunión».
+
+**Qué aporta Pablo que tú no tienes**
+
+| Parte | Qué hace | Cómo te sirve |
+|---|---|---|
+| 4.1 Categóricas frente al riesgo | Porcentaje de cada clase de riesgo por categoría (`pd.crosstab`) | Es lo que te faltaba para las variables de texto, que no entran en la correlación, y justifica la codificación |
+| 4.2 Binarias frente al riesgo | Media de cada binaria por clase | Pone números a tus countplots |
+| 5.1 y 5.2 Nulos | Test chi-cuadrado para ver si que falte el dato depende del riesgo (todos los p > 0,05) | Respalda con un test tu frase de la 1.5: «no parece que la aparición de datos nulos dependa del tipo de paciente» |
+| 5.3 Experimento de imputación | Oculta valores conocidos, los rellena con media, mediana, KNN e Iterative y mide el error en 30 sorteos | Es una prueba mucho más sólida para la fila «Valores faltantes» de tu tabla 1.8, donde dices que kNN aportaría poco |
+| 5.4 Distribución antes y después de imputar | Compara media, mediana y desviación típica | Lo pidieron en clase y no lo tienes |
+
+**Qué aportas tú que él no tiene**
+
+Todo el análisis de calidad de datos (1.6): valores negativos e imposibles, incoherencias entre variables, decimales en variables que deberían ser enteras y valores repetidos que parecen nulos camuflados. También las distribuciones (1.3), la matriz de correlación completa (1.7) y la tabla resumen de problemáticas (1.8).
+
+**En qué no coincidís (para la reunión)**
+
+1. **Pablo ha analizado los nulos sobre los datos sin limpiar, y eso cambia sus resultados.** Tú propones pasar a `NaN` los valores imposibles y los repetidos sospechosos. Si lo hacéis, habrá nulos en bastantes más variables que las 4 actuales (`presion_sistolica`, `colesterol_total`, `trigliceridos`, `acido_urico`, `colesterol_hdl`, `indice_masa_corporal`…), y habrá que repetir su experimento, porque cambian los pacientes completos y los porcentajes de nulos. Por ejemplo, en la comprobación de Friedewald cuenta los pacientes con triglicéridos ≥ 400, y tú has visto que 452,7 es uno de los valores repetidos sospechosos: parte de ese recuento sale de datos que vais a tratar como nulos. Seguramente su conclusión se mantenga (no usar Friedewald e imputar con la mediana), pero hay que recalcular los números después de limpiar.
+2. **`antecedentes_familiares_tipo`:** tú propones one-hot, y Pablo, dos binarias (`antecedente_materno` y `antecedente_paterno`, con «Ambos» = 1 y 1). Sus datos apoyan esta opción: el riesgo alto pasa del 12 % (ninguno) al 22 % (materno), al 28 % (paterno) y al 40 % (ambos), casi la suma de los dos efectos. Además, genera 2 columnas en vez de 4. Podéis elegir una o probar las dos y compararlas en validación.
+3. **Trabajo repetido:** la distribución de clases y la correlación de Spearman con el objetivo aparecen en los dos notebooks, con los mismos resultados (alcohol 0,39, etc.). En la versión final deberían salir una sola vez.
+
+En lo demás coincidís: imputar con la mediana dentro del `Pipeline`, no eliminar filas con nulos, codificación ordinal para `nivel_actividad`, particiones estratificadas y el recall de la clase de riesgo alto como métrica clave.
+
+**Un cambio que sí te recomiendo hacer ya**
+
+Pablo toma la semilla de [src/utils/constantes.py](src/utils/constantes.py), y tú escribes `semilla=42` en el notebook. AGENTS.md pide fijarla en un solo sitio, así que cambia tu celda de imports para usar el mismo módulo:
+
+```python
+import utils.constantes as cte
+
+np.random.seed(cte.semilla)
+```
+
+Y en el resto del notebook, usa `cte.semilla` donde haga falta una semilla.
+
+**Sobre tus cambios guardados**
+
+Al cambiar a la rama de Pablo, GitHub Desktop guardó tus cambios sin commit en un stash, y al volver a `rodrigo/eda` no los restauró. Ya están restaurados (el notebook y la entrada del registro del 6 de noviembre). Para que no vuelva a pasar, haz commit antes de cambiar de rama o mira la rama del otro en GitHub desde el navegador.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-07 11:32:56 +0100 · Claude Code
+
+- **Captura:** manual
+
+**Prompt literal**
+
+````text
+entonces ahora tengo sus cambios tmb?
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final**
+
+````markdown
+No. Tu rama `rodrigo/eda` no tiene nada de Pablo. Lo he comprobado: su commit no está en tu rama y en `src/` no aparece su `eda_clinico.ipynb`.
+
+- **Su rama la he leído, no la he copiado.** Saqué su notebook con `git show` a una carpeta temporal fuera del repositorio, solo para revisarlo. No he hecho merge ni he copiado nada a tu rama.
+- **Lo que restauré del stash eran tus propios cambios.** GitHub Desktop los guardó al cambiar de rama: tu notebook `src/riesgo_cardiovascular.ipynb` y tu registro de IA. No tienen nada de Pablo.
+
+Ahora mismo tienes esos dos archivos modificados y sin commit, como estaban antes de cambiar de rama.
+
+Si en la reunión decidís juntar los dos EDA, lo normal es que Pablo abra un pull request de su rama, o que hagáis merge de las dos ramas en una común. Así cada parte queda en el historial con su autor.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-07 11:58:03 +0100 · Claude Code
+
+- **Captura:** manual
+
+**Prompt literal**
+
+````text
+podrías hacer tu el merge de su eda al mío para que sea así más limpio y en el casod e conflcitos los resuelvas y ya tener una versión unificada?
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final**
+
+````markdown
+Hecho. He hecho el merge de `origin/pablo/eda-clinico` en tu rama `rodrigo/eda`, con el commit `c052238` («Merge del EDA clínico de Pablo (pablo/eda-clinico) en rodrigo/eda»).
+
+- **No ha habido conflictos.** La rama de Pablo solo trae dos archivos suyos, `src/eda_clinico.ipynb` y `docs/ia/registro_ia_pablo.md`, y ninguno coincide con los tuyos.
+- **La autoría se mantiene.** El commit de Pablo entra en tu rama con su nombre, así que en el historial se ve qué hizo cada uno.
+- **Tus cambios sin commit siguen intactos:** `src/riesgo_cardiovascular.ipynb` y tu registro de IA.
+- **No he hecho push.** El merge solo está en tu equipo. Cuando quieras subirlo, haz primero commit de tus cambios y luego push desde GitHub Desktop.
+
+**Lo que el merge no hace:** no junta los dos notebooks en uno. Ahora tu rama tiene los dos EDA uno al lado del otro: `src/riesgo_cardiovascular.ipynb` (el tuyo) y `src/eda_clinico.ipynb` (el de Pablo). Convertirlos en un único notebook ya no es cosa de git, sino de decidir el contenido, y hay dos puntos en los que no coincidís:
+
+1. El análisis de nulos de Pablo se hizo antes de limpiar los valores anómalos que encontraste tú, así que hay que repetirlo con los datos limpios.
+2. Tú propones one-hot para `antecedentes_familiares_tipo`, y él, dos binarias.
+
+Si quieres, puedo preparar un notebook unificado con tu análisis de calidad de datos (1.2-1.7), sus apartados de categóricas, binarias e imputación y una sola tabla de problemáticas, y dejar marcados esos dos puntos como pendientes de la reunión. Para el historial quedaría más limpio hacerlo después de la reunión, con esos dos puntos ya decididos.
+
+Un detalle menor para Pablo: su notebook importa `scipy` (`chi2_contingency`), que no está en `pyproject.toml`. Ahora funciona porque viene instalado con scikit-learn, pero lo correcto sería añadirlo con `uv add scipy`.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-07 12:00:59 +0100 · Claude Code
+
+- **Captura:** manual
+
+**Prompt literal**
+
+````text
+lo que quiero es unificar, tomando lo mejor de ambos
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final**
+
+````markdown
+Hecho. El EDA unificado está en [src/riesgo_cardiovascular.ipynb](src/riesgo_cardiovascular.ipynb). Lo he ejecutado entero y no da ningún error (tarda 1 min 20 s).
+
+**Antes de nada: no guardes el notebook desde la pestaña que tengas abierta.** Hoy VS Code ya sobrescribió tu notebook con una versión antigua: a las 11:57 guardó encima la versión del último commit, y desaparecieron tu sección de correlaciones y la tabla resumen. Las he recuperado del stash, que seguía en git. Si tienes el notebook abierto, ciérralo sin guardar (o usa *Revert File*) y vuelve a abrirlo. Si no, puede volver a pasar.
+
+**Estructura**
+
+| Apartado | Origen |
+|---|---|
+| 1.1-1.2 Carga y descripción | Rodrigo |
+| 1.3 Tipos de variables (listas que usa todo el notebook) | Pablo |
+| 1.4 Variable objetivo | Tus gráficos y el razonamiento de Pablo sobre el recall de la clase de riesgo alto |
+| 1.5 Distribuciones | Tus gráficos y las tablas de Pablo: medianas por clase y binarias y categóricas frente al riesgo, con sus hipótesis |
+| 1.6-1.8 Nulos, calidad de datos y correlaciones | Rodrigo |
+| 1.9 Limpieza de errores de registro | **Nuevo:** aplica las reglas que proponías en tu tabla resumen |
+| 1.10 Tratamiento de nulos | Pablo, repetido sobre los datos limpios |
+| 1.11 Resumen y decisiones para la reunión | Tu tabla con la evidencia de Pablo, y su tabla de preguntas abiertas |
+
+He quitado lo repetido (la distribución de clases y la correlación con el objetivo salían dos veces) y he unificado los nombres (`datos` y las listas de variables de Pablo). La semilla ahora sale de `utils/constantes.py`.
+
+**Qué cambia al repetir el análisis de Pablo con los datos limpios**
+
+- Los 54 pacientes con triglicéridos ≥ 400 que, según Pablo, impedían aplicar Friedewald eran justo el valor camuflado 452,7. Con los datos limpios no queda ninguno. Aun así, Friedewald falla más que la mediana (47,4 frente a 29,5 mg/dL de error), así que se descarta igual.
+- Ahora hay nulos en 11 variables en vez de 4, y el 39 % de los pacientes tiene alguno (antes, el 24 %).
+- Su conclusión se mantiene: la mediana iguala o mejora a KNN e Iterative en todas las variables.
+- Hay una excepción aparente en el chi-cuadrado: en `colesterol_hdl`, 3 de sus 4 nulos son de riesgo alto (p = 0,018). He escrito que no es fiable, porque son solo 4 casos y esos nulos los creó la limpieza. Es una interpretación mía, revísala.
+
+**Una corrección en tu parte**
+
+En «Observaciones» decías que en las variables de texto había categorías nuevas, pero la salida de la 1.7 muestra solo las 4 del diccionario en cada variable. Lo he corregido.
+
+**Lo que te toca revisar o decidir**
+
+- La 1.9 aplica tus reglas tal como las escribiste en la tabla. Comprueba que es lo que querías. Por ejemplo, en las presiones incoherentes anulo las dos, porque no se sabe cuál está mal.
+- `antecedentes_familiares_tipo` (dos binarias u one-hot) queda pendiente para la reunión, igual que el resto de la tabla final.
+- [src/eda_clinico.ipynb](src/eda_clinico.ipynb) sigue ahí, sin tocar. Su contenido ya está en el unificado, pero si se borra o no lo decidís con Pablo.
+- El notebook importa `scipy`, que no está en `pyproject.toml`. Funciona porque lo instala scikit-learn, pero lo correcto es `uv add scipy` y regenerar `requirements.txt`.
+- No he hecho commit. En la entrevista os pueden preguntar por cualquier parte, así que repasa la 1.9 y la 1.10 antes de subirlo. En el mensaje del commit, indica que incluye el trabajo de Pablo.
+
+Si hay que volver atrás, tu versión completa de antes de unificar está en `C:\Users\rodma\AppData\Local\Temp\claude\3c6d5242b56aed6d\6209e179-4546-4d3b-819e-becedaa5ce97\scratchpad\rodrigo_stash.ipynb`.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
