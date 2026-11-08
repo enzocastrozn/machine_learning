@@ -1,0 +1,17 @@
+Pablo: Gradient Boosting, regresión logística y bayes
+
+Enzo: LDA, SVM 
+
+Rodrigo: árboles, k vecinos
+
+80/20
+
+stratified empezamos con 5 y vamos viendo
+
+recall, precision y F1
+
+dos columnas binarias para antecedent materno y otra para paterno (categóricas a binarias)
+
+one hot encoding tipo alimentación 
+
+
