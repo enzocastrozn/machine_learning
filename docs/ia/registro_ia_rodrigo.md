@@ -733,3 +733,271 @@ He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/reg
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
+
+## 2026-11-08 19:23:27 +0100 · Claude Code
+
+- **Captura:** manual
+
+**Prompt literal**
+
+````text
+estamos con la toma de decisiones, de métricas habíamos pensado en recall, precisión y F1, pero cómo podría saber como calcalcularlas al tener varias clases y luego cual tener más en cuenta, tanto en importancia como para el ajuste de hiperparámetros
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final**
+
+````markdown
+**1. Cómo se calculan con 3 clases**
+
+La precisión, el recall y el F1 se calculan para una clase frente a las demás (*one-vs-rest*). Con 3 clases salen 3 valores de cada métrica, y el parámetro `average` decide cómo resumirlos en uno:
+
+| `average` | Qué hace | Con vuestras clases (50/30/20) |
+|---|---|---|
+| `None` | Devuelve un valor por clase | El más informativo: ves la clase de alto riesgo por separado |
+| `'macro'` | Media simple de las 3 clases | Cada clase pesa lo mismo, así que un mal resultado en alto riesgo baja la media |
+| `'weighted'` | Media ponderada por el número de pacientes de cada clase | El riesgo bajo pesa el 50 %, así que puede esconder que el modelo falla en alto riesgo |
+| `'micro'` | Junta los aciertos de todas las clases | En multiclase es igual al accuracy, así que no aporta nada nuevo |
+
+Usad los valores por clase para analizar y `macro` para resumir. Con este desbalance, `weighted` y `micro` no os convienen.
+
+`classification_report` saca todo de una vez:
+
+```python
+from sklearn.metrics import classification_report, ConfusionMatrixDisplay
+
+print(classification_report(y_val, y_pred, target_names=['bajo', 'moderado', 'alto'], digits=3))
+ConfusionMatrixDisplay.from_predictions(y_val, y_pred, display_labels=['bajo', 'moderado', 'alto'])
+```
+
+La matriz de confusión complementa a las métricas. El recall de alto riesgo cuenta igual un paciente de alto riesgo clasificado como moderado que uno clasificado como bajo, aunque clínicamente el segundo error es mucho más grave. Solo la matriz distingue entre los dos.
+
+**2. Cuál importa más clínicamente**
+
+El **recall de la clase 2 (alto riesgo)**: de todos los pacientes de alto riesgo, cuántos detecta el modelo. Un falso negativo es un paciente de alto riesgo que se va a casa sin seguimiento. Un falso positivo (un paciente de riesgo bajo o moderado clasificado como alto) cuesta pruebas o consultas de más, pero no pone a nadie en peligro. Esta es la «métrica más crítica» que el enunciado pide justificar.
+
+Pero sola no basta: un modelo que clasificara a todos como alto riesgo tendría un recall de 1 en esa clase y sería inútil. Por eso tiene que ir acompañada de la precisión de la clase 2 (qué parte de las alarmas son ciertas) y del F1 macro (el equilibrio global).
+
+**3. Cuál usar para ajustar los hiperparámetros**
+
+`GridSearchCV` puede calcular varias métricas a la vez, pero elige la mejor combinación con **una sola** (`refit`). Mi recomendación:
+
+- **`refit='f1_macro'`.** Equilibra precisión y recall, da el mismo peso a las 3 clases (así que no puede ignorar la minoritaria) y resume todo en un único número estable.
+- **Calcular a la vez el recall de la clase 2 y usarlo para desempatar.** Entre configuraciones o modelos con un F1 macro parecido (dentro de la desviación entre folds), quedaos con el que tenga más recall en alto riesgo.
+- **No optimizar directamente el recall de la clase 2.** La búsqueda acabaría eligiendo modelos que predicen «alto» para casi todos.
+
+Para subir el recall de la clase 2 funcionan mejor `class_weight='balanced'` o SMOTE, que ya tenéis en el plan, que el ajuste de hiperparámetros.
+
+Si el grupo quiere que la prioridad clínica entre en el propio ajuste, hay una alternativa: el F2 de la clase 2 (`fbeta_score` con `beta=2`). Da al recall el doble de importancia que a la precisión, pero sigue penalizando las falsas alarmas. Su inconveniente es que no tiene en cuenta si el modelo distingue bien entre riesgo bajo y moderado.
+
+```python
+from sklearn.metrics import make_scorer, precision_score, recall_score
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
+
+# mismo esquema de validación y mismas métricas para todos los modelos
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=cte.semilla)
+
+metricas = {
+    'f1_macro': 'f1_macro',
+    'precision_macro': 'precision_macro',
+    'recall_macro': 'recall_macro',
+    # labels=[2] calcula la métrica solo para la clase de alto riesgo
+    'recall_alto': make_scorer(recall_score, labels=[2], average='macro'),
+    'precision_alto': make_scorer(precision_score, labels=[2], average='macro', zero_division=0),
+}
+
+busqueda = GridSearchCV(pipeline, param_grid, scoring=metricas, refit='f1_macro',
+                        cv=cv, return_train_score=True)   # guarda también train, para ver el sobreajuste
+busqueda.fit(X_train, y_train)
+
+resultados = pd.DataFrame(busqueda.cv_results_)
+resultados[['params', 'mean_train_f1_macro', 'mean_test_f1_macro', 'std_test_f1_macro',
+            'mean_test_recall_alto', 'std_test_recall_alto']].sort_values('mean_test_f1_macro', ascending=False)
+```
+
+En `cv_results_`, `test` se refiere al fold de validación, no al conjunto de test. El test se usa una sola vez, al final, con el modelo elegido.
+
+**4. Coordinación con el grupo**
+
+Según [estrategia_ml.txt](estrategia_ml.txt), cada uno entrena modelos distintos. Para poder compararlos, los tres tenéis que usar exactamente el mismo `cv`, las mismas `metricas` y el mismo `refit`. Lo más seguro es definirlos una sola vez en `src/utils`, como la semilla, e importarlos desde cada notebook.
+
+Además, ahí pone «stratified empezamos con 5 y vamos viendo». Decidid el número de folds antes de empezar a ajustar: si alguien lo cambia a mitad, sus resultados dejan de ser comparables con los de los demás.
+
+Si quieres, añado `cv` y `metricas` a `src/utils` para que el grupo los importe.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-08 20:41:05 +0100 · Claude Code
+
+- **Captura:** manual
+
+````text
+estoy elaborando un .py, el de modelado para tener ñlas cosas del preprocesamiento y demas en común, pero estoy teniendo dificultades para hacer un par de funciones, la de pipeline y tabla resultados, podrías ayudarme?
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final:**
+
+````markdown
+He completado las dos funciones en [src/utils/modelado.py](src/utils/modelado.py) y las he probado con tus datos.
+
+**`crear_pipeline(modelo, balanceo="smotenc")`**
+
+- **Lista `numericas` explícita**, junto a `categoricas`. He comprobado que entre las dos están las 30 columnas de `X` y que no se repite ninguna. Solo las numéricas tienen nulos, así que solo ellas pasan por la imputación y el escalado:
+  - `SimpleImputer(median)`: la mediana no se deja arrastrar por las colas largas.
+  - `RobustScaler`: escala con la mediana y el IQR, así que los extremos reales que hemos dejado no deforman la escala.
+- **Categóricas en `passthrough`.** No tienen nulos y ya están codificadas.
+- **SMOTENC necesita saber en qué posiciones están las categóricas.** Lo difícil era ese paso: después del `ColumnTransformer` las columnas ya no tienen nombre y salen en el orden de los transformadores (primero las numéricas y luego las categóricas). Por eso las categóricas ocupan `range(len(numericas), len(numericas) + len(categoricas))`.
+- **El orden importa.** SMOTENC va después de imputar, porque no admite nulos, y después de escalar, porque genera pacientes a partir de las distancias. El `Pipeline` de imblearn solo lo aplica al entrenar, en cada fold de train, así que la validación siempre se hace con pacientes reales.
+- **`class_weight`.** Primero se hace un `clone` del modelo, para no modificar el que le pasas. Si el modelo no admite `class_weight`, como k vecinos, la función lanza un error claro y no lo ignora sin avisar.
+
+**`tabla_resultados(busqueda, nombre)`**
+
+Devuelve una fila por modelo con los datos de la mejor combinación (`best_index_`):
+
+- Para cada métrica: la media y la desviación en train y en validación.
+- `diferencia_train_val`: la diferencia entre train y validación con la métrica de selección (F1 macro), que mide el sobreajuste.
+- `mejores_parametros`.
+
+He dejado los valores como números y no como texto «0,53 ± 0,02» para poder ordenar y juntar las tablas. Para la memoria se formatean al final.
+
+**Uso:**
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from utils import modelado as md
+
+X_train, X_test, y_train, y_test = md.cargar_datos()
+pipe = md.crear_pipeline(DecisionTreeClassifier(random_state=cte.semilla), balanceo="smotenc")
+busqueda = md.crear_busqueda(pipe, {"modelo__max_depth": [3, 5, 8, None]}).fit(X_train, y_train)
+md.tabla_resultados(busqueda, "arbol_smotenc").round(3).T   # .T para verla en vertical
+```
+
+**Prueba rápida** (árbol con `max_depth` en [3, 5, None]):
+
+| | F1 macro (train / validación) | Recall de riesgo alto (validación) | Diferencia |
+|---|---|---|---|
+| SMOTENC | 0,604 / 0,527 | 0,640 | 0,077 |
+| class_weight | 0,606 / 0,507 | 0,582 | 0,099 |
+
+Con k vecinos y `class_weight` salta el error esperado.
+
+**Decisiones que tendréis que justificar:**
+
+- **Escalado común a todos los modelos.** Los árboles no lo necesitan, pero tampoco les afecta. K vecinos, SVM, regresión logística y el propio SMOTENC sí lo necesitan.
+- **`nivel_actividad` (0-3) como categórica en SMOTENC.** Así no genera valores intermedios como 1,4. La contrapartida es que pierde el orden. Es una decisión defendible, pero conviene escribirla.
+- **`data/datos.csv` no está en git** y el repositorio es público. Avisad al grupo antes de decidir si lo subís.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-08 20:44:24 +0100 · Claude Code
+
+- **Captura:** manual
+
+````text
+lo he hecho ya, preparame un cmmit breve que indique todo lo hecho y una descripcion por guione sopara poner ahora
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final:**
+
+````markdown
+Tienes el título y la descripción preparados para pegarlos en GitHub Desktop.
+
+**Título:**
+
+```text
+Preprocesamiento del EDA y módulo común de modelado
+```
+
+**Descripción:**
+
+```text
+- EDA: nueva sección 2 de preprocesamiento (anómalos y outliers, codificación de categóricas y exportación de los datos limpios sin imputar)
+- src/utils/modelado.py: código común del grupo (partición 80/20 estratificada, StratifiedKFold, métricas macro y recall/precisión de riesgo alto, pipeline imputar-escalar-SMOTENC-modelo, GridSearchCV con refit F1 macro, tabla de resultados train/validación y evaluación en test)
+- constantes.py: test_size, n_folds y la variable objetivo junto a la semilla
+- estrategia_ml.txt: decisiones de la reunión (métricas, limpieza, codificación, pipeline y balanceo)
+- Dependencias: se añade imbalanced-learn (pyproject.toml, uv.lock y requirements.txt)
+- Registro de IA actualizado
+```
+
+**Antes de hacer el commit, revisa dos cosas:**
+
+- **`data/datos.csv` no está en git todavía.** Es un dato nuevo y el repositorio es público, así que AGENTS.md pide avisar al grupo antes de subirlo. `modelado.py` lo lee, así que tus compañeros lo necesitarán:
+  - Si lo subís, añade una línea a la descripción: `- data/datos.csv: datos limpios y codificados, sin imputar (los usa modelado.py)`.
+  - Si no, cada uno tendrá que generarlo ejecutando la sección 2.3 del notebook.
+- **`src/eda_rodrigo.ipynb` tiene una parte de los cambios en el stage y otra no.** Marca el archivo entero para que entren las dos.
+
+No he hecho el commit: tienes que hacerlo tú desde tu cuenta.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-08 20:47:39 +0100 · Claude Code
+
+- **Captura:** manual
+
+````text
+añade tmb los errores corregidos
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final:**
+
+````markdown
+He comparado el notebook con el último commit y he añadido las correcciones a la descripción. El título no cambia.
+
+**Título:**
+
+```text
+Preprocesamiento del EDA y módulo común de modelado
+```
+
+**Descripción:**
+
+```text
+- EDA: nueva sección 2 de preprocesamiento (anómalos y outliers, codificación de categóricas y exportación de los datos limpios sin imputar)
+- src/utils/modelado.py: código común del grupo (partición 80/20 estratificada, StratifiedKFold, métricas macro y recall/precisión de riesgo alto, pipeline imputar-escalar-SMOTENC-modelo, GridSearchCV con refit F1 macro, tabla de resultados train/validación y evaluación en test)
+- constantes.py: test_size, n_folds y la variable objetivo junto a la semilla
+- estrategia_ml.txt: decisiones de la reunión (métricas, limpieza, codificación, pipeline y balanceo)
+- Dependencias: se añade imbalanced-learn (pyproject.toml, uv.lock y requirements.txt)
+- Registro de IA actualizado
+
+Correcciones:
+- Menores de 18 años: la edad pasa a nulo en vez de eliminar al paciente (son adultos con la edad mal registrada); se mantienen los 2.254 pacientes
+- IMC: el corte de valor imposible baja de 12 a 10 (entre 10 y 12 es desnutrición extrema, pero posible)
+- Recuentos y conclusiones de la 1.9 y la 1.10 actualizados tras la nueva limpieza (12 variables con nulos, experimento de imputadores y Friedewald)
+- Eliminada la 1.12, que imputaba con la mediana sobre todo el dataset (fuga de datos): la imputación va dentro del Pipeline
+- Desbalance: SMOTENC en vez de SMOTE, para no generar valores imposibles en las binarias y categóricas
+- Gráfico de densidades por clase rehecho con un subplot por variable
+```
+
+Siguen pendientes los dos avisos de antes:
+
+- **`data/datos.csv`:** decidid entre todos si se sube.
+- **`src/eda_rodrigo.ipynb`:** marca el archivo entero en el stage, porque ahora solo hay una parte de los cambios.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
