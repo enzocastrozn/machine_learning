@@ -1,17 +1,33 @@
 Pablo: Gradient Boosting, regresión logística y bayes
 
-Enzo: LDA, SVM 
+Enzo: LDA, SVM, stacking o voting (u otro)
 
-Rodrigo: árboles, k vecinos
+Rodrigo: árboles, k vecinos, random forest
 
 80/20
 
 stratified empezamos con 5 y vamos viendo
 
-recall, precision y F1
+recall, precision y F1, todas en macro para que las 3 clases cuenten igual
+
+la que más nos importa es el recall de la clase 2 (riesgo alto), que no se nos escape ningún paciente de riesgo alto
+
+el gridsearch lo ajustamos con F1 macro, y si dos modelos salen parecidos nos quedamos con el que tenga más recall en riesgo alto
+
+al modelo final le sacamos la matriz de confusión
 
 dos columnas binarias para antecedent materno y otra para paterno (categóricas a binarias)
 
-one hot encoding tipo alimentación 
+one hot encoding tipo alimentación, quitando la mediterránea que la dejamos de referencia
 
+nivel de actividad ordinal, de 0 (sedentario) a 3 (muy activo)
 
+limpieza: usamos la 1.9 del notebook de Rodrigo con dos cambios de Enzo (menores con la edad a nulo en vez de eliminarlos, e IMC a nulo solo si es menor de 10)
+
+alcohol negativo lo recortamos a 0 y ejercicio de más de 7 días a 7, porque si los pasamos a nulo perdemos que beben poco o hacen mucho ejercicio
+
+los umbrales clínicos de Enzo al final no los aplicamos
+
+dentro del pipeline (solo con train): imputar con la mediana, RobustScaler en todos (SMOTENC lo necesita para medir distancias) y SMOTENC para el desbalance
+
+antes probamos sin balancear vs class_weight vs SMOTENC para justificar que nos quedamos con SMOTENC
