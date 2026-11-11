@@ -959,3 +959,178 @@ Dale a cada modelo sus propias variables (`busquedas_logistica`, `busquedas_nb`�
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
+
+## 2026-11-11 20:37:12 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+He decidido que voy a meter un dummy classifier dentro de la primera iteración de los valores por defecto, para probar que mis modelos lo superan. Pero me está dando un keyerror, ¿cómo lo podría solucionar?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+El `KeyError` venía de que el `if` del suelo envolvía también la creación del pipeline. Lo he corregido en la celda 2 de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). No he vuelto a ejecutar la celda, así que vuelve a correrla para confirmarlo.
+
+## Por qué daba `KeyError`
+
+Tal como estaba, solo se creaba pipeline cuando el modelo era el suelo **y** tenía balanceo. Para los demás casos el `try` no se ejecutaba y `pipeline` se quedaba sin esa etiqueta. Pero la línea `busqueda_por_defecto[...] = ...pipeline[etiqueta]` está fuera del `if` y se ejecuta siempre. La primera vuelta es `logistica` sin balanceo, y por eso pedía `pipeline["logistica_sin_balanceo"]`, que no existía.
+
+## Cambio
+
+Ahora el `if` solo salta los casos que no quieres, y el `try` vuelve a su sitio:
+
+```python
+# el suelo solo se mide sin balanceo: siempre predice la clase mayoritaria, así que balancear no aporta nada
+if nombre == "suelo" and balanceo is not None:
+    continue
+try:
+    pipeline[etiqueta] = mod.crear_pipeline(modelo, balanceo)
+except ValueError:
+    ...
+```
+
+Sin el `if`, `class_weight` ya se saltaría solo, porque `DummyClassifier` no tiene ese parámetro y `crear_pipeline` lanza `ValueError`. Con SMOTENC, en cambio, sí se entrenaría. Como las clases quedan empatadas, `most_frequent` seguiría prediciendo la clase 0 y saldría una fila repetida. El `if` lo deja claro.
+
+## Qué esperar del suelo
+
+El suelo siempre predice «riesgo bajo», que es el 50 % de los pacientes:
+
+| Métrica | Valor esperado | Por qué |
+|---|---|---|
+| F1 macro | ≈ 0,22 | 0,67 en la clase 0, 0 en las otras dos, dividido entre 3 |
+| `recall_alto` | 0 | Nunca predice riesgo alto |
+| `precision_alto` | 0 | Sale 0 y no da aviso, porque el scorer lleva `zero_division=0` |
+
+`precision_macro` no lleva `zero_division`, así que verás avisos `UndefinedMetricWarning` al ajustar el suelo. Son normales: este modelo nunca predice las clases 1 y 2. Tus modelos tienen alrededor de 0,64 de F1 macro, así que lo superan con mucho margen. Con F1 macro ese suelo es muy fácil de batir, y es el valor que conviene citar en la memoria.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 20:45:23 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_pablo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Okay, ya estoy con la comparación de modelos, ¿cómo podría generar una tabla de comparación siguiendo el criterio acordado en @docs/evolucion_planteamiento.md  : F1 macro y, si dos modelos quedan dentro de la desviación entre folds, el recall de riesgo alto?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+He añadido la tabla de comparación en la celda de la sección 6 de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). No la he ejecutado, porque necesita las búsquedas de las secciones anteriores en memoria. Lo que sigue lo he calculado con los CSV que guardaste en `resultados/`.
+
+## Cómo aplica el criterio
+
+1. **Primero ordena por F1 macro** en validación.
+2. **Marca como empatados** los modelos cuyo F1 queda dentro de la desviación entre folds del mejor, es decir, con F1 ≥ F1 del mejor − su desviación. La columna `empata_en_f1` lo indica.
+3. **Entre los empatados, ordena por recall de riesgo alto.** Los que no empatan siguen ordenados por F1, y el suelo queda al final como referencia.
+
+El texto previo a la tabla muestra el umbral, así puedes citar el número en la memoria.
+
+## Qué va a salir
+
+| Modelo | F1 macro val | Recall alto val | ¿Empata? |
+|---|---|---|---|
+| naive_bayes | 0,627 | **0,751** | sí |
+| logistica | **0,651** ± 0,034 | 0,748 | sí |
+| hist_gradient_boosting | 0,645 | 0,723 | sí |
+| suelo | ≈ 0,22 | 0 | no |
+
+El umbral es 0,651 − 0,034 = 0,617, así que **los tres empatan en F1** y, aplicando el criterio al pie de la letra, gana Naive Bayes.
+
+## Un problema del criterio
+
+Naive Bayes gana el desempate por solo 0,003 de recall (0,751 frente a 0,748). Esa diferencia es mucho menor que la desviación del recall, que es de 0,05-0,06. En los mismos folds, Naive Bayes saca más recall en 2, la logística en 1 y en otros 2 empatan:
+
+| fold | logistica | naive_bayes | hgb |
+|---|---|---|---|
+| 0 | 0,722 | 0,722 | 0,694 |
+| 1 | 0,767 | **0,781** | 0,753 |
+| 2 | 0,667 | 0,667 | 0,681 |
+| 3 | **0,847** | 0,819 | 0,722 |
+| 4 | 0,736 | **0,764** | 0,764 |
+
+Es decir, también empatan en recall, y el criterio acordado no dice qué hacer en ese caso. Tienes dos opciones:
+
+- **Aplicar el criterio tal cual** y elegir Naive Bayes, reconociendo en la memoria que la diferencia de recall es ruido.
+- **Proponer al grupo un tercer criterio** para cuando también empaten en recall. Por ejemplo, quedarse con el de mayor F1 (la logística), o con el más simple e interpretable, que también es la logística por sus coeficientes. Este cambio afecta a la comparación de todo el grupo, así que conviene acordarlo antes de cerrar la tabla final.
+
+Para ver la tabla por folds en el notebook, puedes reutilizar tu función:
+
+```python
+por_fold({n: busquedas[n] for n in empatados.index}).round(3)
+```
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 20:57:10 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_pablo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Okay, tengo en cuenta esa igualdad entre bayes y regresión logística, antes de decidir, me gustaría demostrar cuanto aporta la optimización de parámetros a cada uno de los modelos por defecto vs el modelo ajustado seleccionado en cada uno. Pero de nuevo tengo un keyerror.
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+Era otra vez un problema de etiquetas. Lo he corregido en la celda de «¿Cuánto aporta el ajuste?» de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). No he ejecutado la celda.
+
+## Por qué daba `KeyError`
+
+La celda buscaba `busqueda_por_defecto["logistica | class_weight"]`, con el formato de etiqueta que usabas antes. En el apartado 2 las claves se guardan como `f"{nombre}_{balanceo or 'sin_balanceo'}"`, es decir, `"logistica_class_weight"`. El cambio está en una sola línea:
+
+```python
+defecto = mod.tabla_resultados(busqueda_por_defecto[f"{nombre}_{balanceo}"], nombre).iloc[0]
+```
+
+`balanceo_elegido` nunca contiene `None`, así que no hace falta el `or 'sin_balanceo'`.
+
+## Qué debería salir
+
+Lo he sacado de las salidas que ya tienes en el apartado 2 y en cada sección:
+
+| Modelo | F1 val: defecto → ajustado | Recall alto: defecto → ajustado | Sobreajuste: defecto → ajustado |
+|---|---|---|---|
+| logistica | 0,648 → 0,651 | 0,737 → 0,748 | 0,025 → 0,024 |
+| naive_bayes | 0,602 → 0,627 | 0,734 → 0,751 | 0,031 → 0,023 |
+| hist_gradient_boosting | 0,621 → 0,645 | 0,657 → 0,723 | 0,379 → 0,289 |
+
+## Cómo leerlo
+
+- **Logística:** el ajuste casi no aporta. Mejora el F1 en 0,003, muy por debajo de la desviación de 0,03. Cuadra con que la búsqueda eligiera L2 con `C = 0,1`, muy cerca de los valores por defecto (L2 y `C = 1`).
+- **Naive Bayes:** el ajuste sí aporta, +0,025 de F1. Con SMOTENC, `var_smoothing` es lo que más importa.
+- **HistGradientBoosting:** es donde más se nota. Sube el F1 y el recall de riesgo alto, y el sobreajuste baja de 0,38 a 0,29, aunque sigue siendo alto.
+
+## Un matiz para la memoria
+
+En la logística, la versión por defecto usa el solver `lbfgs` con `max_iter=100`, y la ajustada usa `saga` con `max_iter=5000`. Así que la diferencia no se debe solo a `C` y `l1_ratio`. Como apenas hay diferencia, no cambia la conclusión, pero conviene mencionarlo por si te preguntan en la entrevista.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
