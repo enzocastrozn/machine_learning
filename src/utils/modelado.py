@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 from imblearn.over_sampling import SMOTENC
 from imblearn.pipeline import Pipeline   # como el de sklearn, pero admite SMOTENC como paso
+from imblearn.under_sampling import TomekLinks, EditedNearestNeighbours
 from sklearn.base import clone
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -44,7 +45,7 @@ metricas = {
     "precision_alto": make_scorer(precision_score, labels=[2], average="macro", zero_division=0),
 }
 
-# elegimos con F1 macro: con recall_alto ganaría el modelo que dice «riesgo alto» a todos
+# Elegimos con F1 macro para metrica refit: con recall_alto ganaría el modelo que dice «riesgo alto» a todos
 metrica = "f1_macro"
 
 
@@ -70,7 +71,7 @@ numericas = [
 
 
 def crear_pipeline(modelo, balanceo="smotenc"):
-    """Pipeline imputar -> escalar -> balancear -> modelo; balanceo: "smotenc", "class_weight" o None."""
+    """Pipeline imputar -> escalar -> balancear -> modelo; balanceo: "smotenc", "class_weight", "tomek", "enn" o None."""
     # clone devuelve una copia sin entrenar: así no modificamos el modelo que nos pasan
     modelo = clone(modelo)
 
@@ -93,19 +94,31 @@ def crear_pipeline(modelo, balanceo="smotenc"):
         # así que las categóricas ocupan las posiciones len(numericas) ... final
         posiciones_cat = list(range(len(numericas), len(numericas) + len(categoricas)))
         # va después de imputar (SMOTENC no admite nulos) y de escalar (usa distancias entre pacientes)
-        pasos.append(("balanceo", SMOTENC(categorical_features=posiciones_cat,
-                                          random_state=cte.semilla)))
+        pasos.append(("balanceo", SMOTENC(categorical_features=posiciones_cat, random_state=cte.semilla)))
+
     elif balanceo == "class_weight":
         # no crea pacientes: da más peso en el entrenamiento a los errores en las clases pequeñas
         if "class_weight" not in modelo.get_params():
-            raise ValueError(f"{type(modelo).__name__} no admite class_weight; usa 'smotenc' o None")
+            raise ValueError(f"{type(modelo).__name__} no admite class_weight; usa otro balanceo o None")
         modelo.set_params(class_weight="balanced")
+
+    elif balanceo == "tomek":
+        # submuestreo: quita los pacientes de riesgo bajo y moderado que forman un enlace de Tomek
+        # (son el vecino más cercano de un paciente de otra clase), para limpiar la frontera.
+        # "auto" limpia todas las clases menos la minoritaria (riesgo alto)
+        pasos.append(("balanceo", TomekLinks(sampling_strategy="auto")))
+
+    elif balanceo == "enn":
+        # submuestreo: mira los 5 vecinos de cada paciente de riesgo bajo y moderado y lo quita
+        # si la mayoría (al menos 3 de 5) son de otra clase; no toca la minoritaria (riesgo alto)
+        pasos.append(("balanceo", EditedNearestNeighbours(n_neighbors=5, kind_sel="mode", sampling_strategy="not minority")))
+
     elif balanceo is not None:
-        raise ValueError("balanceo debe ser 'smotenc', 'class_weight' o None")
+        raise ValueError("balanceo debe ser 'smotenc', 'class_weight', 'tomek', 'enn' o None")
 
     pasos.append(("modelo", modelo))
-    # el Pipeline de imblearn aplica SMOTENC solo al entrenar (en cada fold de train),
-    # nunca al validar ni al predecir: la validación se hace con pacientes reales
+    # el Pipeline de imblearn solo remuestrea (SMOTENC, Tomek o ENN) al entrenar, en cada fold de train;
+    # nunca al validar ni al predecir, así que la validación se hace con pacientes reales
     return Pipeline(pasos)
 
 
