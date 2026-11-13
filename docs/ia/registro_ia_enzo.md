@@ -12,6 +12,12 @@ Cómo funciona este registro: [docs/ia/GUIA_REGISTRO_IA.md](GUIA_REGISTRO_IA.md)
 https://chatgpt.com/share/6af3a3bd-cbd8-83eb-8837-acb1982fe5d3
 
 ## Videos
+#LDA
+https://www.youtube.com/watch?v=asWoSpdLxTU
+
+#SVM
+https://www.youtube.com/watch?v=iAZpXTUJdvc
+
 Algoritmos de imputación
 https://www.youtube.com/watch?v=XiKYdHUsgyM
 
