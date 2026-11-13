@@ -1197,3 +1197,280 @@ He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/reg
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
+
+## 2026-11-12 21:18:50 +0100 · Claude Code
+
+- **Captura:** manual
+
+````text
+he añadido más técnicas de preprocesamiento a mis modelos, harías tú algo más respecto a esa parte?
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final:**
+
+````markdown
+**Respuesta corta:** no añadiría más técnicas. He probado tres opciones razonables con vuestro código común y ninguna mejora lo que ya tienes. Lo que sí haría es arreglar varios detalles de [src/utils/modelado.py](src/utils/modelado.py) y documentar lo descartado. No he modificado ningún archivo.
+
+### Lo que he probado (mismos folds, mismas métricas y misma semilla)
+
+| Opción | Modelo | F1 macro (validación) | Recall de riesgo alto | Resultado |
+|---|---|---|---|---|
+| **Selección de variables** (`SelectKBest` con k como hiperparámetro) | kNN | 0,590 (gana k = todas) | 0,773 | No mejora. Con k = 12 baja a 0,571 y con k = 5, a 0,506 |
+| **`class_weight="balanced_subsample"`** (pesos recalculados en cada muestra bootstrap) | RF | 0,636 como máximo | 0,670 | Peor que `balanced` (0,648) |
+| **SMOTENC + Tomek** (sobremuestrear y luego limpiar la frontera) | kNN / RF | 0,589 / 0,630 | 0,778 / 0,701 | Igual que SMOTENC solo; no compensa la complejidad |
+| **SMOTENC + ENN** | kNN / RF | **0,396** / 0,535 | 0,814 / 0,803 | Mucho peor: elimina tantos pacientes de bajo y moderado que el modelo casi solo predice «alto» |
+
+La selección de variables era la que más esperaba que ayudase, porque kNN sufre con las variables irrelevantes y la permutación indicaba que solo unas 6 importan. Aun así, gana usar todas.
+
+Si quieres, puedes poner estos resultados en la memoria como opciones descartadas: AGENTS.md pide anotarlas, y esto demuestra que la elección no fue arbitraria. Pero no hace falta meterlos en el notebook.
+
+### Lo que sí arreglaría en `modelado.py`
+
+Es código común, así que avisa a Pablo y a Enzo del cambio. A ellos no les rompe nada, porque solo has añadido opciones.
+
+1. **El mensaje de error y el docstring no incluyen las opciones nuevas.** Si alguien escribe mal `"tomek"`, el error le dice que solo existen `'smotenc'`, `'class_weight'` o `None`.
+2. **Los bloques de `tomek` y `enn` tienen 12 espacios de sangría** en lugar de 8. Python lo acepta, pero no es coherente con el resto.
+3. **`enn` está en el código común, pero no se usa en ningún notebook,** y su comentario no es exacto:
+   - ENN no elimina solo «los cercanos a la minoritaria».
+   - Elimina a los pacientes de bajo y moderado cuyos vecinos son mayoritariamente de otra clase.
+
+   Dado el resultado anterior, lo quitaría, o lo dejaría pero con el resultado documentado.
+4. **El comentario de Tomek dice «clase mayoritaria».** Con `sampling_strategy="auto"`, Tomek limpia todas las clases menos la minoritaria, es decir, la de riesgo bajo y la de moderado.
+5. **El comentario final solo habla de SMOTENC.** Ahora también vale para Tomek: el Pipeline de imblearn solo remuestrea al entrenar.
+
+Este sería el bloque corregido, con ENN quitado:
+
+```python
+def crear_pipeline(modelo, balanceo="smotenc"):
+    """Pipeline imputar -> escalar -> balancear -> modelo; balanceo: "smotenc", "class_weight", "tomek" o None."""
+    ...
+    elif balanceo == "tomek":
+        # submuestreo: quita los pacientes de riesgo bajo y moderado que forman un enlace de Tomek
+        # (son el vecino más cercano de un paciente de otra clase), para limpiar la frontera
+        pasos.append(("balanceo", TomekLinks(sampling_strategy="auto")))
+    elif balanceo is not None:
+        raise ValueError("balanceo debe ser 'smotenc', 'class_weight', 'tomek' o None")
+
+    pasos.append(("modelo", modelo))
+    # el Pipeline de imblearn solo remuestrea (SMOTENC o Tomek) al entrenar, en cada fold de train;
+    # nunca al validar ni al predecir, así que la validación se hace con pacientes reales
+    return Pipeline(pasos)
+```
+
+Si quitas ENN, quita también `EditedNearestNeighbours` del import.
+
+### Una cosa que he visto en Random Forest y que te puede interesar
+
+En vuestro criterio, cuando dos opciones empatan dentro de la desviación, se desempata con el recall de riesgo alto. Si aplicas ese mismo criterio dentro de la rejilla de RF con `class_weight`, hay una combinación mejor que la elegida:
+
+| | F1 macro | Recall de riesgo alto |
+|---|---|---|
+| Elegida: profundidad 10, 1 paciente por hoja | 0,648 ± 0,035 | 0,723 |
+| Profundidad 10, **5 pacientes por hoja** | 0,645 ± 0,023 | **0,762** |
+
+La segunda empata en F1 (0,003 de diferencia), detecta más pacientes de riesgo alto, varía menos entre folds y memoriza menos. `GridSearchCV` no la elige porque `refit` solo mira el F1. No es un fallo, pero podéis decidir:
+
+- Quedaros con la elegida, como hace el criterio automático.
+- Aplicar el desempate también dentro de la rejilla. Es más coherente con vuestra prioridad clínica, pero tendrías que explicarlo y usar los mismos hiperparámetros en `guardar_resultados`.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-12 21:22:48 +0100 · Claude Code
+
+- **Captura:** manual
+
+````text
+no me refiero a técnicas , si no a algún detalle más que mejore el preprocesamineto, en términos de visibilidad o explicabilidad por ejemplo
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final:**
+
+````markdown
+Ahora te entiendo. Ahora mismo el preprocesamiento está escondido dentro de `crear_pipeline`: el notebook dice qué hace, pero nunca lo enseña. Te propongo cuatro celdas cortas. Las he probado con tu pipeline y funcionan. No he modificado ningún archivo.
+
+### 1. Diagrama del pipeline (al principio de la sección 2)
+
+Muestra de un vistazo el orden de los pasos y qué columnas pasan por cada uno. Es útil para la memoria y para el vídeo:
+
+```python
+from sklearn import set_config
+set_config(display="diagram")   # los Pipeline se muestran como un diagrama desplegable
+
+# pipeline común: imputar y escalar las numéricas, dejar las categóricas, balancear y modelo
+mod.crear_pipeline(DecisionTreeClassifier(random_state=cte.semilla))
+```
+
+### 2. Qué hace cada balanceo con las clases (en el experimento de balanceo)
+
+La tabla de métricas dice qué opción gana, pero no qué le pasa a los datos. Con esta celda se entiende el porqué:
+
+```python
+from sklearn.utils.class_weight import compute_class_weight
+
+nombres_clase = {0: "bajo", 1: "moderado", 2: "alto"}
+recuentos = {"sin balancear": y_train.value_counts()}
+for balanceo in ["smotenc", "tomek"]:
+    # [:-1] = el pipeline sin el modelo: solo preprocesado y balanceo
+    _, y_res = mod.crear_pipeline(DecisionTreeClassifier(), balanceo=balanceo)[:-1].fit_resample(X_train, y_train)
+    recuentos[balanceo] = pd.Series(y_res).value_counts()
+recuentos = pd.DataFrame(recuentos).sort_index().rename(index=nombres_clase)
+
+# class_weight no cambia los pacientes, sino lo que pesa el error en cada clase
+pesos = compute_class_weight("balanced", classes=np.array([0, 1, 2]), y=y_train)
+print("Pesos de class_weight:", dict(zip(nombres_clase.values(), pesos.round(2))))
+
+recuentos.plot.bar(figsize=(8, 4), rot=0)
+plt.ylabel("Pacientes en el train")
+plt.title("Pacientes por clase según el balanceo")
+plt.show()
+recuentos
+```
+
+Resultado:
+
+| | Sin balancear | SMOTENC | Tomek |
+|---|---|---|---|
+| Bajo | 901 | 901 | 819 |
+| Moderado | 541 | 901 | 441 |
+| Alto | 361 | 901 | 361 |
+
+Los pesos de `class_weight` son 0,67, 1,11 y 1,66. La tabla explica tu conclusión mejor que las métricas: **Tomek solo quita 182 pacientes, así que el desbalance se mantiene**, y por eso apenas mejora el recall.
+
+### 3. Prueba de que SMOTENC no inventa valores imposibles
+
+En el notebook dices que SMOTENC no genera valores como «fumador = 0,35». Esta celda lo demuestra comparándolo con SMOTE normal:
+
+```python
+from imblearn.over_sampling import SMOTE
+
+prep = mod.crear_pipeline(DecisionTreeClassifier())[:-1]          # preprocesado + SMOTENC
+X_res, _ = prep.fit_resample(X_train, y_train)
+columnas = mod.numericas + mod.categoricas                        # orden de salida del ColumnTransformer
+sinteticos_nc = pd.DataFrame(X_res[len(X_train):], columns=columnas)   # los sintéticos van al final
+
+# mismo preprocesado, pero con SMOTE normal, que trata todo como continuo
+X_prep = prep.named_steps["preprocesado"].transform(X_train)
+X_smote, _ = SMOTE(random_state=cte.semilla).fit_resample(X_prep, y_train)
+sinteticos_smote = pd.DataFrame(X_smote[len(X_train):], columns=columnas)
+
+print("Pacientes sintéticos:", len(sinteticos_nc))
+print("Valores con decimales en las categóricas con SMOTENC:", (sinteticos_nc[mod.categoricas] % 1 != 0).sum().sum())
+print("Valores con decimales en las categóricas con SMOTE:  ", (sinteticos_smote[mod.categoricas] % 1 != 0).sum().sum())
+sinteticos_smote[["fumador_actual", "diabetes_mellitus", "nivel_actividad"]].head().round(2)
+```
+
+Resultado:
+
+- **SMOTENC:** 0 valores con decimales en los 900 sintéticos.
+- **SMOTE:** 2.967 de 9.900, con valores como un fumador = 0,67.
+
+### 4. Umbrales del árbol en unidades clínicas (después del `plot_tree`)
+
+Tú mismo dices en la conclusión que los umbrales del árbol están en unidades escaladas y no se pueden leer. Se pueden devolver a la escala original con lo que guardó el `RobustScaler` (valor real = valor escalado × IQR + mediana):
+
+```python
+# mediana (center_) e IQR (scale_) que aprendió el RobustScaler con el train
+escalador = (busqueda_arbol.best_estimator_.named_steps["preprocesado"]
+             .named_transformers_["num"].named_steps["escalar"])
+mediana = pd.Series(escalador.center_, index=mod.numericas)
+iqr = pd.Series(escalador.scale_, index=mod.numericas)
+
+arbol_interno = mejor_arbol.tree_
+for nodo, nivel in [(0, "raíz"), (arbol_interno.children_left[0], "izquierda"), (arbol_interno.children_right[0], "derecha")]:
+    variable = nombres_arbol[arbol_interno.feature[nodo]].split("__")[1]   # quita el prefijo "num__"
+    umbral = arbol_interno.threshold[nodo]
+    if variable in mod.numericas:
+        umbral = umbral * iqr[variable] + mediana[variable]                 # deshace el escalado
+    print(f"{nivel}: {variable} <= {umbral:.2f}")
+```
+
+Resultado:
+
+- **Raíz:** proteína C reactiva ≤ 0,97 mg/L.
+- **Rama izquierda:** proteína C reactiva ≤ 0,50.
+- **Rama derecha:** consumo de alcohol ≤ 2,93.
+
+Lo del primer corte es un dato muy bueno para la conclusión. Los criterios clínicos (AHA/CDC) consideran **riesgo cardiovascular bajo una PCR por debajo de 1 mg/L**, y el árbol ha encontrado prácticamente ese umbral solo, a partir de los datos. Compruébalo con una fuente antes de citarlo en la memoria.
+
+### Dónde ponerlas
+
+- La 1 y la 2, en la sección 2 (balanceo).
+- La 3, justo después de la 2.
+- La 4, en la sección 3, después del árbol.
+
+La 2 y la 3 justifican con datos dos decisiones de preprocesamiento (rechazar Tomek y usar SMOTENC en lugar de SMOTE), que es lo que más se valora.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-13 08:13:57 +0100 · Claude Code
+
+- **Captura:** manual
+
+````text
+ya he aplicado los cambios que comentabas, enseguida vamos a ponernos ya a sacar lo comun y con la memoria, podrías revisar mi ócidog en general para ver si hay fallos, si son leves arréglalos tú, si son graves, me lo dices y lo veo yo más detenidamente
+````
+
+**Modelo:** Claude Opus 5.5 (claude-opus-5-5)
+
+**Respuesta final:**
+
+````markdown
+He revisado [src/modelos_rodrigo.ipynb](src/modelos_rodrigo.ipynb), [src/utils/modelado.py](src/utils/modelado.py) y el EDA, que no ha cambiado desde la última revisión. **No hay ningún fallo grave.** Había unos cuantos leves y ya los he arreglado.
+
+### Lo que he comprobado
+
+- **Las cifras de las conclusiones son correctas.** He recalculado todas las de Random Forest con `class_weight` y coinciden:
+  - Matriz de confusión: 10 de riesgo alto clasificados como bajo; 19 % de bajo → moderado; 22 % de moderado → alto.
+  - Curva de pacientes por hoja: con 10 por hoja, train 0,906 y validación 0,648; con 40, validación 0,602.
+  - Importancias por permutación: PCR 0,089 ± 0,036, alcohol 0,065 ± 0,030, ácido úrico 0,026, HbA1c 0,025 y HDL 0,006 ± 0,011.
+  - Primeras divisiones del árbol y sus umbrales (0,97 mg/L y 2,93).
+- **No hay fugas de datos.** El test no se usa, todo lo que se aprende de los datos está dentro del Pipeline y los folds y la semilla son los comunes.
+- **No rompo nada a Pablo.** Su notebook usa `crear_pipeline` y captura el `ValueError` cuando un modelo no admite `class_weight`. Ese comportamiento se mantiene igual.
+
+### Errores leves que he arreglado
+
+**En `modelado.py`** solo he cambiado comentarios, mensajes y sangría. El código hace exactamente lo mismo.
+
+- **Docstring y mensaje de error:** ahora incluyen `"tomek"` y `"enn"`. Antes decían que solo existían `'smotenc'`, `'class_weight'` o `None`.
+- **Error de `class_weight`:** el mensaje decía «usa 'smotenc' o None». Ahora dice «usa otro balanceo o None».
+- **Sangría:** los bloques de Tomek y ENN tenían 12 espacios. Ahora tienen 8, como el resto.
+- **Comentarios de Tomek y ENN:** ahora son exactos. Las dos técnicas quitan pacientes de riesgo bajo y moderado, no solo de «la mayoritaria», y ENN quita al paciente si al menos 3 de sus 5 vecinos son de otra clase.
+- **Comentario final:** ahora dice que el Pipeline remuestrea solo al entrenar con cualquiera de las técnicas, no solo con SMOTENC.
+- He dejado ENN, aunque no lo uses, porque la decisión es tuya.
+
+**En el notebook** he corregido tres frases de markdown. No he tocado código ni salidas.
+
+1. **Sección 5, error OOB:** decía que los árboles «ven pacientes sintéticos de SMOTENC», pero la versión elegida es `class_weight`. Ahora dice «en las versiones con SMOTENC».
+2. **Importancia de las variables:** decía «un F1 de 1 en train». Con `class_weight` es 0,997, así que ahora dice «casi 1 (0,997)».
+3. **Conclusión final:** decía que RF «sube de nivel al 19 % de los pacientes de riesgo bajo (kNN, al 39 %)». Ese 19 % son solo los que pasan a moderado. Contando también los que pasan a alto, serían el 22 % y el 45 %. Lo he dejado como «clasifica como moderado al 19 %… y como alto al 22 % de los moderados», igual que en la conclusión de kNN.
+
+**Importante:** si tienes el notebook abierto en VS Code, recárgalo antes de seguir: cierra la pestaña sin guardar y ábrelo otra vez. Si guardas la versión abierta, sobrescribirás estos cambios.
+
+### Un detalle opcional
+
+En la conclusión del árbol pones que las primeras divisiones usan la PCR, el alcohol y la HbA1c. En los tres primeros niveles aparece también el ácido úrico. No es un error, pero podrías añadirlo.
+
+### Fuera del código
+
+En `docs/` hay archivos generados al compilar LaTeX que no deberían subirse: `memoria.aux`, `.fls`, `.fdb_latexmk` y `.synctex.gz`. Conviene que el grupo los añada a `.gitignore`. No lo he hecho porque es un archivo común.
+
+He registrado este prompt a mano en [docs/ia/registro_ia_rodrigo.md](docs/ia/registro_ia_rodrigo.md).
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---

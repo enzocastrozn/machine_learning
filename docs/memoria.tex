@@ -1,0 +1,172 @@
+\documentclass[journal,onecolumn]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+% Añadidos a la plantilla oficial: documento en español
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\renewcommand{\IEEEkeywordsname}{Palabras clave}
+
+\begin{document}
+
+\title{Predicción multiclase de riesgo cardiovascular en población adulta}
+
+\author{Enzo Castro, Rodrigo Martínez Jiménez y Pablo Sánchez Mérida
+\thanks{Práctica 1 de Machine Learning. Máster Universitario en Inteligencia Artificial, Universidad de Murcia, curso 2026/2027.}}
+
+\maketitle
+
+\begin{abstract}
+% Objetivo, metodología, resultados principales y conclusiones, en un solo párrafo.
+\end{abstract}
+
+\begin{IEEEkeywords}
+% Por ejemplo: riesgo cardiovascular, clasificación multiclase, desbalance de clases, ensembles.
+\end{IEEEkeywords}
+
+% Límite de la entrega: 15 páginas en total, incluidos todos los apartados.
+
+%============================================================
+\section{Introducción}
+%============================================================
+% Empezar el primer párrafo con \IEEEPARSTART{L}{as} (primera letra grande, como en la plantilla).
+
+\subsection{Contexto clínico y motivación}
+% Enfermedades cardiovasculares, importancia de estratificar el riesgo y de la detección temprana.
+
+\subsection{Objetivos}
+% Clasificar a los pacientes en tres niveles de riesgo (bajo, moderado y alto) y comparar modelos.
+
+%============================================================
+\section{Materiales}
+%============================================================
+% Dataset y análisis exploratorio, con el preprocesamiento necesario solo para la parte descriptiva.
+
+\subsection{Descripción del dataset}
+% Cohorte del Hospital Morales Meseguer: 2.254 pacientes, 27 variables de entrada y 1 objetivo.
+% Tipos de variables: numéricas, binarias y categóricas.
+
+\subsection{Análisis exploratorio}
+
+\subsubsection{Variable objetivo y desbalance de clases}
+% Proporción 50/30/20 y por qué importa más el error en la clase de riesgo alto.
+
+\subsubsection{Distribución de las variables}
+% Numéricas, binarias y categóricas frente al riesgo.
+
+\subsubsection{Valores faltantes}
+% Nulos en origen y su relación con el riesgo.
+
+\subsubsection{Calidad de los datos}
+% Valores imposibles, incoherencias entre variables y nulos camuflados (valores repetidos).
+
+\subsubsection{Correlaciones y redundancia}
+% Spearman entre variables y con el riesgo.
+
+\subsection{Problemáticas detectadas}
+% Resumen de las problemáticas que motivan el preprocesamiento.
+
+%============================================================
+\section{Métodos}
+%============================================================
+% Metodología para construir y seleccionar los modelos, incluido el preprocesamiento para machine learning.
+
+\subsection{Preprocesamiento}
+
+\subsubsection{Limpieza de errores de registro}
+% Reglas fijas: valores imposibles, recortes y nulos camuflados.
+
+\subsubsection{Codificación de variables categóricas}
+% Ordinal, one-hot con categoría de referencia y binarias.
+
+\subsubsection{Imputación de valores faltantes}
+% Mediana dentro del Pipeline; experimento de comparación de imputadores.
+
+\subsubsection{Escalado}
+% RobustScaler en las variables numéricas.
+
+\subsubsection{Tratamiento del desbalance}
+% Sin balancear, class_weight, SMOTENC y Tomek.
+
+\subsubsection{Técnicas descartadas}
+% Opciones consideradas y motivo por el que no se aplicaron.
+
+\subsection{Esquema de validación}
+% Partición 80/20 estratificada, StratifiedKFold de 5 folds y Pipeline sin fuga de datos.
+
+\subsection{Métricas de evaluación}
+% F1, precisión y recall en macro; recall de riesgo alto como métrica crítica y su justificación clínica.
+
+\subsection{Modelos}
+
+\subsubsection{Modelos base}
+% Regresión logística, Naive Bayes, LDA, SVM, árbol de decisión y kNN.
+
+\subsubsection{Modelos de ensamble}
+% Random Forest, HistGradientBoosting y Voting.
+
+\subsection{Ajuste de hiperparámetros}
+% GridSearchCV con el validador común y refit con F1 macro.
+
+\subsection{Comparación estadística de modelos}
+% Apartado opcional del enunciado: test sobre las notas de cada fold.
+
+\subsection{Entorno y reproducibilidad}
+% Python 3.12, uv, semilla común y repositorio de GitHub.
+
+%============================================================
+\section{Análisis de resultados}
+%============================================================
+% Análisis y justificación de las técnicas utilizadas.
+
+\subsection{Comparación de técnicas de preprocesamiento}
+% Tabla modelo × preprocesamiento y técnica elegida en cada modelo.
+
+\subsection{Resultados en validación cruzada}
+% Tabla comparativa de todos los modelos (media ± desviación).
+
+\subsection{Análisis del sobreajuste}
+% Diferencia entre train y validación y curvas de validación.
+
+\subsection{Matrices de confusión y errores clínicamente graves}
+% Pacientes de riesgo alto clasificados como bajo o moderado.
+
+\subsection{Importancia de las variables}
+% Variables que más pesan en los modelos y relación con el EDA.
+
+\subsection{Test estadísticos}
+% Resultados de la comparación estadística, si se incluye.
+
+\subsection{Evaluación final en test}
+% Única evaluación en test del modelo elegido.
+
+%============================================================
+\section{Discusión y conclusiones}
+%============================================================
+% Análisis crítico, posibles mejoras y resultados más destacados.
+
+\subsection{Mejor modelo y justificación}
+% Modelo elegido con el criterio acordado.
+
+\subsection{Complejidad, interpretabilidad y robustez}
+% Valoración cualitativa y cuantitativa de los mejores modelos.
+
+\subsection{Limitaciones del dataset}
+% Ruido, incoherencias y techo de rendimiento.
+
+\subsection{Posibles mejoras y trabajo futuro}
+% Qué se podría probar con más tiempo o más datos.
+
+%============================================================
+% Bibliografía: las referencias van en referencias.bib y se citan con \cite{clave}.
+% Solo aparecen en la lista las que se citan en el texto.
+% Descomentar estas dos líneas con la primera cita: sin ninguna, BibTeX genera
+% una bibliografía vacía y la compilación falla ("missing \item").
+%============================================================
+% \bibliographystyle{IEEEtran}
+% \bibliography{referencias}
+
+\end{document}
