@@ -71,7 +71,7 @@ numericas = [
 
 
 def crear_pipeline(modelo, balanceo="smotenc"):
-    """Pipeline imputar -> escalar -> balancear -> modelo; balanceo: "smotenc", "class_weight" o None."""
+    """Pipeline imputar -> escalar -> balancear -> modelo; balanceo: "smotenc", "class_weight", "tomek", "enn" o None."""
     # clone devuelve una copia sin entrenar: así no modificamos el modelo que nos pasan
     modelo = clone(modelo)
 
@@ -99,26 +99,26 @@ def crear_pipeline(modelo, balanceo="smotenc"):
     elif balanceo == "class_weight":
         # no crea pacientes: da más peso en el entrenamiento a los errores en las clases pequeñas
         if "class_weight" not in modelo.get_params():
-            raise ValueError(f"{type(modelo).__name__} no admite class_weight; usa 'smotenc' o None")
+            raise ValueError(f"{type(modelo).__name__} no admite class_weight; usa otro balanceo o None")
         modelo.set_params(class_weight="balanced")
 
     elif balanceo == "tomek":
-            # Elimina pacientes de la clase mayoritaria que están muy cerca de la minoritaria, para limpiar la frontera
-            pasos.append(("balanceo", TomekLinks(sampling_strategy="auto")))
+        # submuestreo: quita los pacientes de riesgo bajo y moderado que forman un enlace de Tomek
+        # (son el vecino más cercano de un paciente de otra clase), para limpiar la frontera.
+        # "auto" limpia todas las clases menos la minoritaria (riesgo alto)
+        pasos.append(("balanceo", TomekLinks(sampling_strategy="auto")))
 
     elif balanceo == "enn":
-            # Elimina pacientes de la clase mayoritaria que están muy cerca de la minoritaria con knn,
-            # Conserva si la mayoria de vecinos, al menos 3 de 5 son de la misma clase
-            # Elimina cualquiera menos la clase minoritaria (riesgo 2)
-            pasos.append(("balanceo", EditedNearestNeighbours(n_neighbors=5, kind_sel="mode", sampling_strategy="not minority")))
+        # submuestreo: mira los 5 vecinos de cada paciente de riesgo bajo y moderado y lo quita
+        # si la mayoría (al menos 3 de 5) son de otra clase; no toca la minoritaria (riesgo alto)
+        pasos.append(("balanceo", EditedNearestNeighbours(n_neighbors=5, kind_sel="mode", sampling_strategy="not minority")))
 
     elif balanceo is not None:
-        raise ValueError("balanceo debe ser 'smotenc', 'class_weight' o None")
-
+        raise ValueError("balanceo debe ser 'smotenc', 'class_weight', 'tomek', 'enn' o None")
 
     pasos.append(("modelo", modelo))
-    # el Pipeline de imblearn aplica SMOTENC solo al entrenar (en cada fold de train),
-    # nunca al validar ni al predecir: la validación se hace con pacientes reales
+    # el Pipeline de imblearn solo remuestrea (SMOTENC, Tomek o ENN) al entrenar, en cada fold de train;
+    # nunca al validar ni al predecir, así que la validación se hace con pacientes reales
     return Pipeline(pasos)
 
 
@@ -157,6 +157,23 @@ def guardar_resultados(busqueda, nombre):
     folds = pd.DataFrame({m: [r[f"split{k}_test_{m}"][i] for k in range(cte.n_folds)] for m in metricas})
     folds.index.name = "fold"
     folds.to_csv(RUTA_RESULTADOS / f"{nombre}_folds.csv")
+
+
+def guardar_preprocesamientos(busquedas, nombre):
+    """Guarda en resultados/<nombre>_preprocesamientos.csv una fila por cada versión de preprocesamiento probada.
+
+    busquedas: {versión: búsqueda ya ajustada}. La versión puede ser el balanceo (None, "smotenc"...)
+    o una etiqueta tipo "logistica_smotenc". Sirve para la tabla modelo x preprocesamiento de la memoria.
+    """
+    filas = []
+    for version, busqueda in busquedas.items():
+        # mismo nombre para todos: None -> "sin_balanceo" y sin el prefijo del modelo
+        version = "sin_balanceo" if version is None else str(version).removeprefix(f"{nombre}_")
+        filas.append(tabla_resultados(busqueda, nombre).assign(preprocesamiento=version))
+    tabla = pd.concat(filas).reset_index()
+    RUTA_RESULTADOS.mkdir(exist_ok=True)
+    tabla.to_csv(RUTA_RESULTADOS / f"{nombre}_preprocesamientos.csv", index=False)
+    return tabla
 
 
 # 5. Evaluación final

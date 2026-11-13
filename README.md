@@ -5,12 +5,13 @@ Práctica 1 de Machine Learning · Máster en Inteligencia Artificial · Univers
 | Autores | GitHub |
 |---|---|
 | Enzo Castro | [enzocastrozn](https://github.com/enzocastrozn) |
-| Rodrigo | [Rodri17013](https://github.com/Rodri17013) |
+| Rodrigo Martínez Jiménez | [Rodri17013](https://github.com/Rodri17013) |
 | Pablo Sánchez Mérida | [pablo-sanchez](https://github.com/pablo-sanchez) |
 
 ## Índice
 
 - [Descripción del proyecto](#descripción-del-proyecto)
+- [Decisiones de diseño y avances](#decisiones-de-diseño-y-avances)
 - [Estructura del repositorio](#estructura-del-repositorio)
 - [Reproducir el proyecto (profesorado)](#reproducir-el-proyecto-profesorado)
 - [Guía para el equipo](#guía-para-el-equipo)
@@ -22,7 +23,7 @@ Práctica 1 de Machine Learning · Máster en Inteligencia Artificial · Univers
   - [Archivos del entorno](#archivos-del-entorno)
 - [Registro de uso de IA](#registro-de-uso-de-ia)
 - [Solución de problemas](#solución-de-problemas)
-- [Actualizar requirements.txt](#)
+- [Actualizar requirements.txt](#actualizar-requirements)
 
 ## Descripción del proyecto
 
@@ -47,24 +48,50 @@ La práctica pide:
 
 Los requisitos completos están en el [enunciado](docs/enunciado/enunciado_riesgo_cardiovascular.md) y en las [instrucciones de entrega](docs/enunciado/instrucciones_entrega.md).
 
+## Decisiones de diseño y avances
+
+La evolución del planteamiento, las decisiones del grupo (con su motivo) y las opciones descartadas se documentan en [`docs/evolucion_planteamiento.md`](docs/evolucion_planteamiento.md), que se amplía tras cada reunión. Las notas rápidas de las reuniones están en [`estrategia_ml.txt`](estrategia_ml.txt).
+
+Todos los modelos comparten:
+
+- **La misma partición y validación:** 80/20 estratificada y `StratifiedKFold` de 5 folds, con la semilla 42.
+- **El mismo preprocesamiento:** las reglas fijas de limpieza y la codificación se aplican en el EDA; la imputación con la mediana, el escalado con `RobustScaler` y el balanceo de clases van dentro de un `Pipeline` ajustado solo con el train.
+- **Las mismas métricas:** F1, precisión y recall en macro, y el recall de la clase de riesgo alto como métrica crítica. Los hiperparámetros se eligen con el F1 macro.
+- **Varias técnicas de balanceo:** cada modelo se prueba al menos sin balancear, con `class_weight` (si el modelo lo admite) y con SMOTENC, y algunos también con Tomek y ENN. En cada modelo se elige la mejor con el criterio anterior. El Voting combina los mejores modelos ya ajustados, cada uno con su balanceo.
+
 ## Estructura del repositorio
 
 ```text
 machine_learning/
 ├── data/
-│   └── enfermedad_cardiovascular.csv    # Dataset de la práctica
+│   ├── enfermedad_cardiovascular.csv    # Dataset original de la práctica
+│   └── datos.csv                        # Datos limpios y codificados, sin imputar (los genera eda_rodrigo.ipynb)
 ├── docs/
 │   ├── enunciado/                       # Enunciado e instrucciones en Markdown
 │   ├── ia/                              # Registros individuales de uso de IA
-│   └── memoria.tex                      # Memoria técnica
+│   ├── evolucion_planteamiento.md       # Evolución del planteamiento y decisiones de diseño
+│   ├── memoria.tex                      # Memoria técnica
+│   └── *.pdf                            # Enunciado e instrucciones oficiales
+├── resultados/                          # Resultados de validación de cada modelo
+│   ├── <modelo>.csv                     # Media ± desviación en train y validación de la mejor combinación
+│   └── <modelo>_folds.csv               # Nota de cada fold (para comparar modelos y para los test estadísticos)
 ├── scripts/
 │   └── registrar_prompt_ia.py           # Guarda los prompts en el registro de IA
 ├── src/
-│   └── practica1_riesgo_cardiovascular.ipynb    # Notebook principal
+│   ├── eda_enzo.ipynb                   # Análisis exploratorio de cada miembro
+│   ├── eda_pablo.ipynb
+│   ├── eda_rodrigo.ipynb                # EDA y preprocesamiento: genera data/datos.csv
+│   ├── modelos_enzo.ipynb               # LDA, SVM y Voting
+│   ├── modelos_pablo.ipynb              # Regresión logística, Naive Bayes y HistGradientBoosting
+│   ├── modelos_rodrigo.ipynb            # Árbol de decisión, kNN y Random Forest
+│   └── utils/
+│       ├── constantes.py                # Semilla, tamaño del test y número de folds comunes
+│       └── modelado.py                  # Código común: partición, validación, métricas, Pipeline y resultados
 ├── .claude/settings.json                # Hooks del registro de IA en Claude Code
 ├── .gitattributes                       # Saltos de línea comunes en todos los sistemas
 ├── .python-version                      # Versión de Python del proyecto
 ├── AGENTS.md                            # Instrucciones para agentes de IA
+├── estrategia_ml.txt                    # Notas de las reuniones del grupo
 ├── pyproject.toml                       # Dependencias que declara el proyecto
 ├── requirements.txt                     # Versiones exactas, para instalar con pip
 └── uv.lock                              # Versiones exactas, para instalar con uv
@@ -112,9 +139,14 @@ jupyter lab
 
 En Ubuntu, si `venv` da error, instala antes el paquete que falta: `sudo apt install python3.12-venv`.
 
-### Ejecutar el notebook
+### Ejecutar los notebooks
 
-Abre [`src/practica1_riesgo_cardiovascular.ipynb`](src/practica1_riesgo_cardiovascular.ipynb) y ejecuta todas las celdas en orden.
+Los notebooks están en `src/` y se ejecutan con el kernel `.venv`, en este orden:
+
+1. [`src/eda_rodrigo.ipynb`](src/eda_rodrigo.ipynb): análisis exploratorio y preprocesamiento. Genera `data/datos.csv`, que usan los notebooks de modelos.
+2. Los notebooks de modelos ([`modelos_pablo.ipynb`](src/modelos_pablo.ipynb), [`modelos_rodrigo.ipynb`](src/modelos_rodrigo.ipynb) y `modelos_enzo.ipynb`): cada uno ajusta sus modelos con el código común de [`src/utils/modelado.py`](src/utils/modelado.py) y guarda los resultados en `resultados/`.
+
+`data/datos.csv` y `resultados/` ya están en el repositorio, así que los notebooks de modelos se pueden ejecutar sin pasar antes por el EDA.
 
 ## Guía para el equipo
 

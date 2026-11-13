@@ -536,6 +536,649 @@ display(media_desv("RMSE"))
 No he tocado tu notebook. Las pruebas están en `C:\Users\pablo\AppData\Local\Temp\claude\1c89b8a32de7a558\d5ddce76-2842-4d52-9bf7-f49c77e483c9\scratchpad\exp_final.py`.
 ````
 
+**Análisis crítico:** _(qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+El código es robusto, así que se acepta en su mayoría, las conclusiones; aunque me las adelanta en parte la IA las
+desarrollo yo y le dedico tiempo a asegurarme entenderalas.
+
+---
+
+## 2026-11-09 21:39:08 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 8bea045d
+
+**Prompt literal**
+
+````text
+Échale un vistazo a @estrategia_ml.txt . son los apuntes que tomó Rodri en la última reunión que tuvimos, yo también tomé algunos apuntes de esa reunión, echales un vistazo y creame un resumen no muy extenso en un archivo mardown que nos pueda servir para cuando construyamos la memoria técnica al exponer la evolución del planteamiento del problema, decisiones de diseño y avances tal y como pide @docs/enunciado/instrucciones_entrega.md
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.319)
+
+**Respuesta final**
+
+````markdown
+Escrito para: el equipo (Pablo, Enzo y Rodrigo), como base de la memoria técnica.
+
+He creado [docs/evolucion_planteamiento.md](docs/evolucion_planteamiento.md) a partir del acta de Rodrigo ([estrategia_ml.txt](estrategia_ml.txt)) y de tus apuntes de la reunión del 8 de noviembre. Tiene tres partes:
+
+1. **Punto de partida:** el entorno común, el EDA de cada uno y los problemas que encontrasteis en los datos.
+2. **Reunión del 8 de noviembre:**
+   - el reparto de modelos;
+   - el diseño experimental, con el motivo de cada decisión;
+   - la limpieza y la codificación de los datos;
+   - el pipeline;
+   - una tabla de **opciones descartadas y por qué**, que el acta de Rodrigo no recogía y que conviene para la memoria y la entrevista;
+   - lo que se ha hecho después de la reunión.
+3. **Cuestiones abiertas:**
+   - `class_weight` no funciona en Naive Bayes ni en `GradientBoostingClassifier`, que son dos de tus modelos;
+   - el balanceo debe decidirlo la comparación, no darse por hecho que gana SMOTENC;
+   - no hay forma de probar el árbol y el random forest sin imputar;
+   - falta un modelo de referencia que prediga siempre la clase mayoritaria;
+   - queda por decidir si usar 5 o 10 folds.
+
+Queda revisar los siguientes motivos que no se dijeron en la reunión:
+
+- Las razones para **no usar el logaritmo y PCA** («el `RobustScaler` ya controla las escalas» y «PCA resta interpretabilidad») las he añadido yo. 
+- En la reunión **solo quedó un «PCA, probablemente no»**. Confirmadlas o cambiadlas antes de llevarlas a la memoria.
+
+No he hecho commit. El hook ya ha registrado este prompt en tu registro de IA.
+````
+
+**Análisis crítico:** _(qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+Se revisa el esqueleto y contenido. La aproximación que hace la IA es muy certera dado que tiene acceso a parte
+a nuestros apuntes de la reunión, al propio repo y puede contrastar las decisiones tomadas con la realidad actual
+del repo, en el que ya hemos empezado a implementar los cambios que se propusieron durante la misma.
+
+Queda a la espera también de revisión de mis compañeros por si ellos se acordasen de algún detalle más o quisieran
+resumir un poco más.
+
+---
+
+## 2026-11-11 00:41:00 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_pablo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Estoy intentando aplicar un ajuste de hiperparámetros sobre la regresión logística en @src/modelos_pablo.ipynb  usando @src/utils/modelado.py   pero no se por qué me da el siguiente error:
+
+<pasted_content id="42c8">
+---------------------------------------------------------------------------
+_RemoteTraceback                          Traceback (most recent call last)
+_RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\externals\loky\process_executor.py", line 490, in _process_worker
+    r = call_item()
+        ^^^^^^^^^^^
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\externals\loky\process_executor.py", line 291, in __call__
+    return self.fn(*self.args, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py", line 607, in __call__
+    return [func(*args, **kwargs) for func, args, kwargs in self.items]
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 184, in __call__
+    return self.function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\model_selection\_validation.py", line 832, in _fit_and_score
+    estimator = estimator.set_params(**clone(parameters, safe=False))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\pipeline.py", line 289, in set_params
+    self._set_params("steps", **kwargs)
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\utils\metaestimators.py", line 75, in _set_params
+    super().set_params(**params)
+  File "c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\base.py", line 428, in set_params
+    raise ValueError(
+ValueError: Invalid parameter 'C' for estimator Pipeline(steps=[('preprocesado',
+                 ColumnTransformer(transformers=[('num',
+                                                  Pipeline(steps=[('imputar',
+                                                                   SimpleImputer(strategy='median')),
+                                                                  ('escalar',
+                                                                   RobustScaler())]),
+                                                  ['edad', 'presion_sistolica',
+                                                   'presion_diastolica',
+                                                   'colesterol_total',
+                                                   'colesterol_hdl',
+                                                   'colesterol_ldl',
+                                                   'trigliceridos',
+                                                   'glucosa_ayunas',
+                                                   'indice_masa_corporal',
+                                                   'frecuencia_cardiaca_reposo',
+                                                   'h...
+                                                 ('cat', 'passthrough',
+                                                  ['fumador_actual',
+                                                   'hipertension_previa',
+                                                   'diabetes_mellitus',
+                                                   'tratamiento_estatinas',
+                                                   'uso_antihipertensivos',
+                                                   'nivel_actividad',
+                                                   'dieta_baja_en_carbohidratos',
+                                                   'dieta_occidental',
+                                                   'dieta_vegetariana',
+                                                   'antecedentes_familiares_paterno',
+                                                   'antecedentes_familiares_materno'])])),
+                ('modelo',
+                 LogisticRegression(max_iter=5000, random_state=42,
+                                    solver='saga'))]). Valid parameters are: ['memory', 'steps', 'transform_input', 'verbose'].
+"""
+
+The above exception was the direct cause of the following exception:
+
+ValueError                                Traceback (most recent call last)
+Cell In[16], line 12
+      8 
+      9 busquedas, tablas = {}, []
+     10 for balanceo in balanceos:
+     11     busqueda = mod.crear_busqueda(mod.crear_pipeline(logistica, balanceo=balanceo), parametros_logistica)
+---> 12     busquedas[balanceo] = busqueda.fit(X_train, y_train)
+     13     tablas.append(mod.tabla_resultados(busqueda, f"{nombre} | {balanceo}"))
+     14 
+     15 tabla = pd.concat(tablas)[["f1_macro_val", "f1_macro_val_std", "recall_alto_val", "recall_alto_val_std",
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\base.py:1403, in _fit_context.<locals>.decorator.<locals>.wrapper(estimator, *args, **kwargs)
+   1393     estimator._validate_params()
+   1395 with (
+   1396     config_context(
+   1397         skip_parameter_validation=(
+   (...)   1401     callback_management_context(estimator),
+   1402 ):
+-> 1403     return fit_method(estimator, *args, **kwargs)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\model_selection\_search.py:1134, in BaseSearchCV.fit(self, X, y, **params)
+   1131     return results
+   1133 if "callback_ctx" in signature(self._run_search).parameters:
+-> 1134     self._run_search(evaluate_candidates, callback_ctx=root_callback_ctx)
+   1135 else:
+   1136     # custom search classes
+   1137     self._run_search(evaluate_candidates)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\model_selection\_search.py:1721, in GridSearchCV._run_search(self, evaluate_candidates, callback_ctx)
+   1713 candidate_params = ParameterGrid(self.param_grid)
+   1715 search_ctx = callback_ctx.subcontext(
+   1716     task_name="search",
+   1717     max_subtasks=len(candidate_params) * self.n_splits_,
+   1718     sequential_subtasks=False,
+   1719 ).call_on_fit_task_begin(estimator=self)
+-> 1721 evaluate_candidates(ParameterGrid(self.param_grid), callback_ctx=search_ctx)
+   1723 search_ctx.call_on_fit_task_end(estimator=self)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\model_selection\_search.py:1083, in BaseSearchCV.fit.<locals>.evaluate_candidates(candidate_params, cv, more_results, callback_ctx)
+   1080 else:
+   1081     evaluation_contexts = [None] * len(candidate_split_pairs)
+-> 1083 out = parallel(
+   1084     delayed(_fit_and_score)(
+   1085         clone(base_estimator),
+   1086         X,
+   1087         y,
+   1088         train=train,
+   1089         test=test,
+   1090         parameters=parameters,
+   1091         split_progress=(split_idx, n_splits),
+   1092         candidate_progress=(cand_idx, n_candidates),
+   1093         **fit_and_score_kwargs,
+   1094         caller=self,
+   1095         callback_ctx=evaluation_ctx,
+   1096     )
+   1097     for (
+   1098         ((cand_idx, parameters), (split_idx, (train, test))),
+   1099         evaluation_ctx,
+   1100     ) in zip(candidate_split_pairs, evaluation_contexts)
+   1101 )
+   1103 if len(out) < 1:
+   1104     raise ValueError(
+   1105         "No fits were performed. "
+   1106         "Was the CV iterator empty? "
+   1107         "Were there no candidates?"
+   1108     )
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\sklearn\utils\parallel.py:91, in Parallel.__call__(self, iterable)
+     79 warning_filters = (
+     80     filters_func() if filters_func is not None else warnings.filters
+     81 )
+     83 iterable_with_config_and_warning_filters = (
+     84     (
+     85         _with_config_and_warning_filters(delayed_func, config, warning_filters),
+   (...)     89     for delayed_func, args, kwargs in iterable
+     90 )
+---> 91 return super().__call__(iterable_with_config_and_warning_filters)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py:2098, in Parallel.__call__(self, iterable)
+   2092 # The first item from the output is blank, but it makes the interpreter
+   2093 # progress until it enters the Try/Except block of the generator and
+   2094 # reaches the first `yield` statement. This starts the asynchronous
+   2095 # dispatch of the tasks to the workers.
+   2096 next(output)
+-> 2098 return output if self.return_generator else list(output)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py:1704, in Parallel._get_outputs(self, iterator, pre_dispatch)
+   1701     yield
+   1703     with self._backend.retrieval_context():
+-> 1704         yield from self._retrieve()
+   1706 except GeneratorExit:
+   1707     # The generator has been garbage collected before being fully
+   1708     # consumed. This aborts the remaining tasks if possible and warn
+   1709     # the user if necessary.
+   1710     self._exception = True
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py:1806, in Parallel._retrieve(self)
+   1800 while self._wait_retrieval():
+   1801     # If the callback thread of a worker has signaled that its task
+   1802     # triggered an exception, or if the retrieval loop has raised an
+   1803     # exception (e.g. `GeneratorExit`), exit the loop and surface the
+   1804     # worker traceback.
+   1805     if self._aborting:
+-> 1806         self._raise_error_fast()
+   1807         break
+   1809     nb_jobs = len(self._jobs)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py:1885, in Parallel._raise_error_fast(self)
+   1881 # If this error job exists, immediately raise the error by
+   1882 # calling get_result. This job might not exists if abort has been
+   1883 # called directly or if the generator is gc'ed.
+   1884 if error_job is not None:
+-> 1885     error_job.get_result(self.timeout)
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py:780, in BatchCompletionCallBack.get_result(self, timeout)
+    774 backend = self.parallel._backend
+    776 if backend.supports_retrieve_callback:
+    777     # We assume that the result has already been retrieved by the
+    778     # callback thread, and is stored internally. It's just waiting to
+    779     # be returned.
+--> 780     return self._return_or_raise()
+    782 # For other backends, the main thread needs to run the retrieval step.
+    783 try:
+
+File ~\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\.venv\Lib\site-packages\joblib\parallel.py:795, in BatchCompletionCallBack._return_or_raise(self)
+    793 try:
+    794     if self.status == TASK_ERROR:
+--> 795         raise self._result
+    796     return self._result
+    797 finally:
+
+ValueError: Invalid parameter 'C' for estimator Pipeline(steps=[('preprocesado',
+                 ColumnTransformer(transformers=[('num',
+                                                  Pipeline(steps=[('imputar',
+                                                                   SimpleImputer(strategy='median')),
+                                                                  ('escalar',
+                                                                   RobustScaler())]),
+                                                  ['edad', 'presion_sistolica',
+                                                   'presion_diastolica',
+                                                   'colesterol_total',
+                                                   'colesterol_hdl',
+                                                   'colesterol_ldl',
+                                                   'trigliceridos',
+                                                   'glucosa_ayunas',
+                                                   'indice_masa_corporal',
+                                                   'frecuencia_cardiaca_reposo',
+                                                   'h...
+                                                 ('cat', 'passthrough',
+                                                  ['fumador_actual',
+                                                   'hipertension_previa',
+                                                   'diabetes_mellitus',
+                                                   'tratamiento_estatinas',
+                                                   'uso_antihipertensivos',
+                                                   'nivel_actividad',
+                                                   'dieta_baja_en_carbohidratos',
+                                                   'dieta_occidental',
+                                                   'dieta_vegetariana',
+                                                   'antecedentes_familiares_paterno',
+                                                   'antecedentes_familiares_materno'])])),
+                ('modelo',
+                 LogisticRegression(max_iter=5000, random_state=42,
+                                    solver='saga'))]). Valid parameters are: ['memory', 'steps', 'transform_input', 'verbose'].
+</pasted_content id="42c8">
+
+¿Qué falla en mi planteamiento?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.319)
+
+**Respuesta final**
+
+````markdown
+El fallo está en la rejilla, no en `modelado.py`. Los hiperparámetros llevan el nombre de la regresión logística sin prefijo, pero `GridSearchCV` no recibe la `LogisticRegression` directamente: recibe el `Pipeline` entero.
+
+## Por qué falla
+
+`GridSearchCV` hace en cada combinación algo así:
+
+```python
+pipeline.set_params(C=0.001, l1_ratio=0)
+```
+
+El `Pipeline` no tiene ningún parámetro `C`. Solo tiene `memory`, `steps`, `transform_input` y `verbose`, que son justo los que lista el error. Para llegar a un parámetro de un paso hay que indicar la ruta con el nombre del paso y doble guion bajo: `<paso>__<parámetro>`. En `crear_pipeline` el modelo es el paso `"modelo"` ([modelado.py:106](src/utils/modelado.py#L106)), así que el parámetro es `modelo__C`. Lo indica también el docstring de `crear_busqueda` ([modelado.py:114](src/utils/modelado.py#L114)).
+
+## Corrección
+
+```python
+parametros_logistica = {
+    "modelo__C": [0.001, 0.01, 0.1, 1, 10, 100],
+    "modelo__l1_ratio": [0, 0.5, 1],
+}
+```
+
+Con esto vale para los tres balanceos: el paso final se llama `"modelo"` aunque haya un paso `"balanceo"` antes.
+
+## Otro problema en esa celda
+
+```python
+tablas.append(mod.tabla_resultados(busqueda, f"{nombre} | {balanceo}"))
+```
+
+`nombre` no está definido en esta celda. Viene del bucle `for nombre, modelo in modelos.items()` del apartado 2, así que vale `"hist_gradient_boosting"`, el último modelo de ese diccionario. La tabla saldría con las filas de la logística etiquetadas como HistGradientBoosting. Pon el nombre directamente:
+
+```python
+tablas.append(mod.tabla_resultados(busqueda, f"regresion_logistica | {balanceo or 'sin_balanceo'}"))
+```
+
+He puesto `balanceo or 'sin_balanceo'` para que coincida con las etiquetas del apartado 2. Si no, la fila sin balanceo aparecería como `None`.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 01:03:59 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_rodrigo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Vale, ya funciona, pero ahora me gustaría que viendo que voy a tener que repetir el proceso varias veces cada vez que ajuste parametros (con Bayes, logística o con HistGradient Boosting) y quiera sacar los mejores parámetros, me gustaría sacar una función general que me permitiera pasarle distintos modelos y que me saque además de los valores que tenemos definidos en la variable columnas, los mejores parámetros, inyectandole el nombre desde fuera y aprovechando el código de @src/utils/modelado.py
+````
+
+## 2026-11-11 01:04:21 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+En @src/modelos_pablo.ipynb
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.319)
+
+**Respuesta final**
+
+````markdown
+He añadido la función `ajustar_modelo` a [modelos_pablo.ipynb](src/modelos_pablo.ipynb), en una celda nueva al final del apartado 2. También he reescrito la celda de la logística para que la use. La he probado con Naive Bayes y funciona. No he ejecutado la rejilla completa de la logística porque con `saga` tarda: vuelve a ejecutar el notebook desde arriba.
+
+## Qué hace
+
+```python
+busquedas, tabla = ajustar_modelo(nombre, modelo, parametros)
+```
+
+- **Recorre los tres balanceos** y monta cada pipeline con `mod.crear_pipeline`. La búsqueda la hace `mod.crear_busqueda`, así que la validación, la semilla y las métricas son las comunes del grupo.
+- **Se salta los balanceos que el modelo no admite**, con el mismo `try/except` del apartado 2. Por ejemplo, `GaussianNB` no tiene `class_weight`.
+- **Pone a las filas la misma etiqueta que en el apartado 2** (`logistica_smotenc`, `naive_bayes_sin_balanceo`…), así puedes comparar el modelo ajustado con el de por defecto.
+- **Devuelve dos cosas:**
+  - `busquedas`: un diccionario `etiqueta → GridSearchCV` ya entrenado, del que luego sacas el `best_estimator_` para test.
+  - `tabla`: las `columnas` del apartado 2 más `mejores_parametros`, ordenada por F1 macro de validación.
+- **No corta los parámetros en la tabla:** `pd.set_option("display.max_colwidth", None)` evita que pandas los recorte con «...».
+
+Resultado de la prueba con Naive Bayes y una rejilla pequeña:
+
+```
+                          f1_macro_train  f1_macro_val  ...  mejores_parametros
+naive_bayes_sin_balanceo           0.664         0.641  ...  {'modelo__var_smoothing': 1e-09}
+naive_bayes_smotenc                0.633         0.602  ...  {'modelo__var_smoothing': 1e-09}
+```
+
+## Uso con los otros modelos
+
+```python
+busquedas_nb, tabla_nb = ajustar_modelo("naive_bayes", GaussianNB(), parametros_nb)
+busquedas_hgb, tabla_hgb = ajustar_modelo(
+    "hist_gradient_boosting", HistGradientBoostingClassifier(random_state=cte.semilla), parametros_hgb)
+```
+
+Dale a cada modelo sus propias variables (`busquedas_logistica`, `busquedas_nb`…) para que una rejilla no sobrescriba la anterior.
+
+## Lo que tienes que saber para defenderla
+
+- **Usa variables del notebook sin recibirlas como parámetro:** `X_train`, `y_train` y `columnas`. Necesita que estén definidas antes, así que funciona si ejecutas el notebook en orden.
+- **`balanceos=balanceos` toma la lista del apartado 2.** Python la lee al crear la función, no en cada llamada.
+- **Algunas celdas de prueba de debajo ya no funcionan:**
+  - `busquedas.keys()`: ese diccionario ahora se llama `busquedas_logistica`.
+  - `busqueda["logistica_sin_balanceo"]` y `modelos_por_defecto`: esos nombres no existen en el notebook.
+  - El bucle de `evaluar_test`: también usa `busqueda` y `modelos_por_defecto`, y además mira el test, que solo debe usarse una vez al final. Conviene borrarlo o dejarlo para el último apartado.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 20:37:12 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+He decidido que voy a meter un dummy classifier dentro de la primera iteración de los valores por defecto, para probar que mis modelos lo superan. Pero me está dando un keyerror, ¿cómo lo podría solucionar?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+El `KeyError` venía de que el `if` del suelo envolvía también la creación del pipeline. Lo he corregido en la celda 2 de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). No he vuelto a ejecutar la celda, así que vuelve a correrla para confirmarlo.
+
+## Por qué daba `KeyError`
+
+Tal como estaba, solo se creaba pipeline cuando el modelo era el suelo **y** tenía balanceo. Para los demás casos el `try` no se ejecutaba y `pipeline` se quedaba sin esa etiqueta. Pero la línea `busqueda_por_defecto[...] = ...pipeline[etiqueta]` está fuera del `if` y se ejecuta siempre. La primera vuelta es `logistica` sin balanceo, y por eso pedía `pipeline["logistica_sin_balanceo"]`, que no existía.
+
+## Cambio
+
+Ahora el `if` solo salta los casos que no quieres, y el `try` vuelve a su sitio:
+
+```python
+# el suelo solo se mide sin balanceo: siempre predice la clase mayoritaria, así que balancear no aporta nada
+if nombre == "suelo" and balanceo is not None:
+    continue
+try:
+    pipeline[etiqueta] = mod.crear_pipeline(modelo, balanceo)
+except ValueError:
+    ...
+```
+
+Sin el `if`, `class_weight` ya se saltaría solo, porque `DummyClassifier` no tiene ese parámetro y `crear_pipeline` lanza `ValueError`. Con SMOTENC, en cambio, sí se entrenaría. Como las clases quedan empatadas, `most_frequent` seguiría prediciendo la clase 0 y saldría una fila repetida. El `if` lo deja claro.
+
+## Qué esperar del suelo
+
+El suelo siempre predice «riesgo bajo», que es el 50 % de los pacientes:
+
+| Métrica | Valor esperado | Por qué |
+|---|---|---|
+| F1 macro | ≈ 0,22 | 0,67 en la clase 0, 0 en las otras dos, dividido entre 3 |
+| `recall_alto` | 0 | Nunca predice riesgo alto |
+| `precision_alto` | 0 | Sale 0 y no da aviso, porque el scorer lleva `zero_division=0` |
+
+`precision_macro` no lleva `zero_division`, así que verás avisos `UndefinedMetricWarning` al ajustar el suelo. Son normales: este modelo nunca predice las clases 1 y 2. Tus modelos tienen alrededor de 0,64 de F1 macro, así que lo superan con mucho margen. Con F1 macro ese suelo es muy fácil de batir, y es el valor que conviene citar en la memoria.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 20:45:23 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_pablo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Okay, ya estoy con la comparación de modelos, ¿cómo podría generar una tabla de comparación siguiendo el criterio acordado en @docs/evolucion_planteamiento.md  : F1 macro y, si dos modelos quedan dentro de la desviación entre folds, el recall de riesgo alto?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+He añadido la tabla de comparación en la celda de la sección 6 de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). No la he ejecutado, porque necesita las búsquedas de las secciones anteriores en memoria. Lo que sigue lo he calculado con los CSV que guardaste en `resultados/`.
+
+## Cómo aplica el criterio
+
+1. **Primero ordena por F1 macro** en validación.
+2. **Marca como empatados** los modelos cuyo F1 queda dentro de la desviación entre folds del mejor, es decir, con F1 ≥ F1 del mejor − su desviación. La columna `empata_en_f1` lo indica.
+3. **Entre los empatados, ordena por recall de riesgo alto.** Los que no empatan siguen ordenados por F1, y el suelo queda al final como referencia.
+
+El texto previo a la tabla muestra el umbral, así puedes citar el número en la memoria.
+
+## Qué va a salir
+
+| Modelo | F1 macro val | Recall alto val | ¿Empata? |
+|---|---|---|---|
+| naive_bayes | 0,627 | **0,751** | sí |
+| logistica | **0,651** ± 0,034 | 0,748 | sí |
+| hist_gradient_boosting | 0,645 | 0,723 | sí |
+| suelo | ≈ 0,22 | 0 | no |
+
+El umbral es 0,651 − 0,034 = 0,617, así que **los tres empatan en F1** y, aplicando el criterio al pie de la letra, gana Naive Bayes.
+
+## Un problema del criterio
+
+Naive Bayes gana el desempate por solo 0,003 de recall (0,751 frente a 0,748). Esa diferencia es mucho menor que la desviación del recall, que es de 0,05-0,06. En los mismos folds, Naive Bayes saca más recall en 2, la logística en 1 y en otros 2 empatan:
+
+| fold | logistica | naive_bayes | hgb |
+|---|---|---|---|
+| 0 | 0,722 | 0,722 | 0,694 |
+| 1 | 0,767 | **0,781** | 0,753 |
+| 2 | 0,667 | 0,667 | 0,681 |
+| 3 | **0,847** | 0,819 | 0,722 |
+| 4 | 0,736 | **0,764** | 0,764 |
+
+Es decir, también empatan en recall, y el criterio acordado no dice qué hacer en ese caso. Tienes dos opciones:
+
+- **Aplicar el criterio tal cual** y elegir Naive Bayes, reconociendo en la memoria que la diferencia de recall es ruido.
+- **Proponer al grupo un tercer criterio** para cuando también empaten en recall. Por ejemplo, quedarse con el de mayor F1 (la logística), o con el más simple e interpretable, que también es la logística por sus coeficientes. Este cambio afecta a la comparación de todo el grupo, así que conviene acordarlo antes de cerrar la tabla final.
+
+Para ver la tabla por folds en el notebook, puedes reutilizar tu función:
+
+```python
+por_fold({n: busquedas[n] for n in empatados.index}).round(3)
+```
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 20:57:10 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_pablo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Okay, tengo en cuenta esa igualdad entre bayes y regresión logística, antes de decidir, me gustaría demostrar cuanto aporta la optimización de parámetros a cada uno de los modelos por defecto vs el modelo ajustado seleccionado en cada uno. Pero de nuevo tengo un keyerror.
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+Era otra vez un problema de etiquetas. Lo he corregido en la celda de «¿Cuánto aporta el ajuste?» de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). No he ejecutado la celda.
+
+## Por qué daba `KeyError`
+
+La celda buscaba `busqueda_por_defecto["logistica | class_weight"]`, con el formato de etiqueta que usabas antes. En el apartado 2 las claves se guardan como `f"{nombre}_{balanceo or 'sin_balanceo'}"`, es decir, `"logistica_class_weight"`. El cambio está en una sola línea:
+
+```python
+defecto = mod.tabla_resultados(busqueda_por_defecto[f"{nombre}_{balanceo}"], nombre).iloc[0]
+```
+
+`balanceo_elegido` nunca contiene `None`, así que no hace falta el `or 'sin_balanceo'`.
+
+## Qué debería salir
+
+Lo he sacado de las salidas que ya tienes en el apartado 2 y en cada sección:
+
+| Modelo | F1 val: defecto → ajustado | Recall alto: defecto → ajustado | Sobreajuste: defecto → ajustado |
+|---|---|---|---|
+| logistica | 0,648 → 0,651 | 0,737 → 0,748 | 0,025 → 0,024 |
+| naive_bayes | 0,602 → 0,627 | 0,734 → 0,751 | 0,031 → 0,023 |
+| hist_gradient_boosting | 0,621 → 0,645 | 0,657 → 0,723 | 0,379 → 0,289 |
+
+## Cómo leerlo
+
+- **Logística:** el ajuste casi no aporta. Mejora el F1 en 0,003, muy por debajo de la desviación de 0,03. Cuadra con que la búsqueda eligiera L2 con `C = 0,1`, muy cerca de los valores por defecto (L2 y `C = 1`).
+- **Naive Bayes:** el ajuste sí aporta, +0,025 de F1. Con SMOTENC, `var_smoothing` es lo que más importa.
+- **HistGradientBoosting:** es donde más se nota. Sube el F1 y el recall de riesgo alto, y el sobreajuste baja de 0,38 a 0,29, aunque sigue siendo alto.
+
+## Un matiz para la memoria
+
+En la logística, la versión por defecto usa el solver `lbfgs` con `max_iter=100`, y la ajustada usa `saga` con `max_iter=5000`. Así que la diferencia no se debe solo a `C` y `l1_ratio`. Como apenas hay diferencia, no cambia la conclusión, pero conviene mencionarlo por si te preguntan en la entrevista.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-11 23:25:48 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** 2ae22ad1
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\modelos_pablo.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Okay, me gustaría refactorizar un poco la parte de comparación de mis modelos, para escribir los resultados en un csv y hacer esta última parte más eficiente
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+**Respuesta final**
+
+````markdown
+He refactorizado la sección 6 de [modelos_pablo.ipynb](src/modelos_pablo.ipynb). Ahora hay una sola tabla `comparacion`, de la que salen todas las vistas, y la última celda la guarda en CSV. He comprobado la lógica de la tabla con datos simulados y cuadra. No he ejecutado el notebook, porque necesita las búsquedas en memoria: vuelve a ejecutar la sección 6 desde el principio.
+
+## Fallo que he corregido
+
+La celda de las matrices de confusión recorría `busquedas.items()`, que empieza por el suelo, con solo 3 ejes. Dibujaba suelo, logística y Naive Bayes, así que **HistGradientBoosting se quedaba sin matriz**. Revisa esa figura y la conclusión que escribiste a partir de ella. Ahora recorre `mis_modelos`.
+
+## Qué hace cada celda
+
+1. **Tabla de comparación:** define `balanceo_elegido`, `mis_modelos` y `busquedas` una sola vez. Antes `mis_modelos` se definía en la celda de las matrices, pero `por_fold(mis_modelos)` lo usaba antes, así que solo funcionaba si ejecutabas en desorden.
+   - Junta los modelos ajustados con las columnas por defecto (`*_por_defecto`) y añade `mejora_f1_ajuste`.
+   - Aplica tu criterio (`empata_en_f1`, `empata_en_recall`) sin cambiarlo y muestra las columnas del criterio.
+2. **Celda de `por_fold`:** sin cambios. Ya funciona porque `mis_modelos` está definido antes.
+3. **Cuánto aporta el ajuste:** ya no recalcula nada. Lee las columnas de la tabla que ya existe.
+4. **Matrices de confusión:** además de dibujarlas, apunta en la tabla cuántos pacientes de riesgo alto clasifica como bajo (`alto_como_bajo`).
+5. **Celda nueva:** guarda `resultados/comparacion_pablo.csv`.
+
+## Dónde gana en eficiencia
+
+La versión por defecto ya no se recalcula: se lee de la tabla `por_defecto` del apartado 2. El único entrenamiento que queda en la sección es el de `cross_val_predict` (5 folds por modelo), que hace falta para las matrices de confusión.
+
+## El CSV
+
+`resultados/comparacion_pablo.csv` lleva todo: train y validación con media ± desviación de todas las métricas, mejores parámetros, balanceo, valores por defecto, mejora, empates y `alto_como_bajo`. En el suelo, las columnas por defecto y `alto_como_bajo` quedan vacías, porque no se ajusta ni se dibuja su matriz.
+
+He usado un nombre propio para no pisar los CSV por modelo (`logistica.csv`…) que lee el grupo, ni colisionar con los de Rodrigo (`arbol`, `knn`, `random_forest`). Si el grupo junta los resultados leyendo todos los CSV de la carpeta, este se colaría. Ahora mismo los lee por nombre, así que no pasa.
+````
+
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
