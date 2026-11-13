@@ -159,6 +159,23 @@ def guardar_resultados(busqueda, nombre):
     folds.to_csv(RUTA_RESULTADOS / f"{nombre}_folds.csv")
 
 
+def guardar_preprocesamientos(busquedas, nombre):
+    """Guarda en resultados/<nombre>_preprocesamientos.csv una fila por cada versión de preprocesamiento probada.
+
+    busquedas: {versión: búsqueda ya ajustada}. La versión puede ser el balanceo (None, "smotenc"...)
+    o una etiqueta tipo "logistica_smotenc". Sirve para la tabla modelo x preprocesamiento de la memoria.
+    """
+    filas = []
+    for version, busqueda in busquedas.items():
+        # mismo nombre para todos: None -> "sin_balanceo" y sin el prefijo del modelo
+        version = "sin_balanceo" if version is None else str(version).removeprefix(f"{nombre}_")
+        filas.append(tabla_resultados(busqueda, nombre).assign(preprocesamiento=version))
+    tabla = pd.concat(filas).reset_index()
+    RUTA_RESULTADOS.mkdir(exist_ok=True)
+    tabla.to_csv(RUTA_RESULTADOS / f"{nombre}_preprocesamientos.csv", index=False)
+    return tabla
+
+
 # 5. Evaluación final
 def evaluar_test(modelo, X_test, y_test):
     """Evaluación en test: solo una vez, con el modelo ya elegido."""
