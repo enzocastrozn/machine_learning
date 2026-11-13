@@ -6,7 +6,7 @@ Cómo funciona este registro: [docs/ia/GUIA_REGISTRO_IA.md](GUIA_REGISTRO_IA.md)
 
 | Herramienta | Versión | Modelo | Entorno |
 |---|---|---|---|
-| _Por completar_ | | | |
+ChatGPT|GPT-6|GPT-6|OpenAI Web
 
 ## Prompts
 https://chatgpt.com/share/6af3a3bd-cbd8-83eb-8837-acb1982fe5d3
@@ -21,7 +21,7 @@ https://www.youtube.com/watch?v=iAZpXTUJdvc
 Algoritmos de imputación
 https://www.youtube.com/watch?v=XiKYdHUsgyM
 
-Ordenal encoder
+Ordinal encoder
 https://www.youtube.com/watch?v=15uClAVV-rI
 
 Tomek Links
