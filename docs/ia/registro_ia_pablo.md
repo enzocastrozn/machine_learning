@@ -1182,3 +1182,161 @@ He usado un nombre propio para no pisar los CSV por modelo (`logistica.csv`…) 
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
+
+## 2026-11-14 12:24:55 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** e1ed3770
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\comparacion_final.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Okay, ya tenemos los resultados de todos los modelos @src/modelos_rodrigo.ipynb , @src/modelos_enzo.ipynb  y @src/modelos_pablo.ipynb ,  y voy a proceder a hacer la comparativa final @src/comparacion_final.ipynb  , como ves, he cargado los modelos seleccionados de cada uno. Comprueba que he seleccionado correctamente y ahora el siguiente paso que quiero seguir, es que quiero comprobar que importo los modelos correctamente y que los csv guardados son los correctos, evaluando los f1 y el recall alto del csv vs los reconstruidos en el primer apartado. De forma que me devuelvan un booleano según si coincide o no, de una forma visual en un dataframe haciendo validación cruzada y aprovechando @src/utils/modelado.py  . ¿Cómo lo harías?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.323)
+
+**Respuesta final**
+
+````markdown
+Has elegido bien los modelos. He reconstruido los 9 con validación cruzada (en un script aparte, sin tocar tu notebook) y dan exactamente lo mismo que los CSV, fold a fold, en F1 macro y en recall de riesgo alto. Tarda unos 9 s.
+
+## Tu tabla de configuración frente a los notebooks
+
+| Modelo | Lo que guardó cada notebook | En tu `configuracion` |
+|---|---|---|
+| logistica | `busquedas_logistica["logistica_class_weight"]`, con `solver="saga", max_iter=5000` | ✔ |
+| naive_bayes | `["naive_bayes_smotenc"]` | ✔ |
+| hist_gradient_boosting | `["hist_gradient_boosting_class_weight"]` | ✔ |
+| arbol / knn | `busquedas_*["smotenc"]` | ✔ |
+| random_forest | `busquedas_rf["class_weight"]` | ✔ |
+| lda / svm | `busquedas_lda["smotenc"]`, `busquedas_svm["class_weight"]` (la celda final, la que llama a `guardar_resultados`) | ✔ |
+| voting | LDA smotenc, SVM class_weight con `probability=True` y semilla, RF y LR; orden `lda, svm, rf, lr` | ✔ (los pesos `[1,1,3,1]` van en el mismo orden) |
+
+## Celda propuesta para el apartado 2 (la celda vacía `a23ff022`)
+
+```python
+# misma validación cruzada que en cada notebook: mismos folds (mod.validador) y mismas métricas (mod.metricas).
+# return_train_score=True porque estos resultados se reutilizan en los apartados 3, 5 y 6 (sobreajuste y test por folds)
+validacion = {nombre: cross_validate(pipeline, X_train, y_train, cv=mod.validador, scoring=mod.metricas,
+                                     return_train_score=True, n_jobs=-1)
+              for nombre, pipeline in pipelines.items()}
+
+comprobadas = ["f1_macro", "recall_alto"]
+filas = {}
+for nombre, r in validacion.items():
+    guardado = pd.read_csv(mod.RUTA_RESULTADOS / f"{nombre}.csv").iloc[0]                    # media guardada
+    folds = pd.read_csv(mod.RUTA_RESULTADOS / f"{nombre}_folds.csv", index_col="fold")        # nota de cada fold
+    fila = {}
+    for m in comprobadas:
+        fila[f"{m}_csv"] = guardado[f"{m}_val"]
+        fila[f"{m}_reconstruido"] = r[f"test_{m}"].mean()       # en cross_validate, "test" es el fold de validación
+        # coincide solo si coinciden los 5 folds, no basta la media (así se comprueba también que los folds son los mismos)
+        fila[f"{m}_coincide"] = np.allclose(r[f"test_{m}"], folds[m], atol=1e-6)
+    filas[nombre] = fila
+
+comprobacion = pd.DataFrame.from_dict(filas, orient="index")
+columnas_ok = [f"{m}_coincide" for m in comprobadas]
+
+# verde si coincide, rojo si no
+display(comprobacion.style
+        .format(precision=4, subset=comprobacion.columns.difference(columnas_ok))
+        .map(lambda ok: f"background-color: {'#c6efce' if ok else '#ffc7ce'}", subset=columnas_ok))
+
+# si algo no cuadra, el notebook se para aquí y no se compara con un modelo equivocado
+assert comprobacion[columnas_ok].all().all(), "Algún modelo reconstruido no coincide con su CSV"
+```
+
+Por qué está hecha así:
+
+- **Compara fold a fold con `<modelo>_folds.csv`, no solo la media.** Si los folds, el balanceo o un hiperparámetro cambiaran, la media podría seguir pareciéndose por casualidad, pero los 5 folds no.
+- **Usa `np.allclose` con tolerancia** y no `==`. Aunque aquí ha salido idéntico, comparar decimales con `==` es frágil.
+- **Guarda `validacion` y no solo la tabla.** Ahí tienes train y validación por fold de los 9 modelos, que te sirve para:
+  - el apartado 3 (media ± desviación y sobreajuste),
+  - el `cross_val_predict` del apartado 5,
+  - Friedman y la t corregida del apartado 6.
+
+  Así no repites la validación cruzada.
+- **El `assert`** hace que el notebook falle si alguien vuelve a guardar un CSV sin avisar.
+
+Un detalle: el SVM con `probability=True` da un `FutureWarning` en sklearn 1.9. Es solo un aviso y no cambia los resultados.
+
+Si quieres, pego la celda en el notebook y la ejecuto.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
+
+## 2026-11-14 12:46:10 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** e1ed3770
+
+**Prompt literal**
+
+````text
+<ide_opened_file>The user opened the file c:\Users\pablo\Documents\master_ia_umu\machine_learning\practica\practica1\machine_learning\src\comparacion_final.ipynb in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Ya la he ejecutado yo y me gusta lo que veo. He montado una tabla, importando de nuestros csv los resultados y mostrando cada uno de nuestros mejores modelos mostrando nuestras métricas y su diferencia entre train y validación.
+
+Ahora quiero hacer un análisis visual a nivel de fold a través de una gráfica que me permita mostrar en ese orden como varían en cada fold los distintos modelos a nivel de f1 macro y recall de riesgo alto en validación. ¿Cómo lo puedo conseguir?
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.323)
+
+**Respuesta final**
+
+````markdown
+Ya la he generado con vuestros `_folds.csv` y se lee bien. La propuesta es dos paneles, uno encima de otro: arriba el F1 macro y abajo el recall de riesgo alto. Cada uno tiene su propio eje y. En el eje x van los modelos en tu `orden`, el de mejor a peor F1. Cada fold es una línea de color y la media es una raya negra.
+
+Uno las líneas por fold, aunque el eje x sean categorías, porque los 5 folds son los mismos pacientes para todos los modelos. Así ves:
+- si un fold es difícil para todos (líneas paralelas),
+- si el orden entre modelos cambia de un fold a otro (líneas que se cruzan).
+
+Es justo lo que luego contrasta Friedman. Un boxplot por modelo perdería ese emparejamiento.
+
+## Celda (después de la que crea `folds` y `orden`)
+
+```python
+# una línea por fold: los 5 folds son los mismos pacientes en todos los modelos, así que unirlos
+# muestra si un fold es difícil para todos (líneas paralelas) o si el ranking cambia de fold a fold (se cruzan)
+metricas_grafica = {"f1_macro": "F1 macro", "recall_alto": "Recall de riesgo alto"}
+colores_fold = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]   # un color fijo por fold
+x = np.arange(len(orden))   # posición de cada modelo en el eje x, en el orden de la tabla del apartado 3
+
+# un panel por métrica con su propio eje y (no dos escalas en el mismo gráfico)
+fig, ejes = plt.subplots(2, 1, figsize=(11, 8), sharex=True)
+for eje, (metrica, titulo) in zip(ejes, metricas_grafica.items()):
+    tabla = pd.DataFrame({n: folds[n][metrica] for n in orden})   # filas: folds; columnas: modelos en orden
+    for (k, fila), color in zip(tabla.iterrows(), colores_fold):
+        eje.plot(x, fila, color=color, linewidth=1.2, alpha=0.7, marker="o", markersize=6, label=f"Fold {k + 1}")
+    # la media de los 5 folds es el valor *_val de la tabla del apartado 3
+    eje.scatter(x, tabla.mean(), marker="_", s=700, linewidths=2.5, color="#0b0b0b", zorder=3,
+                label="Media de los 5 folds")
+    eje.set_title(f"{titulo} en validación", loc="left", fontsize=12)
+    eje.set_ylabel(titulo)
+    eje.grid(axis="y", color="#e1e0d9", linewidth=0.8)
+    eje.set_axisbelow(True)                       # la rejilla queda detrás de los puntos
+    eje.spines[["top", "right"]].set_visible(False)
+
+ejes[-1].set_xticks(x, orden, rotation=30, ha="right")
+ejes[0].legend(ncol=6, loc="lower left", bbox_to_anchor=(0, 1.08), frameon=False, fontsize=9)
+fig.tight_layout()
+plt.show()
+```
+
+Usa `folds` y `orden` de tu celda `c2369c65`. Como en el apartado 2 viste que `validacion` coincide con los CSV, sale lo mismo con cualquiera de las dos fuentes.
+
+## Lo que se ve con vuestros datos (para el texto de debajo)
+
+- **El fold pesa más que el modelo.** En F1, los folds 3 y 5 quedan por debajo para casi todos los modelos, y los folds 1, 2 y 4 por encima. En recall pasa lo mismo: el fold 4 siempre sale alto y el fold 3 siempre bajo.
+- **Voting tiene la mejor media, pero no gana en todos los folds.** En el fold 3, el SVM lo iguala o lo supera un poco.
+- **Logística, random forest, SVM y HGB están mezclados.** Sus líneas se cruzan y las medias se separan menos que la variación entre folds. Probablemente cuente como empate según tu criterio.
+- **KNN tiene el mejor recall de riesgo alto pero un F1 bajo.** Es el caso que comentáis en `modelado.py`: elegir solo por recall premia al que dice «riesgo alto» de más.
+- **El árbol queda por debajo de todos en todos los folds,** en las dos métricas.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---
