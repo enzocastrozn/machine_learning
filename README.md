@@ -74,10 +74,11 @@ machine_learning/
 │   └── *.pdf                            # Enunciado e instrucciones oficiales
 ├── resultados/                          # Resultados de validación de cada modelo
 │   ├── <modelo>.csv                     # Media ± desviación en train y validación de la mejor combinación
-│   └── <modelo>_folds.csv               # Nota de cada fold (para comparar modelos y para los test estadísticos)
+│   └── <modelo>_folds.csv               # Nota de cada fold  (para comparar los modelos fold a fold)
 ├── scripts/
 │   └── registrar_prompt_ia.py           # Guarda los prompts en el registro de IA
 ├── src/
+│   ├── comparacion_final.ipynb          # Comparación final: elección del modelo y evaluación en test
 │   ├── eda_enzo.ipynb                   # Análisis exploratorio de cada miembro
 │   ├── eda_pablo.ipynb
 │   ├── eda_rodrigo.ipynb                # EDA y preprocesamiento: genera data/datos.csv
@@ -145,6 +146,7 @@ Los notebooks están en `src/` y se ejecutan con el kernel `.venv`, en este orde
 
 1. [`src/eda_rodrigo.ipynb`](src/eda_rodrigo.ipynb): análisis exploratorio y preprocesamiento. Genera `data/datos.csv`, que usan los notebooks de modelos.
 2. Los notebooks de modelos ([`modelos_pablo.ipynb`](src/modelos_pablo.ipynb), [`modelos_rodrigo.ipynb`](src/modelos_rodrigo.ipynb) y `modelos_enzo.ipynb`): cada uno ajusta sus modelos con el código común de [`src/utils/modelado.py`](src/utils/modelado.py) y guarda los resultados en `resultados/`.
+3. [`src/comparacion_final.ipynb`](src/comparacion_final.ipynb): reconstruye los modelos elegidos a partir de `resultados/`, aplica el criterio de selección y evalúa el modelo final en test una sola vez. Guarda `resultados/comparacion_final.csv`.
 
 `data/datos.csv` y `resultados/` ya están en el repositorio, así que los notebooks de modelos se pueden ejecutar sin pasar antes por el EDA.
 
