@@ -557,8 +557,8 @@ entrenamiento y validación).
 En la logística, la curva de validación de $C$ muestra subajuste cuando la regularización es muy
 fuerte ($C < 0{,}01$) y se estabiliza a partir de $C = 0{,}1$.
 HistGradientBoosting, en cambio, llega a 0,934 en entrenamiento: su validación alcanza el máximo con
-unos 100 árboles y, a partir de ahí, los árboles que se añaden solo memorizan pacientes.
-El SVC elegido, con \textit{kernel} RBF, sobreajusta 0,19, y el \textit{voting} hereda el
+unos 100 árboles y, a partir de ahí, los árboles que se añaden solo memorizan pacientes (Fig.~\ref{fig:curvas_bayes_hgb_rl}).
+El SVC elegido según (Fig.~\ref{fig:curva_validacion_svc}), con \textit{kernel} RBF, sobreajusta 0,19, y el \textit{voting} hereda el
 sobreajuste de Random Forest, al que da el triple de peso (0,25).
 
 \begin{figure}[H]
@@ -639,9 +639,9 @@ medio del F1 macro en los folds de validación y su desviación.}
 \end{figure}
 
 En SVC y Voting la variable más importante es el consumo de alcohol semanal
-(Figs.~\ref{fig:importancia_svm} y~\ref{fig:importancia_voting}):
+(Figs.~\ref{fig:importancia_svm} y~\ref{fig:importancia_voting})::
 aquella tiene una influencia sobre el F1 macro en torno a (0,05),
-le sigue casi al mismo nivel está nivel de actividad, sin embargo, en Voting, la variable proteína C reactiva
+seguida por el nivel de actividad, sin embargo, en Voting, la variable proteína C reactiva
 varía y llega casi al mismo nivel que el consumo de alcohol, y la hemoglobina glicosilada presenta 
 comportamiento similar en ambos modelos, el resto de variables tienen un impacto menor y más homogéneo entre ellas.
 Las importancias son pequeñas en términos absolutos, la variable más relevante hace perder cinco
