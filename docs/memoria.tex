@@ -381,12 +381,12 @@ Se ajustan el número de árboles (100 o 300), la profundidad máxima (5, 10 o s
 de variables que se prueban en cada división (la raíz cuadrada del total o la mitad) y el número
 mínimo de pacientes por hoja (1, 5 o 10).
 
-\textit{Voting,} Se combina el enfoque de clasificación por fronteras (LDA con SVC)
+\textit{Voting.} Se combina el enfoque de clasificación por fronteras (LDA con SVC)
 y los 2 mejores modelos base (Random Forest, Regresión Logística), para ello se agregan las decisiones 
 de los modelos base mediante dos estrategias posibles: \textit{voto duro} (\textit{hard}),
 que selecciona la clase predicha por mayoría simple de votos, y \textit{voto suave} (\textit{soft}),
 que promedia las probabilidades estimadas por los modelos para cada clase y selecciona aquella con mayor valor medio.
-Se intenta ir a favor de un modelo pesandolo con un valor considerable frente a los demás para que sea significativo, 
+Se intenta ir a favor de un modelo pesándolo con un valor considerable frente a los demás para que sea significativo, 
 con 3 veces el peso sobre otro modelo, así como pesar todos los modelos por igual, 
 y una combinación de LDA y Regresión Logística con el triple de peso combinado, lo anterior porque se ha probado su capacidad individual.
 
@@ -639,7 +639,7 @@ medio del F1 macro en los folds de validación y su desviación.}
 \end{figure}
 
 En SVC y Voting la variable más importante es el consumo de alcohol semanal
-(Figs.~\ref{fig:importancia_svm} y~\ref{fig:importancia_voting})::
+(Figs.~\ref{fig:importancia_svm} y~\ref{fig:importancia_voting}):
 aquella tiene una influencia sobre el F1 macro en torno a (0,05),
 seguida por el nivel de actividad, sin embargo, en Voting, la variable proteína C reactiva
 varía y llega casi al mismo nivel que el consumo de alcohol, y la hemoglobina glicosilada presenta 

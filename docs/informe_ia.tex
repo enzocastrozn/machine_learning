@@ -1,0 +1,460 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\sloppy
+
+% caja para los prompts literales
+\newenvironment{prompt}
+  {\par\smallskip\begin{list}{}{\leftmargin=1.2em\rightmargin=0.5em}\item\relax\small\color{black!80}}
+  {\end{list}\smallskip}
+
+\title{Informe de uso ético y responsable de la Inteligencia Artificial}
+\author{Enzo Alejandro Castro Rojas, Rodrigo Martínez Jiménez y Pablo Sánchez Mérida\\[0.3em]
+\small Práctica 1 de Machine Learning. Máster Universitario en Inteligencia Artificial,\\
+\small Universidad de Murcia, curso 2026/2027}
+\date{15 de noviembre de 2026}
+
+\begin{document}
+\maketitle
+
+\section{Introducción}
+Este documento declara el uso de herramientas de IA generativa durante la Práctica 1 (predicción
+multiclase del riesgo cardiovascular), como piden las instrucciones de la entrega (apartado 4.3).
+Recoge las herramientas empleadas por cada miembro del grupo, el análisis crítico de sus respuestas y
+la transcripción literal de los prompts.
+
+Cada miembro ha mantenido su propio registro en el repositorio del grupo
+(\url{https://github.com/enzocastrozn/machine_learning}), en la carpeta \texttt{docs/ia/}:
+\texttt{registro\_ia\_enzo.md}, \texttt{registro\_ia\_pablo.md} y \texttt{registro\_ia\_rodrigo.md}.
+En Claude Code, la mayoría de los prompts se guardaron de forma automática con un \textit{hook}
+(\texttt{scripts/registrar\_prompt\_ia.py}), que anota el prompt, el modelo y la respuesta final del
+agente; el resto se copiaron a mano del historial de la conversación. Los registros del repositorio
+contienen también las respuestas completas de la IA, que no se reproducen aquí por su extensión.
+
+En la transcripción se omite el contexto que el editor añade automáticamente a cada prompt (la
+etiqueta que indica qué archivo estaba abierto), porque no lo escribe la persona. Las trazas de error
+largas que se pegaron en algún prompt se indican con su número de líneas y se conservan completas en
+el registro del repositorio.
+
+\section{Herramientas empleadas}
+
+\begin{table}[h]
+\centering
+\caption{Herramientas de IA empleadas por cada miembro}
+\begin{tabularx}{\linewidth}{l l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+Miembro & Herramienta & Modelo y versión & Entorno \\
+\midrule
+Enzo & ChatGPT & GPT-6 & Aplicación web de OpenAI \\
+Pablo & Claude Code & Claude Opus 5.5 (\texttt{claude-opus-5-5}); versiones de Claude Code de la
+2.1.314 a la 2.1.323 & Extensión de Claude Code para VS Code, en Windows 11 \\
+Rodrigo & Claude Code & Claude Opus 5.5 (\texttt{claude-opus-5-5}); en los 4 primeros prompts no se
+registró el modelo & Extensión de Claude Code para VS Code, en Windows 11 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Además de la IA, Enzo consultó vídeos de YouTube sobre LDA, SVM, algoritmos de imputación, la
+codificación ordinal y Tomek Links, enlazados en su registro.
+
+\section{Análisis crítico y validación}
+
+Los tres miembros coincidimos en el uso que hemos hecho de la IA, así que el análisis es el mismo para
+todos.
+
+\subsection*{Enzo}
+He usado la IA principalmente como asistente de código. En la mayoría de ocasiones he aceptado sus propuestas o las he modificado muy ligeramente, y también la he usado como revisor. La orientación, la planificación y las conclusiones son mías.
+
+\subsection*{Pablo}
+He usado la IA principalmente como asistente de código. En la mayoría de ocasiones he aceptado sus propuestas o las he modificado muy ligeramente, y también la he usado como revisor. La orientación, la planificación y las conclusiones son mías.
+En algunas entradas de su registro dejó además comentarios concretos sobre qué aceptó y qué cambió,
+que se reproducen junto a cada prompt en la Sección~\ref{sec:pablo}.
+
+\subsection*{Rodrigo}
+He usado la IA principalmente como asistente de código. En la mayoría de ocasiones he aceptado sus propuestas o las he modificado muy ligeramente, y también la he usado como revisor. La orientación, la planificación y las conclusiones son mías.
+
+\section{Registro de prompts}
+
+\subsection{Enzo}
+Enzo utilizó ChatGPT en una única conversación, que compartió con un enlace público de ChatGPT. La
+transcripción completa de sus prompts y de las respuestas está en ese enlace:
+
+\url{https://chatgpt.com/share/6af3a3bd-cbd8-83eb-8837-acb1982fe5d3}
+
+\subsection{Pablo}\label{sec:pablo}
+\subsubsection*{P1. 2026-11-01 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.314)
+
+\begin{prompt}
+Échale un vistazo a los documentos de la entrega de la práctica 1 de machine learning: @practica1/\allowbreak{}PR\_\allowbreak{}CTICA\_\allowbreak{}1-\_\allowbreak{}Instrucciones.pdf  y @practica1/\allowbreak{}Practica\_\allowbreak{}1\_\allowbreak{}Machine\_\allowbreak{}Learning\_\allowbreak{}Cardiovascular.pdf  para que conozcas los requisitos del proyecto el repositorio de trabajo está en  \textbackslash\allowbreak{}practica\textbackslash\allowbreak{}practica1\textbackslash\allowbreak{}machine\_\allowbreak{}learning y ahora tenemos un poco de lío entre lo que está en main y lo que estaba en mi rama. Unos tienen python 3.14 y otros han hecho la instalación de python 3.12 y me gustaría hacer una guía común tanto si se trabaja en Windows o en Linux /\allowbreak{} WSL. También una guía específica de para que los profesores se puedan instalar el entorno tanto si tienen como si no tienen uv. Échale un vistazo a mis apuntes en C:\textbackslash\allowbreak{}Users\textbackslash\allowbreak{}pablo\textbackslash\allowbreak{}Documents\textbackslash\allowbreak{}Pablo's Wiki\textbackslash\allowbreak{}MasterIA\textgreater{} en los que tengo mis resúmenes de clase y una guía de uso de uv para que intentemos unificarlo todo. Ya tengo yo modificaciones hechas en @practica1/\allowbreak{}machine\_\allowbreak{}learning/\allowbreak{}README.md  pero me gustaría que le de dieras buen formato y estructura y que además modificases el resto de archivos como @practica1/\allowbreak{}machine\_\allowbreak{}learning/\allowbreak{}uv.lock , @practica1/\allowbreak{}machine\_\allowbreak{}learning/\allowbreak{}.python-version  y @practica1/\allowbreak{}machine\_\allowbreak{}learning/\allowbreak{}pyproject.toml . Yo creo que la opción de un python 3.12 para todos es lo más interesante, porque es una versión bastante contrastada. Incluye una sección en la que mis compañeros puedan entender como sincronizarse
+
+También quiero generar un sistema de registro de prompts de IA individualizado para ir registrándolos de forma automatizada tal y como pide la profesora en sus requisitos que yo he creado en @practica1/\allowbreak{}machine\_\allowbreak{}learning/\allowbreak{}docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}pablo.md  , que creo que lo podemos conseguir con un un AGENTS.md genérico para todos. Ayúdame con ello. Y también que se entienda el propósito del trabajo. No se si deberíamos añadir también las instrucciones de la práctica en el repo para trabajar con un buen contexto si se quiere. No se si pegando el PDF directamente o haciendole un markitdown. Sugiéreme y pregúntame en el camino y lo vamos decidiendo.
+\end{prompt}
+
+\textbf{Respuestas literales a las preguntas del agente:}
+
+\begin{prompt}
+Enunciado: Solo Markdown (Recommended)
+
+Captura: Tienes que tener en cuenta que no todos tienen Claude Code, 2 sí y uno tiene Github Copilot, así que lo tienes que hacer genérico para que nos funcione a todos. ¿Qué te refieres con los hooks? ¿A mencionar el documentos de agents.md dentro del claude.md no commiteable?
+
+Contenido: Prompt, modelo y respuesta (Recommended)
+
+Carpeta: Abrir el repo directamente (Recommended)
+\end{prompt}
+
+\textbf{Comentario de la persona en su registro:}
+
+Se aceptan la mayoría de los cambios a nivel de resolución de librerías y la creación del registro automático de IA. \\{}
+Cambio manualmente la semilla y la unificamos a 42. \\{}
+Se deja el archivo requirements.txt, aunque con uv no es necesario para que el equipo tenga un entorno unificado. Añado una sección en el README de la raíz para mencionar que al final del desarrollo lo tendremos que actualizar.
+
+\subsubsection*{P2. 2026-11-06 19:44:03 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.318)
+
+\begin{prompt}
+Tengo el siguiente notebook @src/\allowbreak{}eda\_\allowbreak{}pablo.ipynb  y mis compañeros ya han estado trabajando en @src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb  pero yo quiero aportar una visión distinta al trabajo que ya han realizado y es analizar de una forma más enfocada al problema en sí y comprendiendo cada variable como se comporta, que conclusiones podemos ir sacando. En primer lugar quiero centrarme en este punto 3.2 y todo lo que anteriormente he hecho, vamos paso a paso. En primer lugar, quiero sacar la correlación de mi variable objetivo, que es ordinal con el resto de variables numéricas. ¿Cómo lo podría hacer de forma que tenga sentido? Vamos paso a paso, no saltes a más puntos, yo te voy preguntando cuano me atasque.
+\end{prompt}
+
+\subsubsection*{P3. 2026-11-06 21:17:46 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.318)
+
+\begin{prompt}
+Venga, ahora estoy con las variables numéricas, como puedes ver, el 24\% de los registros tienen al menos algún valor nulo y estos se concentran en 4 variables numéricas: colesterol\_\allowbreak{}ldl, glucosa\_\allowbreak{}ayunas, horas\_\allowbreak{}sueno\_\allowbreak{}diarias y proteina\_\allowbreak{}c\_\allowbreak{}reactiva.
+
+De cara a aplicar alguna estrategia para rellenar los valores nulos, ya sea con la media, la mediana o algún método de imputación de valores, quiero explorar distintas estrategias para ver tendría mayor sentido estadístico utilizar para usar esos valores nulos.
+
+En primer lugar, para LDL, vi por internet que existía la fórmula de fiedewald para calcular una aproximación del LDL y del colesterol total. Para ver si podíamos calcular los valores missing a través de datos ya existentes.
+
+Pero he visto que no tienen correlación entre los valores calculados del colesterol total, tengo 2 aproximaciones, primero mirándolo desde la perspectiva del colesterol total y luego mirándolo de la perspectiva del LDL. ¿Cuál sería la aproximación correcta y de que forma podría plantearme resolver los nulls de LDL? ¿Me falta alguna comprobación?
+\end{prompt}
+
+\textbf{Comentario de la persona en su registro:}
+
+Se acepta explicando las implicaciones que tiene en la decisión.
+
+\subsubsection*{P4. 2026-11-06 21:59:53 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.318)
+
+\begin{prompt}
+Okay, ahora quiero hacer comprobaciones con el resto de variables, para determinar también con ellas cual es el método más interesante para imputar estos valores missing, pero entiendo que vamos a repetir acciones más de una vez, así que me gustaría que me construyeras una función que fácilmente me comprobase si existe alguna relación con el riesgo el que exista ese valor faltante, ver si existe alguna variable con alta correlación que me pueda ayudar a entender si debo aplicar una fórmula o una imputación multivariante y si es simétrica (usar la media) o tiene cola (usar la mediana).
+
+Para el resto de casos no tengo fórmulas que me puedan ayudar, así que vamos solo con eso y comprobamos rápidamente la aproximación más interesante para cada una de ellas.
+\end{prompt}
+
+\textbf{Comentario de la persona en su registro:}
+
+Debemos hacer varios matices a esta función de \textit{diagnostico\_\allowbreak{}nulos}:
+
+1. \textbf{Los umbrales (0,3 y 0,5) son arbitrarios}: pero no afectan demasiado porque solo proteina\_\allowbreak{}c\_\allowbreak{}reactiva pasa del umbral de asimetría.
+
+2. La correlación por parejas no prueba que el imputador multivariante falle, pero sí es un indicio que hay que comprobar.
+
+3. El problema de tener 2 imputadores es que nos obliga a aplicar varios transformer sin grandes ganancias, así que es probable que lo más interesante sea usar la mediana para todas.
+
+Cambiamos la lógica para decidir entre mediana y un método de imputación.
+
+\subsubsection*{P5. 2026-11-07 00:08:48 +0100 -- Claude Code}
+\textbf{Modelo:} el mismo que la entrada anterior (prompt encadenado en la misma petición)
+
+\begin{prompt}
+Okay, ahora me gustaría hacer el experimento para comprobar las conclusiones que he planteado en la celda markdown del apartado 5. Quiero demostrar que realmente la estrategia de imputación más interesante sería la mediana o la media vs knn imputer o iterative imputer.
+
+Para eso habría que usar pacientes sin nulos, esconder un cieto porcentaje a cada una de las variables par que sean parte de nuestro test, y repetirlo varias veces en sorteos distintos  porque un solo sorteo puede engañar. Y para comprobarlo, puedo comprobar puedo usar el MAE. Comparando métodos univariantes con multivariantes. ¿Cómo lo plantearías para el apartado 5.3?
+\end{prompt}
+
+\subsubsection*{P6. 2026-11-07 00:12:00 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.318)
+
+\begin{prompt}
+Sería solo para las variables numéricas
+\end{prompt}
+
+\textbf{Comentario de la persona en su registro:}
+
+El código es robusto, así que se acepta en su mayoría, las conclusiones; aunque me las adelanta en parte la IA las \\{}
+desarrollo yo y le dedico tiempo a asegurarme entenderalas.
+
+\subsubsection*{P7. 2026-11-09 21:39:08 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.319)
+
+\begin{prompt}
+Échale un vistazo a @estrategia\_\allowbreak{}ml.txt . son los apuntes que tomó Rodri en la última reunión que tuvimos, yo también tomé algunos apuntes de esa reunión, echales un vistazo y creame un resumen no muy extenso en un archivo mardown que nos pueda servir para cuando construyamos la memoria técnica al exponer la evolución del planteamiento del problema, decisiones de diseño y avances tal y como pide @docs/\allowbreak{}enunciado/\allowbreak{}instrucciones\_\allowbreak{}entrega.md
+\end{prompt}
+
+\textbf{Comentario de la persona en su registro:}
+
+Se revisa el esqueleto y contenido. La aproximación que hace la IA es muy certera dado que tiene acceso a parte \\{}
+a nuestros apuntes de la reunión, al propio repo y puede contrastar las decisiones tomadas con la realidad actual \\{}
+del repo, en el que ya hemos empezado a implementar los cambios que se propusieron durante la misma.
+
+Queda a la espera también de revisión de mis compañeros por si ellos se acordasen de algún detalle más o quisieran \\{}
+resumir un poco más.
+
+\subsubsection*{P8. 2026-11-11 00:41:00 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.319)
+
+\begin{prompt}
+Estoy intentando aplicar un ajuste de hiperparámetros sobre la regresión logística en @src/\allowbreak{}modelos\_\allowbreak{}pablo.ipynb  usando @src/\allowbreak{}utils/\allowbreak{}modelado.py   pero no se por qué me da el siguiente error:
+
+[Texto pegado de 223 líneas: traza de error de Python. Se conserva completo en el registro del repositorio.]
+
+¿Qué falla en mi planteamiento?
+\end{prompt}
+
+\subsubsection*{P9. 2026-11-11 01:03:59 +0100 -- Claude Code}
+\textbf{Modelo:} el mismo que la entrada anterior (prompt encadenado en la misma petición)
+
+\begin{prompt}
+Vale, ya funciona, pero ahora me gustaría que viendo que voy a tener que repetir el proceso varias veces cada vez que ajuste parametros (con Bayes, logística o con HistGradient Boosting) y quiera sacar los mejores parámetros, me gustaría sacar una función general que me permitiera pasarle distintos modelos y que me saque además de los valores que tenemos definidos en la variable columnas, los mejores parámetros, inyectandole el nombre desde fuera y aprovechando el código de @src/\allowbreak{}utils/\allowbreak{}modelado.py
+\end{prompt}
+
+\subsubsection*{P10. 2026-11-11 01:04:21 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.319)
+
+\begin{prompt}
+En @src/\allowbreak{}modelos\_\allowbreak{}pablo.ipynb
+\end{prompt}
+
+\subsubsection*{P11. 2026-11-11 20:37:12 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+\begin{prompt}
+He decidido que voy a meter un dummy classifier dentro de la primera iteración de los valores por defecto, para probar que mis modelos lo superan. Pero me está dando un keyerror, ¿cómo lo podría solucionar?
+\end{prompt}
+
+\subsubsection*{P12. 2026-11-11 20:45:23 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+\begin{prompt}
+Okay, ya estoy con la comparación de modelos, ¿cómo podría generar una tabla de comparación siguiendo el criterio acordado en @docs/\allowbreak{}evolucion\_\allowbreak{}planteamiento.md  : F1 macro y, si dos modelos quedan dentro de la desviación entre folds, el recall de riesgo alto?
+\end{prompt}
+
+\subsubsection*{P13. 2026-11-11 20:57:10 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+\begin{prompt}
+Okay, tengo en cuenta esa igualdad entre bayes y regresión logística, antes de decidir, me gustaría demostrar cuanto aporta la optimización de parámetros a cada uno de los modelos por defecto vs el modelo ajustado seleccionado en cada uno. Pero de nuevo tengo un keyerror.
+\end{prompt}
+
+\subsubsection*{P14. 2026-11-11 23:25:48 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
+
+\begin{prompt}
+Okay, me gustaría refactorizar un poco la parte de comparación de mis modelos, para escribir los resultados en un csv y hacer esta última parte más eficiente
+\end{prompt}
+
+\subsubsection*{P15. 2026-11-14 12:24:55 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.323)
+
+\begin{prompt}
+Okay, ya tenemos los resultados de todos los modelos @src/\allowbreak{}modelos\_\allowbreak{}rodrigo.ipynb , @src/\allowbreak{}modelos\_\allowbreak{}enzo.ipynb  y @src/\allowbreak{}modelos\_\allowbreak{}pablo.ipynb ,  y voy a proceder a hacer la comparativa final @src/\allowbreak{}comparacion\_\allowbreak{}final.ipynb  , como ves, he cargado los modelos seleccionados de cada uno. Comprueba que he seleccionado correctamente y ahora el siguiente paso que quiero seguir, es que quiero comprobar que importo los modelos correctamente y que los csv guardados son los correctos, evaluando los f1 y el recall alto del csv vs los reconstruidos en el primer apartado. De forma que me devuelvan un booleano según si coincide o no, de una forma visual en un dataframe haciendo validación cruzada y aprovechando @src/\allowbreak{}utils/\allowbreak{}modelado.py  . ¿Cómo lo harías?
+\end{prompt}
+
+\subsubsection*{P16. 2026-11-14 12:46:10 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.323)
+
+\begin{prompt}
+Ya la he ejecutado yo y me gusta lo que veo. He montado una tabla, importando de nuestros csv los resultados y mostrando cada uno de nuestros mejores modelos mostrando nuestras métricas y su diferencia entre train y validación.
+
+Ahora quiero hacer un análisis visual a nivel de fold a través de una gráfica que me permita mostrar en ese orden como varían en cada fold los distintos modelos a nivel de f1 macro y recall de riesgo alto en validación. ¿Cómo lo puedo conseguir?
+\end{prompt}
+
+\subsubsection*{P17. 2026-11-15 11:34:21 +0100 -- Claude Code}
+\textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.323)
+
+\begin{prompt}
+Échale un vistazo al estado de la memoria con la que estoy trabajando en Overleaf, creo que le faltan figuras que me sirvan para respaldar mis conclusiones, ayudame con eso
+\end{prompt}
+
+
+\subsection{Rodrigo}
+Los 4 primeros prompts (29 y 30 de octubre) no los guardó el registro automático. Se añadieron a mano
+el 3 de noviembre, copiando del historial de la conversación de Claude Code el texto literal de cada
+prompt; la hora es la que muestra el chat, sin segundos, y no quedó constancia del modelo.
+
+\subsubsection*{R1. 2026-10-29 18:17 +0100 -- Claude Code}
+\textbf{Modelo:} no disponible
+
+\begin{prompt}
+cómo puedo hacer que al usar describe no se corte la tabla?
+\end{prompt}
+
+\subsubsection*{R2. 2026-10-29 18:18 +0100 -- Claude Code}
+\textbf{Modelo:} no disponible
+
+\begin{prompt}
+otra pregunta, en clase nos han comentado tener cuidado con los duplicados, pero revisando los notebooks de la asignatura no lo encuentro, cómo podría comprobar si hay y quitarlos?
+\end{prompt}
+
+\subsubsection*{R3. 2026-10-29 18:21 +0100 -- Claude Code}
+\textbf{Modelo:} no disponible
+
+\textit{El prompt incluía una captura de pantalla de la salida de \texttt{df.info()} del notebook, cortada por VS Code entre las columnas 19 y 26. La imagen no se conserva en este registro. El texto del prompt era:}
+
+\begin{prompt}
+pese a usar describe.T, se corta
+\end{prompt}
+
+\subsubsection*{R4. 2026-10-30 17:42 +0100 -- Claude Code}
+\textbf{Modelo:} no disponible
+
+\begin{prompt}
+por qué obtengo este error? cómo lo soluciono?
+
+--------------------------------------------------------------------------- \\{}
+AttributeError                            Traceback (most recent call last) \\{}
+Cell In[4], line 1 \\{}
+----\textgreater{} 1 count\_\allowbreak{}classes = pd.value\_\allowbreak{}counts(riesgo\_\allowbreak{}cardiovascular, sort = True) \\{}
+      2 count\_\allowbreak{}classes.plot(kind = 'bar', rot=0) \\{}
+      3 \\{}
+      4 datos['riesgo\_\allowbreak{}cardiovascular'].value\_\allowbreak{}counts()
+
+AttributeError: module 'pandas' has no attribute 'value\_\allowbreak{}counts'
+\end{prompt}
+
+\subsubsection*{R5. 2026-11-03 18:21:28 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+estoy pensando ahora en buscar valores anómalos o que no tengan mucho sentido, una de las condiciones que se me había ocurrido era esta: (datos['edad'] \textless{} 18).sum(), con qué más variables podría hacerlo?
+\end{prompt}
+
+\subsubsection*{R6. 2026-11-03 18:24:41 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+puedes añadir al documento de ia que no se registro nuestros prompt anteriores?
+\end{prompt}
+
+\subsubsection*{R7. 2026-11-03 18:25:32 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+registralos no solo resumen
+\end{prompt}
+
+\subsubsection*{R8. 2026-11-03 18:28:06 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+hoy es 3 de noviembre
+\end{prompt}
+
+\subsubsection*{R9. 2026-11-03 19:12:55 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+te pego el chat para que registres las horas de los que no se registraron automáticamente:
+
+[omitido: transcripción pegada del chat de Claude Code de esta misma conversación, desde el prompt «cómo puedo hacer que al usar describe no se corte la tabla?» hasta la respuesta de las 18:28. Incluye las horas de cada respuesta y las llamadas a herramientas. Los prompts y respuestas que contiene ya están en las entradas anteriores de este registro.]
+\end{prompt}
+
+\subsubsection*{R10. 2026-11-06 17:07:31 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+Para seguir con el analisis, quiero hacer una matriz de correlación, sé que se hace con .corr, pero qué opciones podría meterle? Cuáles pueden convenir más?
+\end{prompt}
+
+\subsubsection*{R11. 2026-11-07 11:28:38 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+mi compañero ha hecho eda tmb en una rama aparte, la rama es pablo/\allowbreak{}eda-clinico, puedes revisarlo y ver si se puede usar algo para mi eda o en el caso de ser conveptos muy diferentes, dejarlo por separado?
+\end{prompt}
+
+\subsubsection*{R12. 2026-11-07 11:32:56 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+entonces ahora tengo sus cambios tmb?
+\end{prompt}
+
+\subsubsection*{R13. 2026-11-07 11:58:03 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+podrías hacer tu el merge de su eda al mío para que sea así más limpio y en el casod e conflcitos los resuelvas y ya tener una versión unificada?
+\end{prompt}
+
+\subsubsection*{R14. 2026-11-07 12:00:59 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+lo que quiero es unificar, tomando lo mejor de ambos
+\end{prompt}
+
+\subsubsection*{R15. 2026-11-08 19:23:27 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+estamos con la toma de decisiones, de métricas habíamos pensado en recall, precisión y F1, pero cómo podría saber como calcalcularlas al tener varias clases y luego cual tener más en cuenta, tanto en importancia como para el ajuste de hiperparámetros
+\end{prompt}
+
+\subsubsection*{R16. 2026-11-08 20:41:05 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+estoy elaborando un .py, el de modelado para tener ñlas cosas del preprocesamiento y demas en común, pero estoy teniendo dificultades para hacer un par de funciones, la de pipeline y tabla resultados, podrías ayudarme?
+\end{prompt}
+
+\subsubsection*{R17. 2026-11-08 20:44:24 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+lo he hecho ya, preparame un cmmit breve que indique todo lo hecho y una descripcion por guione sopara poner ahora
+\end{prompt}
+
+\subsubsection*{R18. 2026-11-08 20:47:39 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+añade tmb los errores corregidos
+\end{prompt}
+
+\subsubsection*{R19. 2026-11-09 13:26:20 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+estoy haciendo los modelos, me he creado modelos\_\allowbreak{}rodrigo.ipynb, he avanzado bastante, pero podrías revisar por si hubiera  algo más por hacer o complemnetar en las celdas? las conclusiones ya las rellenaré yo
+\end{prompt}
+
+\subsubsection*{R20. 2026-11-09 17:16:55 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+ya he dejado el archivo listo, podrías revisar mi eda y mis modelos, asi como el codigo común, por si hubiera fallos importantes que se me hayan escapado
+\end{prompt}
+
+\subsubsection*{R21. 2026-11-12 21:18:50 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+he añadido más técnicas de preprocesamiento a mis modelos, harías tú algo más respecto a esa parte?
+\end{prompt}
+
+\subsubsection*{R22. 2026-11-12 21:22:48 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+no me refiero a técnicas , si no a algún detalle más que mejore el preprocesamineto, en términos de visibilidad o explicabilidad por ejemplo
+\end{prompt}
+
+\subsubsection*{R23. 2026-11-13 08:13:57 +0100 -- Claude Code}
+\textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
+
+\begin{prompt}
+ya he aplicado los cambios que comentabas, enseguida vamos a ponernos ya a sacar lo comun y con la memoria, podrías revisar mi ócidog en general para ver si hay fallos, si son leves arréglalos tú, si son graves, me lo dices y lo veo yo más detenidamente
+\end{prompt}
+
+
+\end{document}

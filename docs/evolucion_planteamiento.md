@@ -5,8 +5,8 @@ Registro de cómo ha ido cambiando el planteamiento del problema y de las decisi
 ## 1. Punto de partida (hasta el 7 de noviembre)
 
 - **Entorno común:** Python 3.12 con uv, `requirements.txt` exportado desde `uv.lock` y una única semilla (42) en `src/utils/constantes.py` para que todos los experimentos sean comparables.
-- **EDA individual:** cada miembro exploró los datos en su notebook (`eda_enzo`, `eda_pablo` y `eda_rodrigo`): distribuciones, desbalanceo (≈ 50/30/20 % en bajo, moderado y alto), nulos, valores imposibles y una lectura clínica de las variables.
-- **Problemáticas detectadas:** valores nulos en varias numéricas, valores imposibles (edades de menores, IMC < 10, alcohol negativo, más de 7 días de ejercicio por semana, HDL y triglicéridos negativos, presiones incoherentes),valores repetidos sospechosos que esconden nulos, colas largas con valores extremos, categóricas sin codificar y clases desbalanceadas. La clase de riesgo moderado se solapa con las otras dos; bajo frente a alto se separa mejor.
+- **EDA individual:** cada miembro exploró los datos en su notebook (`eda_enzo`, `eda_pablo` y `eda_rodrigo`): distribuciones, desbalanceo (aprox. 50/30/20 % en bajo, moderado y alto), nulos, valores imposibles y una lectura clínica de las variables.
+- **Problemáticas detectadas:** valores nulos en varias numéricas, valores imposibles (edades de menores, IMC < 10, alcohol negativo, más de 7 días de ejercicio por semana, HDL y triglicéridos negativos, presiones incoherentes), valores repetidos sospechosos que esconden nulos, colas largas con valores extremos, categóricas sin codificar y clases desbalanceadas. La clase de riesgo moderado se solapa con las otras dos; bajo frente a alto se separa mejor.
 
 ## 2. Reunión del 8 de noviembre: del EDA al modelado
 
@@ -28,7 +28,7 @@ Así se cubren los mínimos del enunciado: modelos base de sobra y tres ensemble
 | `StratifiedKFold` de 5 folds, con la opción de probar 10 | Mantener la proporción de clases en cada fold; con pocos datos, más folds pueden estabilizar la estimación |
 | Métricas: F1, precisión y recall en macro, y recall y precisión de riesgo alto | En macro las tres clases pesan igual, aunque la de alto sea la minoritaria |
 | Métrica crítica: **recall de riesgo alto** | Clínicamente, lo grave es no detectar a un paciente de riesgo alto (falso negativo) |
-| `GridSearchCV` optimiza el F1 macro; si dos modelos empatan, gana el de más recall de alto | Optimizar solo el recall de alto premiaría al modelo que predice «alto» a todos |
+| `GridSearchCV` optimiza el F1 macro; si dos modelos empatan, gana el de más recall de alto | Optimizar solo el recall de alto premiaría al modelo que predice "alto" a todos |
 | Matriz de confusión del modelo final y comparación train/validación (media ± desviación) en todos | Ver dónde se equivoca el modelo y detectar sobreajuste |
 
 ### Preprocesamiento
@@ -47,9 +47,9 @@ Así se cubren los mínimos del enunciado: modelos base de sobra y tres ensemble
 
 - `nivel_actividad`: ordinal de 0 (sedentario) a 3 (muy activo), porque tiene orden.
 - `tipo_alimentacion`: one-hot, quitando la dieta mediterránea como categoría de referencia.
-- `antecedentes_familiares_tipo`: dos binarias (materno y paterno). «Ambos» activa las dos y «ninguno», ninguna.
+- `antecedentes_familiares_tipo`: dos binarias (materno y paterno). "Ambos" activa las dos y "ninguno", ninguna.
 
-**Dentro del `Pipeline`, ajustado solo con el train de cada fold:** imputación con la mediana → `RobustScaler` en las numéricas (SMOTENC mide distancias y la escala robusta no se deforma con los extremos) → `SMOTENC` para el desbalanceo (el SMOTE que respeta las variables categóricas) → modelo.
+**Dentro del `Pipeline`, ajustado solo con el train de cada fold:** imputación con la mediana -> `RobustScaler` en las numéricas (SMOTENC mide distancias y la escala robusta no se deforma con los extremos) -> `SMOTENC` para el desbalanceo (el SMOTE que respeta las variables categóricas) -> modelo.
 
 **Desbalanceo:** se compara sin balancear, `class_weight` y SMOTENC, y se elige según los resultados de validación.
 
@@ -72,8 +72,8 @@ Así se cubren los mínimos del enunciado: modelos base de sobra y tres ensemble
 
 ## 3. Cuestiones abiertas
 
-- **`class_weight` no existe en todos los modelos** (Naive Bayes, `GradientBoostingClassifier`, LDA y k-NN). Hay que decidir la alternativa (por ejemplo, `HistGradientBoostingClassifier` o los `priors` de Naive Bayes) o justificar que en esos modelos se compara solo «sin balancear frente a SMOTENC».
-- **Que la comparación decida el balanceo:** el acta habla de comparar «para justificar SMOTENC», pero en una exploración previa `class_weight` subió el recall de alto sin bajar el F1 macro.
+- **`class_weight` no existe en todos los modelos** (Naive Bayes, `GradientBoostingClassifier`, LDA y k-NN). Hay que decidir la alternativa (por ejemplo, `HistGradientBoostingClassifier` o los `priors` de Naive Bayes) o justificar que en esos modelos se compara solo "sin balancear frente a SMOTENC".
+- **Que la comparación decida el balanceo:** el acta habla de comparar "para justificar SMOTENC", pero en una exploración previa `class_weight` subió el recall de alto sin bajar el F1 macro.
 - **Modelos con nulos en crudo:** el árbol y el random forest admiten `NaN`, pero el pipeline común siempre imputa. Si se quiere esa comparación, hace falta una opción sin imputar.
 - **Modelo de referencia:** falta un clasificador trivial (clase mayoritaria) como suelo de comparación.
 - **5 o 10 folds:** pendiente de comprobar si 10 folds reducen la variabilidad.

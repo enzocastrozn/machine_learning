@@ -45,7 +45,7 @@ metricas = {
     "precision_alto": make_scorer(precision_score, labels=[2], average="macro", zero_division=0),
 }
 
-# Elegimos con F1 macro para metrica refit: con recall_alto ganaría el modelo que dice «riesgo alto» a todos
+# Elegimos con F1 macro como métrica de refit: con recall_alto ganaría el modelo que dice "riesgo alto" a todos
 metrica = "f1_macro"
 
 
@@ -152,7 +152,7 @@ def guardar_resultados(busqueda, nombre):
     """Guarda la tabla y la nota de cada fold en resultados/ para juntar luego los modelos de todo el grupo."""
     RUTA_RESULTADOS.mkdir(exist_ok=True)
     tabla_resultados(busqueda, nombre).to_csv(RUTA_RESULTADOS / f"{nombre}.csv")
-    # nota de la mejor combinación en cada fold (la necesita el test estadístico opcional)
+    # nota de la mejor combinación en cada fold (para comparar los modelos fold a fold)
     r, i = busqueda.cv_results_, busqueda.best_index_
     folds = pd.DataFrame({m: [r[f"split{k}_test_{m}"][i] for k in range(cte.n_folds)] for m in metricas})
     folds.index.name = "fold"

@@ -16,7 +16,7 @@ el gridsearch lo ajustamos con F1 macro, y si dos modelos salen parecidos nos qu
 
 al modelo final le sacamos la matriz de confusión
 
-dos columnas binarias para antecedent materno y otra para paterno (categóricas a binarias)
+dos columnas binarias para antecedente materno y otra para paterno (categóricas a binarias)
 
 one hot encoding tipo alimentación, quitando la mediterránea que la dejamos de referencia
 
