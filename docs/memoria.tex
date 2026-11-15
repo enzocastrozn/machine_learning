@@ -7,6 +7,7 @@
 \usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage{float}
 \renewcommand{\IEEEkeywordsname}{Palabras clave}
 \graphicspath{{figuras/}}
 
@@ -20,7 +21,7 @@
 
 \title{Predicción multiclase de riesgo cardiovascular en población adulta}
 
-\author{Enzo Castro, Rodrigo Martínez Jiménez y Pablo Sánchez Mérida
+\author{Enzo Alejandro Castro Rojas, Rodrigo Martínez Jiménez y Pablo Sánchez Mérida
 \thanks{Práctica 1 de Machine Learning.
 Máster Universitario en Inteligencia Artificial, Universidad de Murcia, curso 2026/2027.}}
 
@@ -175,7 +176,7 @@ La incoherencia entre HDL, LDL y colesterol total no se corrige, porque no se pu
 variable es la errónea y además, afecta a un cuarto de los pacientes, por lo que se documenta como limitación del
 dataset.
 
-\begin{table}[!t]
+\begin{table}[H]
 \caption{Errores de registro detectados y regla aplicada}
 \label{tab:limpieza}
 \centering
@@ -380,6 +381,15 @@ Se ajustan el número de árboles (100 o 300), la profundidad máxima (5, 10 o s
 de variables que se prueban en cada división (la raíz cuadrada del total o la mitad) y el número
 mínimo de pacientes por hoja (1, 5 o 10).
 
+\textit{Voting,} Se combina el enfoque de clasificación por fronteras (LDA con SVC)
+y los 2 mejores modelos base (Random Forest, Regresión Logística), para ello se agregan las decisiones 
+de los modelos base mediante dos estrategias posibles: \textit{voto duro} (\textit{hard}),
+que selecciona la clase predicha por mayoría simple de votos, y \textit{voto suave} (\textit{soft}),
+que promedia las probabilidades estimadas por los modelos para cada clase y selecciona aquella con mayor valor medio.
+Se intenta ir a favor de un modelo pesandolo con un valor considerable frente a los demás para que sea significativo, 
+con 3 veces el peso sobre otro modelo, así como pesar todos los modelos por igual, 
+y una combinación de LDA y Regresión Logística con el triple de peso combinado, lo anterior porque se ha probado su capacidad individual.
+
 \textit{HistGradientBoosting.} Es un ensamble de tipo \textit{boosting}~\cite{tema2,nb_ensambles}:
 añade árboles pequeños uno tras otro, y cada uno corrige los errores que dejan los anteriores.
 Puede captar relaciones no lineales e interacciones entre variables que la regresión logística no ve.
@@ -388,13 +398,6 @@ Agrupa los valores de cada variable en intervalos (histogramas), lo que lo hace 
 Se ajustan la tasa de aprendizaje (0,03 o 0,1), el número de árboles (100 o 300), su profundidad
 máxima (2, 3 o sin límite), el número mínimo de pacientes por hoja (20 o 50) y la regularización L2
 (0 o 1).
-
-\textit{Voting.} Combina cuatro modelos de naturaleza distinta, cada uno con su balanceo y sus
-hiperparámetros ya ajustados: LDA, SVC, Random Forest y regresión logística.
-Se comparan el voto duro (\textit{hard}), en el que gana la clase que predice la mayoría, y el voto
-suave (\textit{soft}), que promedia las probabilidades de cada clase y elige la mayor.
-También se ajustan los pesos de cada modelo: todos iguales, el triple de peso para uno de ellos o el
-triple a la vez para LDA y la regresión logística.
 
 \subsection{Ajuste de hiperparámetros y criterio de selección}\label{sec:ajuste}
 Todos los modelos se ajustan con búsqueda en rejilla (\texttt{GridSearchCV})~\cite{nb_metricas}
@@ -450,7 +453,7 @@ riesgo bajo y 100 moderados) y ninguno de riesgo alto, así que el desbalance se
 Se concluye para los modelos descritos anteriormente que no hay una técnica de balanceo mejor para todos,
 lo que justifica haberlas comparado en cada uno en lugar de fijar una sola técnica para todos.
 
-\begin{table}[!t]
+\begin{table}[H]
 \caption{F1 macro y, entre paréntesis, recall de riesgo alto en validación según la técnica de
 balanceo.
 En negrita, la técnica elegida en cada modelo; --, técnica no aplicable o no probada}
@@ -493,7 +496,7 @@ la referencia de predecir siempre riesgo bajo (F1 macro de 0,222).
 
 La Fig.~\ref{fig:folds} muestra la nota de cada modelo en cada fold.
 
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{folds_modelos.pdf}
 \caption{F1 macro y recall de riesgo alto en cada fold de validación. Cada línea une el mismo fold en
@@ -501,7 +504,7 @@ todos los modelos; la raya negra es la media.}
 \label{fig:folds}
 \end{figure}
 
-\begin{table}[!t]
+\begin{table}[H]
 \caption{Mejor configuración de cada modelo en validación cruzada (media $\pm$ desviación entre
 folds). Alto $\rightarrow$ bajo: pacientes de riesgo alto (de 361) clasificados como riesgo bajo.
 Train $-$ val.: diferencia de F1 macro entre entrenamiento y validación}
@@ -540,22 +543,39 @@ Random Forest alcanza 0,997 en entrenamiento, pero es el que mejor generaliza de
 validación que el árbol individual: cada árbol sobreajusta por separado, pero al promediar muchos
 árboles distintos se reduce la varianza, además, limitar a 10 los pacientes por hoja reduce su F1 de entrenamiento a 0,90 sin empeorar la validación.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{curvas_validacion.pdf}
+\caption{Curvas de validación del árbol de decisión (profundidad máxima) y de kNN (número de
+vecinos): F1 macro en entrenamiento y validación, con la media y la desviación entre folds.}
+\label{fig:curvas}
+\end{figure}
+
 En el resto de modelos se repite el mismo patrón (última columna de la Tabla~\ref{tab:resultados}).
 La regresión logística, Naive Bayes y LDA apenas sobreajustan (en torno a 0,02 de diferencia entre
 entrenamiento y validación).
 En la logística, la curva de validación de $C$ muestra subajuste cuando la regularización es muy
 fuerte ($C < 0{,}01$) y se estabiliza a partir de $C = 0{,}1$.
 HistGradientBoosting, en cambio, llega a 0,934 en entrenamiento: su validación alcanza el máximo con
-unos 100 árboles y, a partir de ahí, los árboles que se añaden solo memorizan pacientes.
-El SVC elegido, con \textit{kernel} RBF, sobreajusta 0,19, y el \textit{voting} hereda el
+unos 100 árboles y, a partir de ahí, los árboles que se añaden solo memorizan pacientes (Fig.~\ref{fig:curvas_bayes_hgb_rl}).
+El SVC elegido según (Fig.~\ref{fig:curva_validacion_svc}), con \textit{kernel} RBF, sobreajusta 0,19, y el \textit{voting} hereda el
 sobreajuste de Random Forest, al que da el triple de peso (0,25).
 
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.85\linewidth]{curvas_validacion.pdf}
-\caption{Curvas de validación del árbol de decisión (profundidad máxima) y de kNN (número de
-vecinos): F1 macro en entrenamiento y validación, con la media y la desviación entre folds.}
-\label{fig:curvas}
+\includegraphics[width=\linewidth]{curvas_validacion_bayes_hgb_rl.pdf}
+\caption{Curvas de validación de Naive Bayes (\texttt{var\_smoothing}), HistGradientBoosting
+(iteraciones) y regresión logística ($C$): F1 macro en entrenamiento y validación, con la media y la
+desviación entre folds.}
+\label{fig:curvas_bayes_hgb_rl}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.35\linewidth]{curva_validacion_svc.png}
+\caption{Curva de validación del SVC (parámetro $C$): F1 macro en entrenamiento y validación, con la
+media y la desviación entre folds.}
+\label{fig:curva_validacion_svc}
 \end{figure}
 
 \subsection{Matrices de confusión y errores clínicamente graves}
@@ -567,7 +587,7 @@ La Tabla~\ref{tab:errores} recoge, para los cinco modelos que siguen empatados t
 pasos del criterio, cómo se clasifican los 361 pacientes de riesgo alto y cuántos pacientes de riesgo
 moderado se aciertan.
 
-\begin{table}[!t]
+\begin{table}[H]
 \caption{Errores en validación cruzada de los modelos finalistas: pacientes de riesgo alto (de 361)
 clasificados como bajo o como moderado, y acierto en la clase de riesgo moderado}
 \label{tab:errores}
@@ -610,6 +630,39 @@ deshaciendo el escalado: su primer corte separa a los pacientes con una proteín
 0,97~mg/L, muy próximo al umbral de 1~mg/L que la AHA y los CDC emplean para el riesgo
 cardiovascular bajo.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\linewidth]{importancia_rf.pdf}
+\caption{Importancia por permutación de las 10 variables más relevantes para Random Forest: descenso
+medio del F1 macro en los folds de validación y su desviación.}
+\label{fig:importancia}
+\end{figure}
+
+En SVC y Voting la variable más importante es el consumo de alcohol semanal
+(Figs.~\ref{fig:importancia_svm} y~\ref{fig:importancia_voting})::
+aquella tiene una influencia sobre el F1 macro en torno a (0,05),
+seguida por el nivel de actividad, sin embargo, en Voting, la variable proteína C reactiva
+varía y llega casi al mismo nivel que el consumo de alcohol, y la hemoglobina glicosilada presenta 
+comportamiento similar en ambos modelos, el resto de variables tienen un impacto menor y más homogéneo entre ellas.
+Las importancias son pequeñas en términos absolutos, la variable más relevante hace perder cinco
+puntos de F1 macro sobre un valor cercano a (0,65), y el resto, menos de tres.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\linewidth]{importancia_svm.pdf}
+\caption{Importancia por permutación de las 10 variables más relevantes para el SVC:
+descenso medio del F1 macro en los folds de validación y su desviación.}
+\label{fig:importancia_svm}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\linewidth]{importancia_voting.pdf}
+\caption{Importancia por permutación de las 10 variables más relevantes para Voting:
+descenso medio del F1 macro en los folds de validación y su desviación.}
+\label{fig:importancia_voting}
+\end{figure}
+
 En la regresión logística, el modelo elegido, los coeficientes de la clase de riesgo alto indican
 directamente qué variables aumentan o reducen ese riesgo (Fig.~\ref{fig:coeficientes}).
 Los que más lo aumentan son el consumo de alcohol (0,77), la dieta occidental (0,57), la hipertensión
@@ -624,15 +677,7 @@ glicosilada), aunque la proteína C reactiva, la más importante en Random Fores
 logística un coeficiente moderado (0,26), posiblemente porque su efecto se concentra alrededor de un
 umbral y no es lineal.
 
-\begin{figure}[!t]
-\centering
-\includegraphics[width=0.62\linewidth]{importancia_rf.pdf}
-\caption{Importancia por permutación de las 10 variables más relevantes para Random Forest: descenso
-medio del F1 macro en los folds de validación y su desviación.}
-\label{fig:importancia}
-\end{figure}
-
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.62\linewidth]{coeficientes_logistica.pdf}
 \caption{Coeficientes de la regresión logística para la clase de riesgo alto: las 8 variables que más
@@ -648,7 +693,7 @@ conjunto de entrenamiento y se evalúa una sola vez en los 451 pacientes de test
 El \textit{pipeline} vuelve a calcular la mediana, el escalado y los pesos de clase solo con el
 entrenamiento.
 
-\begin{table}[!t]
+\begin{table}[H]
 \caption{Regresión logística: validación cruzada (media $\pm$ desviación entre folds) frente a test}
 \label{tab:test}
 \centering
@@ -681,7 +726,7 @@ Por clases, el F1 es de 0,816 en riesgo bajo, 0,533 en moderado y 0,690 en alto.
 
 La Fig.~\ref{fig:confusion} compara las matrices de confusión en validación cruzada y en test.
 
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\linewidth]{confusion_logistica.pdf}
 \caption{Matrices de confusión de la regresión logística: predicciones de validación cruzada sobre el
@@ -741,9 +786,9 @@ cada paciente supone más de un punto de recall.
 \begin{itemize}
 \item Ajustar el umbral de decisión de la clase de riesgo alto en la regresión logística, eligiéndolo
 con validación cruzada, para aumentar su recall a costa de más falsas alarmas si el uso clínico lo
-requiere. Es una alternativa a cambiar de modelo, como LDA, que ocupa otro punto de ese mismo
-equilibrio.
-\item Repetir la validación cruzada con varias semillas o con más folds para estimar mejor la
+requiere. Es una alternativa a cambiar de modelo, como LDA, que utiliza otro enfoque matemático para
+ese mismo equilibrio.
+\item Repetir la validación cruzada con más folds para estimar mejor la
 variación entre folds y comprobar con test estadísticos si las diferencias entre los mejores modelos
 son significativas.
 \item Validar el modelo con datos de otros hospitales, dado que las variables de este dataset parecen
