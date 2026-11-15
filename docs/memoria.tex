@@ -168,13 +168,13 @@ dataset.
 \hline
 Problema & Casos & Regla \\
 \hline
-HDL o triglicéridos negativos & 4 + 4 & Pasar a nulo \\
+HDL o triglicéridos negativos & 4 + 4 & Transformar a nulo \\
 Consumo de alcohol negativo & 177 & Recortar a 0 \\
-IMC menor de 10 & 8 & Pasar a nulo \\
-Edad menor de 18 años & 4 & Pasar la edad a nulo \\
+IMC menor de 10 & 8 & Transformar a nulo \\
+Edad menor de 18 años & 4 & Transformar la edad a nulo \\
 Más de 7 días de ejercicio a la semana & 41 & Recortar a 7 \\
-Presión sistólica $\leq$ diastólica & 44 & Pasar las dos a nulo \\
-Valores repetidos (nulos camuflados) & 449 & Pasar a nulo \\
+Presión sistólica $\leq$ diastólica & 44 & Transformar las dos a nulo \\
+Valores repetidos (nulos camuflados) & 449 & Transformar a nulo \\
 HDL + LDL $>$ colesterol total & 559 & No se corrige (limitación) \\
 \hline
 \end{tabular}
@@ -305,6 +305,25 @@ Manhattan).
 No admite \texttt{class\_weight}, porque no aprende parámetros a los que se pueda dar peso: solo
 compara cada paciente con los del entrenamiento.
 
+\textit{Análisis Discriminante Lineal (LDA).} Se maximiza la separación entre los 3 tipos de riesgo
+al proyectar las variables de cada uno en un subespacio de dos dimensiones. Para ello primero se visualiza
+la normalidad de las distribuciones, que cumplen de acuerdo con las campanas de Gauss en el EDA,
+y con el boxplot con mediana centrada en en la caja y bigotes con distancia similar en la mayoría de variables.
+Se realiza un posible encogimiento de la matriz de covarianza (shrinkage) 
+para estabilizar el ruido en la relación de crecimiento de variables (none, automático,
+0.1, 0.5 y 0.9), además de un solver (lsqr o eigen) que admiten dicho encogimiento.
+Dado que no admite ponderación de costes mediante \texttt{class\_weight},
+el desbalance se trata con SMOTENC y Tomek.
+
+\textit{Clasificador de Vectores de Soporte (SVC).} Se separa cada paciente de forma automática uno vs uno, 
+con kernel lineal y no lineal con RBF, polinómico y sigmoide,
+el objetivo es detectar separaciones que una separación lineal no captura.
+Las variables ingresan escaladas para que el kernel no se afecte por la magnitud de las variables.
+Se ajusta el parámetro de regularización $C$ ($0,1$, $1$, $10$, $100$), el coeficiente de los kernels
+($\gamma$ en RBF, poli y sigmoide: \textit{scale}, \textit{auto}, $0,01$, $0,1$) y el grado del polinomio ($2$ o $3$).
+Admite balaceo de clases mediante \texttt{class\_weight} para complementar la estrategia junto a
+enfoques de remuestreo como SMOTENC y Tomek.
+
 \subsubsection{Modelos de ensamble}
 
 \textit{Random Forest.} Es un ensamble de tipo \textit{bagging}~\cite{tema2,nb_ensambles}: combina
@@ -318,6 +337,15 @@ Se ajustan el número de árboles (100 o 300), la profundidad máxima (5, 10 o s
 de variables que se prueban en cada división (la raíz cuadrada del total o la mitad) y el número
 mínimo de pacientes por hoja (1, 5 o 10).
 
+\textit{Voting,} Se combina el enfoque se clasificación por fronteras (LDA con SVC)
+y los 2 mejores modelos base (Random Forest, Regresión Logística), para ello se agregan las decisiones 
+de los modelos base mediante dos estrategias posibles: \textit{voto duro} (\textit{hard}),
+que selecciona la clase predicha por mayoría simple de votos, y \textit{voto suave} (\textit{soft}),
+que promedia las probabilidades estimadas por los modelos para cada clase y selecciona aquella con mayor valor medio.
+Se intenta ir a favor de un modelo pesandolo con un valor considerable frente a los demás para que sea significativo, 
+con 3 veces el peso sobre otro modelo, así como pesar todos los modelos por igual, 
+y una combinación de LDA y Regresión Logística con el triple de peso combinado, lo anterior porque se ha probado su capacidad individual.
+
 \subsection{Ajuste de hiperparámetros}
 Todos los modelos se ajustan con búsqueda en rejilla (\texttt{GridSearchCV})~\cite{nb_metricas}
 sobre la validación cruzada.
@@ -325,8 +353,6 @@ En cada combinación se calculan todas las métricas, en entrenamiento y en vali
 de mayor F1 macro.
 Con el mismo criterio se elige la técnica de balanceo de cada modelo: el F1 macro y, si la
 diferencia queda dentro de la desviación entre folds, se escoge por el recall de riesgo alto.
-
-\subsection{Comparación estadística de modelos}
 
 \subsection{Entorno y reproducibilidad}
 El código está en el repositorio de GitHub (\texttt{github.com/enzocastrozn/machine\_learning}), con
@@ -349,8 +375,10 @@ riesgo alto (0,72).
 Tomek no es la mejor opción en ningún modelo: solo elimina 182 pacientes de la frontera (82 de
 riesgo bajo y 100 moderados) y ninguno de riesgo alto, así que el desbalance se mantiene (819, 441 y
 361 pacientes).
-Se concluye que no hay una técnica de balanceo mejor para todos los modelos, lo que justifica haberlas
-comparado en cada uno en lugar de fijar una sola técnica para todos.
+Se concluye para los modelos descritos anteriormente que no hay una técnica de balanceo mejor para todos,
+lo que justifica haberlas comparado en cada uno en lugar de fijar una sola técnica para todos.
+
+La 
 
 \begin{table}[!t]
 \caption{F1 macro y, entre paréntesis, recall de riesgo alto en validación según la técnica de
@@ -365,6 +393,11 @@ Modelo & Sin balancear & \texttt{class\_weight} & SMOTENC & Tomek \\
 Árbol de decisión & 0,545 (0,50) & 0,532 (0,60) & \textbf{0,541 (0,60)} & 0,540 (0,52) \\
 kNN & 0,537 (0,41) & -- & \textbf{0,590 (0,77)} & 0,549 (0,49) \\
 Random Forest & 0,611 (0,56) & \textbf{0,648 (0,72)} & 0,627 (0,69) & 0,609 (0,68) \\
+LDA & 0.660 (0.68) & -- & \textbf{0.636	(0,75)} & 0.647 (0.71) \\
+SVC & 0.649 (0.67) & \textbf{0.648 (0.72)} & 0.636 (0,72) & 0.643 (0,69) \\
+Regresión Logística & X (X) & X (X) & X (X) & X (X) \\
+Naive Bayes & X (X) & X(X) & X (X) & X (X) \\
+HistGradientBoosting & X (X) & X (X) & X (X) & X (X) \\
 \hline
 \end{tabular}
 \end{table}
@@ -389,6 +422,11 @@ Modelo & Balanceo & F1 macro & Recall alto & Precisión alto & Alto $\rightarrow
 Árbol de decisión & SMOTENC & 0,541 $\pm$ 0,033 & 0,60 & 0,50 & 37 \\
 kNN & SMOTENC & 0,590 $\pm$ 0,020 & 0,77 & 0,56 & 8 \\
 Random Forest & \texttt{class\_weight} & 0,648 $\pm$ 0,035 & 0,72 & 0,65 & 10 \\
+LDA & SMOTENC & X $\pm$ X & X & X & X \\
+SVC & \texttt{class\_weight} & X $\pm$ X & X & X & X \\
+Regresión Logística & \texttt{X} & X $\pm$ X & X & X & X \\
+Naive Bayes & \texttt{X} & X $\pm$ X & X & X & X \\
+HistGradientBoosting & \texttt{X} & X $\pm$ X & X & X & X \\
 \hline
 \end{tabular}
 \end{table}
@@ -442,8 +480,6 @@ medio del F1 macro en los folds de validación y su desviación.}
 \label{fig:importancia}
 \end{figure}
 
-\subsection{Test estadísticos}
-
 \subsection{Evaluación final en test}
 
 \section{Discusión y conclusiones}
@@ -455,6 +491,15 @@ medio del F1 macro en los folds de validación y su desviación.}
 \subsection{Limitaciones del dataset}
 
 \subsection{Posibles mejoras y trabajo futuro}
+
+1. En caso de requerir un modelo que tenga la máxima cobertura en riesgo alto, se podría utilizar un LDA, que requeriría además 
+de un filtrado de las variables categóricas binarias, eliminandolas para controlar la distribución normal de variables que no son continuas,
+aún cuando el modelo tenga la capacidad de procesarlas.
+
+2. Se pueden analizar matrices de confusión para cada uno de los trozos de entrenamiento, con el objetivo de evaluar la desviación de cada predicción, 
+así como la medición del F1 por clase predicha y no solamente a nivel macro.
+
+3. Se puede variar la cantidad de folds en cada procesamiento, por ejemplo, con 10 folds en un dataset pequeño como el tratado, los errores pueden tener menos peso.
 
 \bibliographystyle{IEEEtran}
 \bibliography{referencias}
