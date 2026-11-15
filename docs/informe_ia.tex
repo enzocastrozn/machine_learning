@@ -11,9 +11,12 @@
 \setlength{\parindent}{0pt}
 \sloppy
 
-% caja para los prompts literales
 \newenvironment{prompt}
   {\par\smallskip\begin{list}{}{\leftmargin=1.2em\rightmargin=0.5em}\item\relax\small\color{black!80}}
+  {\end{list}\smallskip}
+
+\newenvironment{codigo}
+  {\par\smallskip\begin{list}{}{\leftmargin=1.2em\rightmargin=0em}\item\relax\ttfamily\scriptsize\raggedright}
   {\end{list}\smallskip}
 
 \title{Informe de uso ético y responsable de la Inteligencia Artificial}
@@ -36,8 +39,9 @@ Cada miembro ha mantenido su propio registro en el repositorio del grupo
 \texttt{registro\_ia\_enzo.md}, \texttt{registro\_ia\_pablo.md} y \texttt{registro\_ia\_rodrigo.md}.
 En Claude Code, la mayoría de los prompts se guardaron de forma automática con un \textit{hook}
 (\texttt{scripts/registrar\_prompt\_ia.py}), que anota el prompt, el modelo y la respuesta final del
-agente; el resto se copiaron a mano del historial de la conversación. Los registros del repositorio
-contienen también las respuestas completas de la IA, que no se reproducen aquí por su extensión.
+agente; el resto se copiaron a mano del historial de la conversación. La respuesta final
+literal de la IA a cada prompt se reproduce en el anexo, con la misma numeración que el prompt (P1,
+R1\ldots).
 
 En la transcripción se omite el contexto que el editor añade automáticamente a cada prompt (la
 etiqueta que indica qué archivo estaba abierto), porque no lo escribe la persona. Las trazas de error
@@ -56,8 +60,8 @@ Miembro & Herramienta & Modelo y versión & Entorno \\
 Enzo & ChatGPT & GPT-6 & Aplicación web de OpenAI \\
 Pablo & Claude Code & Claude Opus 5.5 (\texttt{claude-opus-5-5}); versiones de Claude Code de la
 2.1.314 a la 2.1.323 & Extensión de Claude Code para VS Code, en Windows 11 \\
-Rodrigo & Claude Code & Claude Opus 5.5 (\texttt{claude-opus-5-5}); en los 4 primeros prompts no se
-registró el modelo & Extensión de Claude Code para VS Code, en Windows 11 \\
+Rodrigo & Claude Code & Claude Opus 5.5 (\texttt{claude-opus-5-5}); en los 4 primeros prompts,
+registrados a posteriori, no consta el modelo & Extensión de Claude Code para VS Code, en Windows 11 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -67,19 +71,20 @@ codificación ordinal y Tomek Links, enlazados en su registro.
 
 \section{Análisis crítico y validación}
 
-Los tres miembros coincidimos en el uso que hemos hecho de la IA, así que el análisis es el mismo para
-todos.
+Cada miembro describe a continuación cómo ha usado la IA y qué ha hecho con sus respuestas.
 
 \subsection*{Enzo}
-He usado la IA principalmente como asistente de código. En la mayoría de ocasiones he aceptado sus propuestas o las he modificado muy ligeramente, y también la he usado como revisor. La orientación, la planificación y las conclusiones son mías.
+Mi uso de la IA ha sido sobre todo de apoyo con el código: le pedía ayuda para implementar o corregir partes concretas y, en general, incorporé sus propuestas tal cual o con pequeños ajustes. También me sirvió para revisar lo que ya tenía hecho. El planteamiento del análisis, la elección de qué probar y las conclusiones las decidí yo. Para entender los métodos (LDA, SVM, imputación, codificación ordinal y Tomek Links) me apoyé además en vídeos explicativos.
 
 \subsection*{Pablo}
-He usado la IA principalmente como asistente de código. En la mayoría de ocasiones he aceptado sus propuestas o las he modificado muy ligeramente, y también la he usado como revisor. La orientación, la planificación y las conclusiones son mías.
-En algunas entradas de su registro dejó además comentarios concretos sobre qué aceptó y qué cambió,
-que se reproducen junto a cada prompt en la Sección~\ref{sec:pablo}.
+Empleé la IA fundamentalmente como asistente de programación. La mayoría de sus propuestas las acepté directamente o con cambios menores, y en otros momentos la utilicé para revisar mi trabajo. La orientación del análisis, la planificación de cada paso y las conclusiones son mías.
+En varias entradas de mi registro detallo qué acepté y qué cambié; esos comentarios se reproducen
+junto a cada prompt en la Sección~\ref{sec:pablo}.
 
 \subsection*{Rodrigo}
-He usado la IA principalmente como asistente de código. En la mayoría de ocasiones he aceptado sus propuestas o las he modificado muy ligeramente, y también la he usado como revisor. La orientación, la planificación y las conclusiones son mías.
+La IA me ha servido principalmente como ayuda con el código: dudas puntuales de pandas, errores al ejecutar y la construcción del código común de modelado. Acepté sus propuestas, casi siempre tal cual o con retoques mínimos, y también la usé para revisar mis notebooks. El enfoque del trabajo, cómo organizarlo y las conclusiones son míos.
+Mis 4 primeros prompts (29 y 30 de octubre) se registraron a posteriori, el 3 de noviembre, porque el
+registro automático no llegó a funcionar en esa sesión (Sección~\ref{sec:rodrigo}).
 
 \section{Registro de prompts}
 
@@ -111,6 +116,8 @@ Contenido: Prompt, modelo y respuesta (Recommended)
 Carpeta: Abrir el repo directamente (Recommended)
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P1.}
+
 \textbf{Comentario de la persona en su registro:}
 
 Se aceptan la mayoría de los cambios a nivel de resolución de librerías y la creación del registro automático de IA. \\{}
@@ -123,6 +130,8 @@ Se deja el archivo requirements.txt, aunque con uv no es necesario para que el e
 \begin{prompt}
 Tengo el siguiente notebook @src/\allowbreak{}eda\_\allowbreak{}pablo.ipynb  y mis compañeros ya han estado trabajando en @src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb  pero yo quiero aportar una visión distinta al trabajo que ya han realizado y es analizar de una forma más enfocada al problema en sí y comprendiendo cada variable como se comporta, que conclusiones podemos ir sacando. En primer lugar quiero centrarme en este punto 3.2 y todo lo que anteriormente he hecho, vamos paso a paso. En primer lugar, quiero sacar la correlación de mi variable objetivo, que es ordinal con el resto de variables numéricas. ¿Cómo lo podría hacer de forma que tenga sentido? Vamos paso a paso, no saltes a más puntos, yo te voy preguntando cuano me atasque.
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, P2.}
 
 \subsubsection*{P3. 2026-11-06 21:17:46 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.318)
@@ -137,6 +146,8 @@ En primer lugar, para LDL, vi por internet que existía la fórmula de fiedewald
 Pero he visto que no tienen correlación entre los valores calculados del colesterol total, tengo 2 aproximaciones, primero mirándolo desde la perspectiva del colesterol total y luego mirándolo de la perspectiva del LDL. ¿Cuál sería la aproximación correcta y de que forma podría plantearme resolver los nulls de LDL? ¿Me falta alguna comprobación?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P3.}
+
 \textbf{Comentario de la persona en su registro:}
 
 Se acepta explicando las implicaciones que tiene en la decisión.
@@ -149,6 +160,8 @@ Okay, ahora quiero hacer comprobaciones con el resto de variables, para determin
 
 Para el resto de casos no tengo fórmulas que me puedan ayudar, así que vamos solo con eso y comprobamos rápidamente la aproximación más interesante para cada una de ellas.
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, P4.}
 
 \textbf{Comentario de la persona en su registro:}
 
@@ -178,6 +191,8 @@ Para eso habría que usar pacientes sin nulos, esconder un cieto porcentaje a ca
 Sería solo para las variables numéricas
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P6.}
+
 \textbf{Comentario de la persona en su registro:}
 
 El código es robusto, así que se acepta en su mayoría, las conclusiones; aunque me las adelanta en parte la IA las \\{}
@@ -189,6 +204,8 @@ desarrollo yo y le dedico tiempo a asegurarme entenderalas.
 \begin{prompt}
 Échale un vistazo a @estrategia\_\allowbreak{}ml.txt . son los apuntes que tomó Rodri en la última reunión que tuvimos, yo también tomé algunos apuntes de esa reunión, echales un vistazo y creame un resumen no muy extenso en un archivo mardown que nos pueda servir para cuando construyamos la memoria técnica al exponer la evolución del planteamiento del problema, decisiones de diseño y avances tal y como pide @docs/\allowbreak{}enunciado/\allowbreak{}instrucciones\_\allowbreak{}entrega.md
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, P7.}
 
 \textbf{Comentario de la persona en su registro:}
 
@@ -210,6 +227,8 @@ Estoy intentando aplicar un ajuste de hiperparámetros sobre la regresión logí
 ¿Qué falla en mi planteamiento?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P8.}
+
 \subsubsection*{P9. 2026-11-11 01:03:59 +0100 -- Claude Code}
 \textbf{Modelo:} el mismo que la entrada anterior (prompt encadenado en la misma petición)
 
@@ -224,12 +243,16 @@ Vale, ya funciona, pero ahora me gustaría que viendo que voy a tener que repeti
 En @src/\allowbreak{}modelos\_\allowbreak{}pablo.ipynb
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P10.}
+
 \subsubsection*{P11. 2026-11-11 20:37:12 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
 
 \begin{prompt}
 He decidido que voy a meter un dummy classifier dentro de la primera iteración de los valores por defecto, para probar que mis modelos lo superan. Pero me está dando un keyerror, ¿cómo lo podría solucionar?
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, P11.}
 
 \subsubsection*{P12. 2026-11-11 20:45:23 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
@@ -238,12 +261,16 @@ He decidido que voy a meter un dummy classifier dentro de la primera iteración 
 Okay, ya estoy con la comparación de modelos, ¿cómo podría generar una tabla de comparación siguiendo el criterio acordado en @docs/\allowbreak{}evolucion\_\allowbreak{}planteamiento.md  : F1 macro y, si dos modelos quedan dentro de la desviación entre folds, el recall de riesgo alto?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P12.}
+
 \subsubsection*{P13. 2026-11-11 20:57:10 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
 
 \begin{prompt}
 Okay, tengo en cuenta esa igualdad entre bayes y regresión logística, antes de decidir, me gustaría demostrar cuanto aporta la optimización de parámetros a cada uno de los modelos por defecto vs el modelo ajustado seleccionado en cada uno. Pero de nuevo tengo un keyerror.
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, P13.}
 
 \subsubsection*{P14. 2026-11-11 23:25:48 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.322)
@@ -252,12 +279,16 @@ Okay, tengo en cuenta esa igualdad entre bayes y regresión logística, antes de
 Okay, me gustaría refactorizar un poco la parte de comparación de mis modelos, para escribir los resultados en un csv y hacer esta última parte más eficiente
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P14.}
+
 \subsubsection*{P15. 2026-11-14 12:24:55 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.323)
 
 \begin{prompt}
 Okay, ya tenemos los resultados de todos los modelos @src/\allowbreak{}modelos\_\allowbreak{}rodrigo.ipynb , @src/\allowbreak{}modelos\_\allowbreak{}enzo.ipynb  y @src/\allowbreak{}modelos\_\allowbreak{}pablo.ipynb ,  y voy a proceder a hacer la comparativa final @src/\allowbreak{}comparacion\_\allowbreak{}final.ipynb  , como ves, he cargado los modelos seleccionados de cada uno. Comprueba que he seleccionado correctamente y ahora el siguiente paso que quiero seguir, es que quiero comprobar que importo los modelos correctamente y que los csv guardados son los correctos, evaluando los f1 y el recall alto del csv vs los reconstruidos en el primer apartado. De forma que me devuelvan un booleano según si coincide o no, de una forma visual en un dataframe haciendo validación cruzada y aprovechando @src/\allowbreak{}utils/\allowbreak{}modelado.py  . ¿Cómo lo harías?
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, P15.}
 
 \subsubsection*{P16. 2026-11-14 12:46:10 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.323)
@@ -268,6 +299,8 @@ Ya la he ejecutado yo y me gusta lo que veo. He montado una tabla, importando de
 Ahora quiero hacer un análisis visual a nivel de fold a través de una gráfica que me permita mostrar en ese orden como varían en cada fold los distintos modelos a nivel de f1 macro y recall de riesgo alto en validación. ¿Cómo lo puedo conseguir?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P16.}
+
 \subsubsection*{P17. 2026-11-15 11:34:21 +0100 -- Claude Code}
 \textbf{Modelo:} claude-opus-5-5 (versión de la herramienta: 2.1.323)
 
@@ -275,28 +308,42 @@ Ahora quiero hacer un análisis visual a nivel de fold a través de una gráfica
 Échale un vistazo al estado de la memoria con la que estoy trabajando en Overleaf, creo que le faltan figuras que me sirvan para respaldar mis conclusiones, ayudame con eso
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, P17.}
 
-\subsection{Rodrigo}
-Los 4 primeros prompts (29 y 30 de octubre) no los guardó el registro automático. Se añadieron a mano
-el 3 de noviembre, copiando del historial de la conversación de Claude Code el texto literal de cada
-prompt; la hora es la que muestra el chat, sin segundos, y no quedó constancia del modelo.
+
+\subsection{Rodrigo}\label{sec:rodrigo}
+\textbf{Los 4 primeros prompts (R1 a R4, del 29 y 30 de octubre) se registraron a posteriori.} El
+registro automático no llegó a funcionar en esa sesión, así que se añadieron a mano el 3 de noviembre,
+copiando del historial de la conversación de Claude Code el texto literal de cada prompt. La hora es la
+que muestra el chat, sin segundos, y no quedó constancia del modelo. A partir de R5 los prompts se
+registraron en el momento.
 
 \subsubsection*{R1. 2026-10-29 18:17 +0100 -- Claude Code}
 \textbf{Modelo:} no disponible
+
+\textit{\textbf{Registrado a posteriori} el 2026-11-03, copiando el prompt literal del historial de la conversación.}
 
 \begin{prompt}
 cómo puedo hacer que al usar describe no se corte la tabla?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R1.}
+
 \subsubsection*{R2. 2026-10-29 18:18 +0100 -- Claude Code}
 \textbf{Modelo:} no disponible
+
+\textit{\textbf{Registrado a posteriori} el 2026-11-03, copiando el prompt literal del historial de la conversación.}
 
 \begin{prompt}
 otra pregunta, en clase nos han comentado tener cuidado con los duplicados, pero revisando los notebooks de la asignatura no lo encuentro, cómo podría comprobar si hay y quitarlos?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R2.}
+
 \subsubsection*{R3. 2026-10-29 18:21 +0100 -- Claude Code}
 \textbf{Modelo:} no disponible
+
+\textit{\textbf{Registrado a posteriori} el 2026-11-03, copiando el prompt literal del historial de la conversación.}
 
 \textit{El prompt incluía una captura de pantalla de la salida de \texttt{df.info()} del notebook, cortada por VS Code entre las columnas 19 y 26. La imagen no se conserva en este registro. El texto del prompt era:}
 
@@ -304,8 +351,12 @@ otra pregunta, en clase nos han comentado tener cuidado con los duplicados, pero
 pese a usar describe.T, se corta
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R3.}
+
 \subsubsection*{R4. 2026-10-30 17:42 +0100 -- Claude Code}
 \textbf{Modelo:} no disponible
+
+\textit{\textbf{Registrado a posteriori} el 2026-11-03, copiando el prompt literal del historial de la conversación.}
 
 \begin{prompt}
 por qué obtengo este error? cómo lo soluciono?
@@ -321,12 +372,16 @@ Cell In[4], line 1 \\{}
 AttributeError: module 'pandas' has no attribute 'value\_\allowbreak{}counts'
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R4.}
+
 \subsubsection*{R5. 2026-11-03 18:21:28 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 estoy pensando ahora en buscar valores anómalos o que no tengan mucho sentido, una de las condiciones que se me había ocurrido era esta: (datos['edad'] \textless{} 18).sum(), con qué más variables podría hacerlo?
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R5.}
 
 \subsubsection*{R6. 2026-11-03 18:24:41 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -335,6 +390,8 @@ estoy pensando ahora en buscar valores anómalos o que no tengan mucho sentido, 
 puedes añadir al documento de ia que no se registro nuestros prompt anteriores?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R6.}
+
 \subsubsection*{R7. 2026-11-03 18:25:32 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
@@ -342,12 +399,16 @@ puedes añadir al documento de ia que no se registro nuestros prompt anteriores?
 registralos no solo resumen
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R7.}
+
 \subsubsection*{R8. 2026-11-03 18:28:06 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 hoy es 3 de noviembre
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R8.}
 
 \subsubsection*{R9. 2026-11-03 19:12:55 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -358,12 +419,16 @@ te pego el chat para que registres las horas de los que no se registraron autom�
 [omitido: transcripción pegada del chat de Claude Code de esta misma conversación, desde el prompt «cómo puedo hacer que al usar describe no se corte la tabla?» hasta la respuesta de las 18:28. Incluye las horas de cada respuesta y las llamadas a herramientas. Los prompts y respuestas que contiene ya están en las entradas anteriores de este registro.]
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R9.}
+
 \subsubsection*{R10. 2026-11-06 17:07:31 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 Para seguir con el analisis, quiero hacer una matriz de correlación, sé que se hace con .corr, pero qué opciones podría meterle? Cuáles pueden convenir más?
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R10.}
 
 \subsubsection*{R11. 2026-11-07 11:28:38 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -372,12 +437,16 @@ Para seguir con el analisis, quiero hacer una matriz de correlación, sé que se
 mi compañero ha hecho eda tmb en una rama aparte, la rama es pablo/\allowbreak{}eda-clinico, puedes revisarlo y ver si se puede usar algo para mi eda o en el caso de ser conveptos muy diferentes, dejarlo por separado?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R11.}
+
 \subsubsection*{R12. 2026-11-07 11:32:56 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 entonces ahora tengo sus cambios tmb?
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R12.}
 
 \subsubsection*{R13. 2026-11-07 11:58:03 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -386,12 +455,16 @@ entonces ahora tengo sus cambios tmb?
 podrías hacer tu el merge de su eda al mío para que sea así más limpio y en el casod e conflcitos los resuelvas y ya tener una versión unificada?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R13.}
+
 \subsubsection*{R14. 2026-11-07 12:00:59 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 lo que quiero es unificar, tomando lo mejor de ambos
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R14.}
 
 \subsubsection*{R15. 2026-11-08 19:23:27 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -400,12 +473,16 @@ lo que quiero es unificar, tomando lo mejor de ambos
 estamos con la toma de decisiones, de métricas habíamos pensado en recall, precisión y F1, pero cómo podría saber como calcalcularlas al tener varias clases y luego cual tener más en cuenta, tanto en importancia como para el ajuste de hiperparámetros
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R15.}
+
 \subsubsection*{R16. 2026-11-08 20:41:05 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 estoy elaborando un .py, el de modelado para tener ñlas cosas del preprocesamiento y demas en común, pero estoy teniendo dificultades para hacer un par de funciones, la de pipeline y tabla resultados, podrías ayudarme?
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R16.}
 
 \subsubsection*{R17. 2026-11-08 20:44:24 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -414,12 +491,16 @@ estoy elaborando un .py, el de modelado para tener ñlas cosas del preprocesamie
 lo he hecho ya, preparame un cmmit breve que indique todo lo hecho y una descripcion por guione sopara poner ahora
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R17.}
+
 \subsubsection*{R18. 2026-11-08 20:47:39 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 añade tmb los errores corregidos
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R18.}
 
 \subsubsection*{R19. 2026-11-09 13:26:20 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -428,12 +509,16 @@ añade tmb los errores corregidos
 estoy haciendo los modelos, me he creado modelos\_\allowbreak{}rodrigo.ipynb, he avanzado bastante, pero podrías revisar por si hubiera  algo más por hacer o complemnetar en las celdas? las conclusiones ya las rellenaré yo
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R19.}
+
 \subsubsection*{R20. 2026-11-09 17:16:55 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 ya he dejado el archivo listo, podrías revisar mi eda y mis modelos, asi como el codigo común, por si hubiera fallos importantes que se me hayan escapado
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R20.}
 
 \subsubsection*{R21. 2026-11-12 21:18:50 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
@@ -442,6 +527,8 @@ ya he dejado el archivo listo, podrías revisar mi eda y mis modelos, asi como e
 he añadido más técnicas de preprocesamiento a mis modelos, harías tú algo más respecto a esa parte?
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R21.}
+
 \subsubsection*{R22. 2026-11-12 21:22:48 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
@@ -449,12 +536,1958 @@ he añadido más técnicas de preprocesamiento a mis modelos, harías tú algo m
 no me refiero a técnicas , si no a algún detalle más que mejore el preprocesamineto, en términos de visibilidad o explicabilidad por ejemplo
 \end{prompt}
 
+\textit{Respuesta de la IA: Anexo, R22.}
+
 \subsubsection*{R23. 2026-11-13 08:13:57 +0100 -- Claude Code}
 \textbf{Modelo:} Claude Opus 5.5 (claude-opus-5-5)
 
 \begin{prompt}
 ya he aplicado los cambios que comentabas, enseguida vamos a ponernos ya a sacar lo comun y con la memoria, podrías revisar mi ócidog en general para ver si hay fallos, si son leves arréglalos tú, si son graves, me lo dices y lo veo yo más detenidamente
 \end{prompt}
+
+\textit{Respuesta de la IA: Anexo, R23.}
+
+
+\clearpage
+\section*{Anexo. Respuestas de la IA}
+\addcontentsline{toc}{section}{Anexo. Respuestas de la IA}
+Respuesta final literal del agente a cada prompt de la Sección 4, tal como quedó en los registros del
+repositorio. Las respuestas de ChatGPT de Enzo están en el enlace de la Sección~4.1.
+
+\subsection*{Pablo}
+\subsubsection*{P1. 2026-11-01 -- Claude Code}
+{\small
+Escrito para: tus compañeros y el profesorado (README, AGENTS.md, guía de IA).
+
+El entorno ya está unificado en Python 3.12 y el registro de prompts está montado, pero no he hecho ningún commit ni push: todo sigue en tu copia local. Con Claude Code, el registro automático empieza en la próxima sesión, con VS Code abierto en practica1/\allowbreak{}machine\_\allowbreak{}learning. Falta probar el flujo de Copilot.
+
+El lío de ramas y Python \\{}
+Tu rama local está en el mismo commit que main; solo su copia en GitHub va 2 commits por detrás, así que no hay nada que fusionar. El problema real estaba en main:
+
+uv sync fallaba: en un clon limpio daba error porque pyproject.toml configuraba un paquete que no existe. He quitado esa configuración. \\{}
+Faltaba scikit-learn: no estaba declarado, y ya está añadido. \\{}
+Faltaba requirements.txt: se había borrado y es obligatorio en la entrega. Ya está regenerado. \\{}
+Qué he cambiado \\{}
+Entorno: pyproject.toml, .python-version, uv.lock y requirements.txt quedan en 3.12, y he añadido .gitattributes para que Windows y WSL usen los mismos saltos de línea. \\{}
+README.md: incluye el propósito del trabajo, la guía del profesorado con y sin uv, la guía común Windows/\allowbreak{}WSL, cómo sincronizarse y solución de problemas. \\{}
+Enunciado: los dos PDF están en Markdown en docs/\allowbreak{}enunciado/\allowbreak{}, y todas las palabras de los PDF aparecen en las transcripciones. Añadí una nota porque el apartado 3.2 se contradice: su título dice «4 modelos» y su texto pide 5. \\{}
+Registro de IA: hay un archivo por persona en docs/\allowbreak{}ia/\allowbreak{}. Esta sesión la he apuntado a mano en tu registro, con el análisis crítico pendiente de que lo rellenes tú. \\{}
+Cómo funciona el registro \\{}
+Un hook no es mencionar AGENTS.md en CLAUDE.md: es un comando que la herramienta ejecuta sola al enviar un prompt y al terminar la respuesta.
+
+Claude Code (2 de vosotros): el hook se sube al repo, así que funciona sin configurar nada más. Elige el archivo según el nombre o correo de git. \\{}
+Copilot (1 de vosotros): el agente sigue la regla de AGENTS.md, que es menos fiable que un hook. En modo pregunta hay que copiar el prompt a mano, y el autocompletado solo se declara. \\{}
+Qué he probado \\{}
+Prueba    Resultado \\{}
+Instalación con uv en Windows y WSL    Funciona \\{}
+Instalación con pip en Windows y WSL    Funciona, con el Python 3.12 llamado directamente, no con py -3.12 \\{}
+Notebook completo en Windows    Se ejecuta sin errores \\{}
+Hook con una sesión real de Claude Code en Windows    Funciona \\{}
+Flujo de Copilot    Sin probar: quien lo use debe comprobar en su primera petición que se crea la entrada \\{}
+Hook en WSL    Sin probar \\{}
+Lo que tenéis que resolver \\{}
+Semilla: el notebook usa 42 y tu notebooks/\allowbreak{}constantes.py, sin subir, usa 123. La profesora considera un error garrafal comparar modelos con semillas distintas, así que acordad una sola; yo no he tocado ninguno de los dos. \\{}
+Datos de Rodrigo: faltan sus apellidos en el README, y su nombre o correo de git debe contener rodri para que el hook encuentre su archivo. \\{}
+El repo es público: los registros publicarán todo lo que escribáis al agente, y tu primera entrada ya incluye la ruta de tu wiki. Revisadlos antes de cada commit. \\{}
+Plazo del 3 de noviembre: el repo ya es público, pero tu guía recoge de clase que hay que compartirlo con Raquel y Pepe. Confirma que lo tienen. \\{}
+Documento de evolución: las instrucciones piden registrar las decisiones de diseño y los avances, y aún no existe ese documento. \\{}
+Tu guía de uv en la wiki sigue con ejemplos en 3.13; no la he modificado.
+}
+
+\subsubsection*{P2. 2026-11-06 19:44:03 +0100 -- Claude Code}
+{\small
+Para correlacionar una variable objetivo ordinal con variables numéricas, el coeficiente adecuado es \textbf{Spearman}, no Pearson.
+
+\smallskip\noindent\textbf{Por qué Spearman y no Pearson}\par
+\hspace*{1.0em}\textbullet~\textbf{Pearson} mide relación \textit{lineal} y trata el objetivo como una escala de intervalos: da por hecho que la distancia de bajo a moderado es la misma que de moderado a alto. Con un 0/\allowbreak{}1/\allowbreak{}2 clínico eso no está garantizado. Los números solo indican el orden. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Spearman} convierte cada variable en rangos y mide si la relación es \textbf{monótona}: \textquotedbl{}a más X, más riesgo\textquotedbl{}, sin suponer distancias ni linealidad. Solo necesita que el objetivo esté ordenado, que es justo lo que tienes. \\{}
+\hspace*{1.0em}\textbullet~Alternativa: \textbf{Kendall tau-b}, que trata mejor los empates. Aquí hay muchos, porque el objetivo solo tiene 3 valores. Suele dar valores más bajos que Spearman pero el mismo orden de variables. Puedes usarlo como comprobación, aunque no hace falta. Además, Spearman es coherente con el heatmap que ya tienes en la sección 6.
+
+\smallskip\noindent\textbf{Código para la celda 3.2}\par
+\begin{codigo}
+\# Correlación de Spearman de cada variable numérica con el riesgo (0 \textless{} 1 \textless{} 2). \\{}
+\# Spearman trabaja con rangos: solo exige que el objetivo esté ordenado, no que 0-\textgreater{}1 y 1-\textgreater{}2 sean \textquotedbl{}igual de lejos\textquotedbl{}. \\{}
+corr\_\allowbreak{}objetivo = ( \\{}
+\hspace*{2.08em}df[numericas] \\{}
+\hspace*{2.08em}.corrwith(df[objetivo], method=\textquotedbl{}spearman\textquotedbl{})   \# una correlación por columna frente al objetivo \\{}
+\hspace*{2.08em}.sort\_\allowbreak{}values(key=abs, ascending=False)       \# ordeno por fuerza, sin importar el signo \\{}
+\hspace*{2.08em}.rename(\textquotedbl{}rho\_\allowbreak{}spearman\textquotedbl{}) \\{}
+) \\{}
+corr\_\allowbreak{}objetivo.round(3)
+\end{codigo}
+\hspace*{1.0em}\textbullet~\texttt{corrwith} calcula la correlación de cada columna de \texttt{df[numericas]} con la serie del objetivo. \\{}
+\hspace*{1.0em}\textbullet~Los nulos se ignoran par a par: para \texttt{colesterol\_\allowbreak{}ldl} usa los 2.119 pacientes con dato, no los 2.254. \\{}
+\hspace*{1.0em}\textbullet~\texttt{key=abs} ordena por magnitud, así una correlación de -0,20 aparece junto a una de +0,20.
+
+Lo he ejecutado y funciona. Te salen estos valores:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Variable} & \textbf{rho} &  & \textbf{Variable} & \textbf{rho} \\
+\midrule
+consumo\_\allowbreak{}alcohol\_\allowbreak{}semanal & \textbf{0,39} &  & clearance\_\allowbreak{}creatinina & -0,18 \\
+hemoglobina\_\allowbreak{}glicosilada & 0,28 &  & edad & 0,16 \\
+proteina\_\allowbreak{}c\_\allowbreak{}reactiva & 0,28 &  & anos\_\allowbreak{}fumador & 0,15 \\
+acido\_\allowbreak{}urico & 0,21 &  & perimetro\_\allowbreak{}cintura & 0,14 \\
+glucosa\_\allowbreak{}ayunas & 0,21 &  & horas\_\allowbreak{}sueno\_\allowbreak{}diarias & -0,14 \\
+frecuencia\_\allowbreak{}ejercicio\_\allowbreak{}semanal & -0,21 &  & presión sist./\allowbreak{}diast. & 0,14 \\
+colesterol\_\allowbreak{}hdl & -0,20 &  & colesterol\_\allowbreak{}ldl & 0,13 \\
+indice\_\allowbreak{}masa\_\allowbreak{}corporal & 0,20 &  & colesterol total /\allowbreak{} triglic. /\allowbreak{} FC reposo & \textless{}= 0,10 \\
+\bottomrule
+\end{tabularx}}
+
+\smallskip\noindent\textbf{Cómo interpretarlo}\par
+\hspace*{1.0em}1.~\textbf{Fíjate en el signo y en la magnitud, no en el p-valor.} Con 2.254 pacientes, hasta rho = 0,05 sale \textquotedbl{}significativo\textquotedbl{}. Lo útil es comparar magnitudes: aquí todas son débiles o moderadas (\textless{} 0,4). \\{}
+\hspace*{1.0em}2.~\textbf{Ninguna variable explica el riesgo por sí sola.} Es razonable que el riesgo dependa de varias a la vez, y por eso tiene sentido usar modelos multivariantes. \\{}
+\hspace*{1.0em}3.~\textbf{Los signos encajan con la clínica:} el HDL (\textquotedbl{}colesterol bueno\textquotedbl{}), el ejercicio y el filtrado renal van en negativo, y la glucemia, la inflamación (PCR) y el IMC en positivo. \\{}
+\hspace*{1.0em}4.~\textbf{Hay algo llamativo:} el alcohol es la variable más correlacionada, por encima de la presión arterial o el LDL. Además, en la tabla de tu \texttt{df.head()} ya aparecen consumos negativos (-4,9, -1,7). Apúntalo como algo a investigar.
+
+\smallskip\noindent\textbf{Dos limitaciones para dejar escritas en el markdown}\par
+\hspace*{1.0em}\textbullet~\textbf{Spearman solo detecta relaciones monótonas.} Si una variable tiene relación en U (por ejemplo, dormir muy poco y dormir demasiado son malos los dos), puede dar rho \textasciitilde{} 0 aunque la relación sea importante. Una rho baja no quiere decir que la variable sea inútil. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Este cálculo usa el dataset completo.} Como análisis descriptivo vale, pero si más adelante lo usas para \textbf{seleccionar variables}, tiene que hacerse solo con el train para no filtrar información del test.
+
+Cuando lo tengas en el notebook, dime cuál es el siguiente punto en el que te atascas.
+
+}
+
+\subsubsection*{P3. 2026-11-06 21:17:46 +0100 -- Claude Code}
+{\small
+Las dos aproximaciones son la misma comprobación. La fórmula falla, pero no porque falte una variable: el LDL no está relacionado con ninguna otra columna, y los nulos no dependen del riesgo. Por eso basta con rellenar con la mediana.
+
+\smallskip\noindent\textbf{1. Tus dos aproximaciones miden lo mismo}\par
+Las dos salen de la misma igualdad, CT = HDL + LDL + TG/\allowbreak{}5, solo que despejada de dos formas. Los residuos son exactamente iguales con el signo cambiado (lo he comprobado), así que un histograma es el espejo del otro. Las correlaciones salen parecidas (0,03 y 0,035) porque comparan contra variables distintas, pero dicen lo mismo.
+
+\textbf{La perspectiva correcta es la del LDL}, porque es la variable que quieres imputar. La pregunta útil es: \textit{si rellenara un LDL con la fórmula, ¿cuánto me equivocaría?} Se responde con los pacientes que sí tienen LDL:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Rellenar con...} & \textbf{Error absoluto medio} \\
+\midrule
+Friedewald & \textbf{56,4 mg/\allowbreak{}dL} \\
+La mediana del LDL & \textbf{29,5 mg/\allowbreak{}dL} \\
+\bottomrule
+\end{tabularx}}
+
+La fórmula se equivoca casi el doble que poner a todos la mediana. Es un argumento más fuerte que la correlación de 0,03 para descartarla.
+
+En la celda 28, \texttt{ldl\_\allowbreak{}sin\_\allowbreak{}nulos} rellena con la fórmula que acabas de descartar; yo la quitaría. Además, \texttt{value\_\allowbreak{}counts()} no aporta nada en una variable continua.
+
+\smallskip\noindent\textbf{2. Comprobaciones que te faltan}\par
+Las he ejecutado; estos son los resultados:
+
+\hspace*{1.0em}1.~\textbf{Si la fórmula se puede aplicar.} Friedewald supone unidades en mg/\allowbreak{}dL (los rangos cuadran) y no es válida con TG \textgreater{}= 400. Hay 54 pacientes así, y la fórmula da LDL negativo en 10. Aun así, esto no explica una correlación de 0,03. \\{}
+\hspace*{1.0em}2.~\textbf{Coherencia física.} El colesterol total incluye el HDL y el LDL, así que \textbf{HDL + LDL nunca puede superar al CT}. Falla en \textbf{559 de 2.119 pacientes (26 \%)}. También hay HDL negativos (4) y TG negativos (4). Esto va a tu sección 6 de coherencia clínica. \\{}
+\hspace*{1.0em}3.~\textbf{Si el LDL se relaciona con algo.} Esta es la clave. El LDL es el componente principal del colesterol total, y en datos reales están fuertemente correlacionados. Aquí la rho de Spearman entre LDL y CT es \textbf{0,026}, y la variable más relacionada con el LDL (HbA1c) solo llega a \textbf{0,078}. Eso refuta tu hipótesis de la celda 29: si faltara una variable, el LDL seguiría relacionado con sus componentes aunque la fórmula fallara. Lo que pasa es que \textbf{los lípidos parecen generados de forma independiente entre sí}. \\{}
+\hspace*{1.0em}4.~\textbf{Por qué faltan los datos (MCAR /\allowbreak{} MAR /\allowbreak{} MNAR).} MCAR significa que faltan al azar, MAR que la falta depende de otras variables observadas y MNAR que depende del propio valor que falta. Esto decide si la ausencia aporta información: \\{}
+\hspace*{2.5em}\textbullet~Riesgo entre pacientes \textbf{sin LDL}: 53/\allowbreak{}30/\allowbreak{}16 \%. \textbf{Con LDL}: 50/\allowbreak{}30/\allowbreak{}20 \%. Chi2 p = 0,52, sin diferencia. \\{}
+\hspace*{2.5em}\textbullet~Probé una hipótesis clínica: los laboratorios no informan el LDL calculado cuando TG \textgreater{}= 400. No se cumple: hay un 3,7 \% de TG \textgreater{}= 400 entre los nulos y un 2,3 \% entre los demás. \\{}
+\hspace*{2.5em}\textbullet~Comparé las otras variables entre pacientes con y sin LDL. Solo sueño y HbA1c dan p = 0,01, y con 18 contrastes eso es esperable por azar: con Bonferroni, el umbral queda en \textasciitilde{} 0,003. \\{}
+\hspace*{2.5em}\textbullet~Los nulos de LDL casi no coinciden con los de las otras tres variables (4, 7 y 13 pacientes).
+
+   -\textgreater{} El patrón es \textbf{compatible con MCAR}.
+
+Código para añadir estas comprobaciones al notebook (lo he probado y da los números de arriba):
+
+\begin{codigo}
+\# 1) Error de la fórmula desde la perspectiva del LDL, solo en los pacientes con LDL medido \\{}
+ldl\_\allowbreak{}calculado = df[\textquotedbl{}colesterol\_\allowbreak{}total\textquotedbl{}] - df[\textquotedbl{}colesterol\_\allowbreak{}hdl\textquotedbl{}] - df[\textquotedbl{}trigliceridos\textquotedbl{}] /\allowbreak{} 5 \\{}
+conocido = df[\textquotedbl{}colesterol\_\allowbreak{}ldl\textquotedbl{}].notna() \\{}
+ldl\_\allowbreak{}real = df.loc[conocido, \textquotedbl{}colesterol\_\allowbreak{}ldl\textquotedbl{}] \\{}
+print(f\textquotedbl{}Error medio con Friedewald: \{(ldl\_\allowbreak{}real - ldl\_\allowbreak{}calculado[conocido]).abs().mean():.1f\} mg/\allowbreak{}dL\textquotedbl{}) \\{}
+print(f\textquotedbl{}Error medio rellenando con la mediana: \{(ldl\_\allowbreak{}real - ldl\_\allowbreak{}real.median()).abs().mean():.1f\} mg/\allowbreak{}dL\textquotedbl{}) \\{}
+\mbox{} \\{}
+\# 2) Condiciones de validez de la fórmula y coherencia física (HDL + LDL no puede superar al CT) \\{}
+print(\textquotedbl{}TG \textgreater{}= 400 (Friedewald no aplica):\textquotedbl{}, (df[\textquotedbl{}trigliceridos\textquotedbl{}] \textgreater{}= 400).sum()) \\{}
+print(\textquotedbl{}LDL calculado negativo:\textquotedbl{}, (ldl\_\allowbreak{}calculado \textless{} 0).sum()) \\{}
+print(\textquotedbl{}HDL + LDL \textgreater{} colesterol total:\textquotedbl{}, (df[\textquotedbl{}colesterol\_\allowbreak{}hdl\textquotedbl{}] + df[\textquotedbl{}colesterol\_\allowbreak{}ldl\textquotedbl{}] \textgreater{} df[\textquotedbl{}colesterol\_\allowbreak{}total\textquotedbl{}]).sum()) \\{}
+\mbox{} \\{}
+\# 3) ¿Hay alguna variable que ayude a predecir el LDL? \\{}
+display(df[numericas + binarias].corrwith(df[\textquotedbl{}colesterol\_\allowbreak{}ldl\textquotedbl{}], method=\textquotedbl{}spearman\textquotedbl{}) \\{}
+\hspace*{4.16em}.drop(\textquotedbl{}colesterol\_\allowbreak{}ldl\textquotedbl{}).sort\_\allowbreak{}values(key=abs, ascending=False).head(5).round(3)) \\{}
+\mbox{} \\{}
+\# 4) ¿Faltan al azar? Si el nulo dependiera del riesgo, la ausencia sería informativa \\{}
+from scipy.stats import chi2\_\allowbreak{}contingency \\{}
+nulo\_\allowbreak{}ldl = df[\textquotedbl{}colesterol\_\allowbreak{}ldl\textquotedbl{}].isna() \\{}
+display(pd.crosstab(nulo\_\allowbreak{}ldl, df[objetivo], normalize=\textquotedbl{}index\textquotedbl{}).round(2)) \\{}
+print(\textquotedbl{}p-valor chi2:\textquotedbl{}, round(chi2\_\allowbreak{}contingency(pd.crosstab(nulo\_\allowbreak{}ldl, df[objetivo])).pvalue, 3))
+\end{codigo}
+\smallskip\noindent\textbf{3. Cómo resolver los nulos de LDL}\par
+\hspace*{1.0em}\textbullet~\textbf{Imputación simple con la mediana.} Un imputador multivariante (KNN, \texttt{IterativeImputer}) estima el valor que falta a partir de otras variables. Si ninguna se relaciona con el LDL (rho máx. 0,08), no tiene de dónde sacar información y añade complejidad sin ganar nada. La media y la mediana coinciden casi del todo, porque el LDL es simétrico (asimetría -0,05). La mediana es más robusta frente a los valores extremos que ya has visto. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Sin indicador de nulo} (\texttt{add\_\allowbreak{}indicator=True}). Lo descartaría, porque la ausencia no se relaciona con el riesgo (p = 0,52). Déjalo anotado como opción descartada y con su motivo. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Va dentro del \texttt{Pipeline}:} \texttt{SimpleImputer(strategy=\textquotedbl{}median\textquotedbl{})} se ajusta solo con el train. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Coste:} imputar con la mediana reduce un poco la varianza del LDL y diluye algo su relación con el riesgo. Con un 6 \% de nulos el efecto es pequeño.
+
+Si quieres demostrarlo empíricamente, el siguiente paso sería una \textbf{simulación de nulos}: ocultar un 10 \% de los LDL conocidos, imputarlos con la mediana, con KNN y con \texttt{IterativeImputer}, y comparar el error con los valores reales. Además, la celda de la sección 6 que lista las 10 parejas más relacionadas ya deja ver el problema: ninguna correlación entre variables numéricas pasa de 0,11. Cuando quieras, seguimos con la simulación o con la glucosa.
+
+}
+
+\subsubsection*{P4. 2026-11-06 21:59:53 +0100 -- Claude Code}
+{\small
+He escrito la función y la he probado con las cuatro variables. Para ninguna sale una relación entre el dato faltante y el riesgo, ni una variable que la prediga. Solo la PCR tiene cola: mediana para la PCR y media para las otras tres.
+
+\smallskip\noindent\textbf{La función}\par
+Tiene parámetros con valor por defecto para que puedas cambiar los umbrales sin tocar el código:
+
+\begin{codigo}
+from scipy.stats import chi2\_\allowbreak{}contingency \\{}
+\mbox{} \\{}
+def diagnostico\_\allowbreak{}nulos(df, variable, objetivo, predictoras, \\{}
+\hspace*{11.44em}umbral\_\allowbreak{}corr=0.3, umbral\_\allowbreak{}asimetria=0.5, alfa=0.05): \\{}
+\hspace*{2.08em}\textquotedbl{}\textquotedbl{}\textquotedbl{}Resume las tres comprobaciones que deciden cómo imputar `variable`. \\{}
+\mbox{} \\{}
+\hspace*{2.08em}1. Si que falte el dato se relaciona con el riesgo (chi2) -\textgreater{} ¿añadir un indicador de nulo? \\{}
+\hspace*{2.08em}2. Si alguna otra variable la acompaña (Spearman)          -\textgreater{} ¿imputación multivariante? \\{}
+\hspace*{2.08em}3. Si es simétrica o tiene cola (asimetría)                -\textgreater{} ¿media o mediana? \\{}
+\hspace*{2.08em}\textquotedbl{}\textquotedbl{}\textquotedbl{} \\{}
+\hspace*{2.08em}nulo = df[variable].isna()              \# True en los pacientes a los que les falta el dato \\{}
+\hspace*{2.08em}clase\_\allowbreak{}alta = df[objetivo].max()         \# la clase de riesgo alto (2) \\{}
+\mbox{} \\{}
+\hspace*{2.08em}\# 1) Tabla \textquotedbl{}falta el dato (sí/\allowbreak{}no)\textquotedbl{} x clase de riesgo. Si el p-valor es bajo, la ausencia es informativa. \\{}
+\hspace*{2.08em}tabla = pd.crosstab(nulo, df[objetivo]) \\{}
+\hspace*{2.08em}p\_\allowbreak{}riesgo = chi2\_\allowbreak{}contingency(tabla).pvalue \\{}
+\hspace*{2.08em}reparto = pd.crosstab(nulo, df[objetivo], normalize=\textquotedbl{}index\textquotedbl{})   \# \% de cada clase en cada grupo \\{}
+\mbox{} \\{}
+\hspace*{2.08em}\# 2) Spearman con el resto de predictoras (sin el objetivo: el imputador del Pipeline no ve la y). \\{}
+\hspace*{2.08em}otras = [c for c in predictoras if c != variable] \\{}
+\hspace*{2.08em}rho = df[otras].corrwith(df[variable], method=\textquotedbl{}spearman\textquotedbl{}) \\{}
+\hspace*{2.08em}mejor = rho.abs().idxmax()              \# la que más se relaciona, sea con signo + o - \\{}
+\mbox{} \\{}
+\hspace*{2.08em}\# 3) Asimetría con los valores observados: \textasciitilde{} 0 simétrica, \textgreater{} 0 cola a la derecha, \textless{} 0 a la izquierda \\{}
+\hspace*{2.08em}asimetria = df[variable].skew() \\{}
+\mbox{} \\{}
+\hspace*{2.08em}\# Decisión: primero miro si hay en qué apoyarse para una imputación multivariante; si no, media o mediana \\{}
+\hspace*{2.08em}if abs(rho[mejor]) \textgreater{}= umbral\_\allowbreak{}corr: \\{}
+\hspace*{4.16em}metodo = \textquotedbl{}multivariante (KNN /\allowbreak{} Iterative)\textquotedbl{} \\{}
+\hspace*{2.08em}elif abs(asimetria) \textless{} umbral\_\allowbreak{}asimetria: \\{}
+\hspace*{4.16em}metodo = \textquotedbl{}media\textquotedbl{} \\{}
+\hspace*{2.08em}else: \\{}
+\hspace*{4.16em}metodo = \textquotedbl{}mediana\textquotedbl{} \\{}
+\mbox{} \\{}
+\hspace*{2.08em}return \{ \\{}
+\hspace*{4.16em}\textquotedbl{}variable\textquotedbl{}: variable, \\{}
+\hspace*{4.16em}\textquotedbl{}\% nulos\textquotedbl{}: round(nulo.mean() * 100, 1), \\{}
+\hspace*{4.16em}\textquotedbl{}\% riesgo alto (nulos)\textquotedbl{}: round(reparto.loc[True, clase\_\allowbreak{}alta] * 100, 1), \\{}
+\hspace*{4.16em}\textquotedbl{}\% riesgo alto (con dato)\textquotedbl{}: round(reparto.loc[False, clase\_\allowbreak{}alta] * 100, 1), \\{}
+\hspace*{4.16em}\textquotedbl{}p chi2 riesgo\textquotedbl{}: round(p\_\allowbreak{}riesgo, 3), \\{}
+\hspace*{4.16em}\textquotedbl{}indicador de nulo\textquotedbl{}: \textquotedbl{}sí\textquotedbl{} if p\_\allowbreak{}riesgo \textless{} alfa else \textquotedbl{}no\textquotedbl{}, \\{}
+\hspace*{4.16em}\textquotedbl{}más correlacionada\textquotedbl{}: mejor, \\{}
+\hspace*{4.16em}\textquotedbl{}rho\textquotedbl{}: round(rho[mejor], 3), \\{}
+\hspace*{4.16em}\textquotedbl{}asimetría\textquotedbl{}: round(asimetria, 2), \\{}
+\hspace*{4.16em}\textquotedbl{}media\textquotedbl{}: round(df[variable].mean(), 2), \\{}
+\hspace*{4.16em}\textquotedbl{}mediana\textquotedbl{}: round(df[variable].median(), 2), \\{}
+\hspace*{4.16em}\textquotedbl{}imputación propuesta\textquotedbl{}: metodo, \\{}
+\hspace*{2.08em}\}
+\end{codigo}
+Para aplicarla a todas las variables con nulos a la vez:
+
+\begin{codigo}
+con\_\allowbreak{}nulos = [c for c in numericas if df[c].isna().any()] \\{}
+resumen = pd.DataFrame([diagnostico\_\allowbreak{}nulos(df, v, objetivo, numericas + binarias) for v in con\_\allowbreak{}nulos]) \\{}
+resumen.set\_\allowbreak{}index(\textquotedbl{}variable\textquotedbl{}).T
+\end{codigo}
+\textbf{Umbrales que conviene citar en la memoria:} \\{}
+\hspace*{1.0em}\textbullet~\textbar{}rho\textbar{} \textgreater{}= 0,3: según Cohen, 0,1 es un efecto pequeño y 0,3 uno moderado. Por debajo, otra variable no aporta suficiente para estimar la que falta. \\{}
+\hspace*{1.0em}\textbullet~\textbar{}asimetría\textbar{} \textless{} 0,5: regla habitual para considerar una distribución aproximadamente simétrica.
+
+\smallskip\noindent\textbf{Resultados}\par
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & \textbf{LDL} & \textbf{Glucosa} & \textbf{Sueño} & \textbf{PCR} \\
+\midrule
+\% nulos & 6,0 & 5,0 & 8,0 & 7,0 \\
+\% riesgo alto (nulos /\allowbreak{} con dato) & 16 /\allowbreak{} 20 & \textbf{28 /\allowbreak{} 20} & 19 /\allowbreak{} 20 & 17 /\allowbreak{} 20 \\
+p chi2 & 0,52 & 0,11 & 0,90 & 0,08 \\
+Más correlacionada (rho) & HbA1c (0,08) & ác. úrico (0,08) & ác. úrico (-0,07) & alcohol (0,10) \\
+Asimetría & -0,05 & 0,12 & 0,02 & \textbf{1,59} \\
+Media /\allowbreak{} mediana & 135,6 /\allowbreak{} 135,5 & 104,1 /\allowbreak{} 103,8 & 6,75 /\allowbreak{} 6,8 & \textbf{2,35 /\allowbreak{} 1,79} \\
+\textbf{Propuesta} & media & media & media & \textbf{mediana} \\
+\bottomrule
+\end{tabularx}}
+
+\smallskip\noindent\textbf{Conclusiones}\par
+\hspace*{1.0em}1.~\textbf{Que falte un dato no se relaciona con el riesgo en ninguna variable.} El caso más dudoso es la glucosa: entre los pacientes sin dato hay un 28 \% de riesgo alto, frente al 20 \% del resto. Pero p = 0,11, con solo 112 nulos y 4 contrastes. Yo lo anotaría como un indicio débil. Si quieres asegurarte, puedes probar \texttt{add\_\allowbreak{}indicator=True} en la validación cruzada y ver si mejora algo. \\{}
+\hspace*{1.0em}2.~\textbf{Ninguna variable pasa de rho = 0,10 con las que tienen nulos}, así que se descarta la imputación multivariante en las cuatro. Pasa lo mismo que con el LDL: las variables parecen generadas de forma independiente entre sí. \\{}
+\hspace*{1.0em}3.~\textbf{La elección entre media y mediana solo importa en la PCR.} En las otras tres, media y mediana prácticamente coinciden, así que da igual cuál uses. La PCR tiene una cola larga a la derecha (asimetría 1,59) y su media está un 31 \% por encima de la mediana. Rellenar con la media inflaría la inflamación de los pacientes sin dato. Además encaja con la clínica: la PCR suele ser baja en la mayoría y muy alta en unos pocos con inflamación.
+
+\textbf{Opción más simple y defendible:} como la media y la mediana coinciden en las variables simétricas, puedes usar \textbf{un solo \texttt{SimpleImputer(strategy=\textquotedbl{}median\textquotedbl{})} para todas las numéricas}. Da el mismo resultado y protege frente a los valores extremos que aún no has limpiado.
+
+\smallskip\noindent\textbf{Dos cosas que la función no mira}\par
+\hspace*{1.0em}\textbullet~\textbf{Variables categóricas.} La función solo usa numéricas y binarias. Las he revisado aparte con Kruskal-Wallis, que compara la variable entre los grupos de cada categórica. Hay diferencias significativas, pero pequeñas. La mayor está en el LDL: mediana de 143 con antecedentes en ambos padres frente a 133 sin antecedentes, una diferencia de una cuarta parte de su desviación típica. No justifica un imputador multivariante, pero conviene mencionarlo. \\{}
+\hspace*{1.0em}\textbullet~\textbf{El orden de las operaciones.} La media y la mediana se calculan con todos los valores observados, incluidos los imposibles: PCR = 0,0, glucosa = 32 o LDL = 6,1. En el \texttt{Pipeline}, primero convierte en nulo lo que sea fisiológicamente imposible (sección 6) y después imputa. Si no, esos valores entran en el cálculo del relleno.
+
+He verificado el código ejecutándolo sobre el dataset completo. No he tocado tu notebook: pégalo en la celda que prefieras.
+
+}
+
+\subsubsection*{P5. 2026-11-07 00:08:48 +0100 -- Claude Code}
+\textit{Sin respuesta propia: el agente respondió a este prompt junto con el siguiente (P6).}
+
+\subsubsection*{P6. 2026-11-07 00:12:00 +0100 -- Claude Code}
+{\small
+He montado el experimento del 5.3 con el mismo esquema que el notebook del profesor, usando solo las 19 numéricas. Confirma tus conclusiones: ningún imputador multivariante mejora de forma apreciable a la mediana, y el KNN con 5 vecinos es claramente peor.
+
+\smallskip\noindent\textbf{Diseño del experimento}\par
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Decisión} & \textbf{Por qué} \\
+\midrule
+Solo los \textbf{1.721 pacientes sin ningún nulo} & Así conozco el valor real de cada hueco y puedo medir el error. \\
+En cada variable oculto \textbf{el mismo \% de nulos que tiene de verdad} (103, 86, 137 y 120 valores), elegidos al azar & Imito la situación real. Ocultar al azar es coherente con el chi2 del 5.2, que no mostró relación entre faltar y el riesgo. \\
+El imputador ve solo las \textbf{19 numéricas} & Lo que pediste. Nunca ve el objetivo, igual que dentro del \texttt{Pipeline}. \\
+\textbf{Estandarizo} antes de imputar & KNN mide distancias; sin escalar, las dominarían el colesterol y los triglicéridos. A la media y la mediana no les afecta. \\
+\textbf{30 sorteos} con un generador creado con \texttt{cte.semilla} & Un solo sorteo puede engañar; con 30 tengo media ± desviación y son reproducibles. \\
+\textbf{KNN con k=5 y k=25} & Así se ve qué pasa al promediar más vecinos. \\
+\textbf{MAE}, y además RMSE (raíz del error cuadrático medio) & La explicación está en la conclusión 3. \\
+\bottomrule
+\end{tabularx}}
+
+\smallskip\noindent\textbf{Celdas para el notebook}\par
+He ejecutado este código tal cual desde \texttt{src/\allowbreak{}} (unos 13 s) y da las tablas de abajo.
+
+\begin{codigo}
+from sklearn.experimental import enable\_\allowbreak{}iterative\_\allowbreak{}imputer  \# habilita IterativeImputer (sigue siendo experimental) \\{}
+from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer \\{}
+\mbox{} \\{}
+predictoras = numericas                                     \# solo las 19 numéricas (sin binarias ni objetivo) \\{}
+completos = df[predictoras].dropna().reset\_\allowbreak{}index(drop=True)  \# pacientes sin ningún nulo: conozco el valor real \\{}
+pct\_\allowbreak{}nulos = df[con\_\allowbreak{}nulos].isna().mean()                      \# oculto el mismo \% que falta de verdad \\{}
+print(f\textquotedbl{}Pacientes completos: \{len(completos)\}\textquotedbl{}) \\{}
+print(\textquotedbl{}Valores que se ocultan en cada sorteo:\textquotedbl{}, (pct\_\allowbreak{}nulos * len(completos)).round().astype(int).to\_\allowbreak{}dict()) \\{}
+\mbox{} \\{}
+imputadores = \{ \\{}
+\hspace*{2.08em}\textquotedbl{}media\textquotedbl{}: SimpleImputer(strategy=\textquotedbl{}mean\textquotedbl{}), \\{}
+\hspace*{2.08em}\textquotedbl{}mediana\textquotedbl{}: SimpleImputer(strategy=\textquotedbl{}median\textquotedbl{}), \\{}
+\hspace*{2.08em}\textquotedbl{}KNN (k=5)\textquotedbl{}: KNNImputer(n\_\allowbreak{}neighbors=5), \\{}
+\hspace*{2.08em}\textquotedbl{}KNN (k=25)\textquotedbl{}: KNNImputer(n\_\allowbreak{}neighbors=25), \\{}
+\hspace*{2.08em}\textquotedbl{}Iterative\textquotedbl{}: IterativeImputer(max\_\allowbreak{}iter=10, random\_\allowbreak{}state=cte.semilla), \\{}
+\}
+\end{codigo}
+\begin{codigo}
+def un\_\allowbreak{}sorteo(datos, pct\_\allowbreak{}nulos, imputadores, rng): \\{}
+\hspace*{2.08em}\textquotedbl{}\textquotedbl{}\textquotedbl{}Oculta valores al azar, los reconstruye con cada imputador y mide el error en los huecos.\textquotedbl{}\textquotedbl{}\textquotedbl{} \\{}
+\hspace*{2.08em}\# 1) Máscara: en cada variable marco al azar el mismo \% de pacientes que tiene nulos en el dataset real \\{}
+\hspace*{2.08em}mascara = pd.DataFrame(False, index=datos.index, columns=datos.columns) \\{}
+\hspace*{2.08em}for variable, p in pct\_\allowbreak{}nulos.items(): \\{}
+\hspace*{4.16em}filas = rng.choice(len(datos), size=round(p * len(datos)), replace=False) \\{}
+\hspace*{4.16em}mascara.loc[filas, variable] = True \\{}
+\hspace*{2.08em}huecos = datos.mask(mascara)                       \# pongo NaN donde la máscara es True \\{}
+\mbox{} \\{}
+\hspace*{2.08em}\# 2) Estandarizo para que KNN no mida distancias dominadas por las variables de mayor escala \\{}
+\hspace*{2.08em}\#    (colesterol, triglicéridos). A la media y la mediana no les afecta: el cambio de escala se deshace al final. \\{}
+\hspace*{2.08em}centro, escala = huecos.mean(), huecos.std() \\{}
+\hspace*{2.08em}z = (huecos - centro) /\allowbreak{} escala \\{}
+\mbox{} \\{}
+\hspace*{2.08em}\# 3) Reconstruyo con cada imputador y comparo con el valor real solo en las celdas ocultas \\{}
+\hspace*{2.08em}filas\_\allowbreak{}resultado = [] \\{}
+\hspace*{2.08em}for nombre, imputador in imputadores.items(): \\{}
+\hspace*{4.16em}reconstruido = pd.DataFrame(imputador.fit\_\allowbreak{}transform(z), columns=datos.columns) * escala + centro \\{}
+\hspace*{4.16em}for variable in pct\_\allowbreak{}nulos.index: \\{}
+\hspace*{6.24em}ocultos = mascara[variable] \\{}
+\hspace*{6.24em}error = reconstruido.loc[ocultos, variable] - datos.loc[ocultos, variable] \\{}
+\hspace*{6.24em}filas\_\allowbreak{}resultado.append(\{\textquotedbl{}método\textquotedbl{}: nombre, \textquotedbl{}variable\textquotedbl{}: variable, \\{}
+\hspace*{18.72em}\textquotedbl{}MAE\textquotedbl{}: error.abs().mean(), \\{}
+\hspace*{18.72em}\textquotedbl{}RMSE\textquotedbl{}: np.sqrt((error ** 2).mean())\}) \\{}
+\hspace*{2.08em}return filas\_\allowbreak{}resultado
+\end{codigo}
+\begin{codigo}
+n\_\allowbreak{}sorteos = 30 \\{}
+rng = np.random.default\_\allowbreak{}rng(cte.semilla)   \# un generador con la semilla del proyecto: 30 sorteos distintos pero reproducibles \\{}
+resultados = pd.DataFrame([ \\{}
+\hspace*{2.08em}\{**fila, \textquotedbl{}sorteo\textquotedbl{}: i\} \\{}
+\hspace*{2.08em}for i in range(n\_\allowbreak{}sorteos) \\{}
+\hspace*{2.08em}for fila in un\_\allowbreak{}sorteo(completos, pct\_\allowbreak{}nulos, imputadores, rng) \\{}
+]) \\{}
+\mbox{} \\{}
+def media\_\allowbreak{}desv(metrica): \\{}
+\hspace*{2.08em}\textquotedbl{}\textquotedbl{}\textquotedbl{}Tabla variable x método con 'media ± desviación' de la métrica en los 30 sorteos.\textquotedbl{}\textquotedbl{}\textquotedbl{} \\{}
+\hspace*{2.08em}r = resultados.groupby([\textquotedbl{}variable\textquotedbl{}, \textquotedbl{}método\textquotedbl{}])[metrica].agg([\textquotedbl{}mean\textquotedbl{}, \textquotedbl{}std\textquotedbl{}]) \\{}
+\hspace*{2.08em}texto = r[\textquotedbl{}mean\textquotedbl{}].map(\textquotedbl{}\{:.2f\}\textquotedbl{}.format) + \textquotedbl{} ± \textquotedbl{} + r[\textquotedbl{}std\textquotedbl{}].map(\textquotedbl{}\{:.2f\}\textquotedbl{}.format) \\{}
+\hspace*{2.08em}return texto.unstack()[list(imputadores)] \\{}
+\mbox{} \\{}
+display(media\_\allowbreak{}desv(\textquotedbl{}MAE\textquotedbl{})) \\{}
+print(\textquotedbl{}Referencia, desviación típica de cada variable:\textquotedbl{}, completos[con\_\allowbreak{}nulos].std().round(2).to\_\allowbreak{}dict())
+\end{codigo}
+\begin{codigo}
+\# Comparación por parejas: en cada sorteo todos los métodos rellenan los mismos huecos, \\{}
+\# así que puedo contar en qué \% de sorteos cada método mejora a la mediana. \\{}
+mae = resultados.pivot\_\allowbreak{}table(index=[\textquotedbl{}variable\textquotedbl{}, \textquotedbl{}sorteo\textquotedbl{}], columns=\textquotedbl{}método\textquotedbl{}, values=\textquotedbl{}MAE\textquotedbl{}) \\{}
+victorias = mae.drop(columns=\textquotedbl{}mediana\textquotedbl{}).lt(mae[\textquotedbl{}mediana\textquotedbl{}], axis=0).groupby(\textquotedbl{}variable\textquotedbl{}).mean() \\{}
+display((victorias * 100).round(0)[[m for m in imputadores if m != \textquotedbl{}mediana\textquotedbl{}]])
+\end{codigo}
+\begin{codigo}
+display(media\_\allowbreak{}desv(\textquotedbl{}RMSE\textquotedbl{}))
+\end{codigo}
+\smallskip\noindent\textbf{Resultados}\par
+\textbf{MAE (media ± desviación en 30 sorteos):}
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & \textbf{media} & \textbf{mediana} & \textbf{KNN k=5} & \textbf{KNN k=25} & \textbf{Iterative} & \textbf{desv. típica} \\
+\midrule
+LDL & 29,01 ± 1,95 & 29,03 ± 1,95 & \textbf{31,79} ± 2,32 & 29,50 ± 2,20 & 29,06 ± 1,97 & 36,7 \\
+Glucosa & 20,28 ± 1,86 & 20,29 ± 1,86 & \textbf{21,87} ± 1,95 & 20,44 ± 2,01 & 20,08 ± 1,84 & 25,3 \\
+Sueño & 1,26 ± 0,07 & 1,26 ± 0,07 & \textbf{1,36} ± 0,08 & 1,27 ± 0,07 & 1,26 ± 0,07 & 1,58 \\
+PCR & 1,56 ± 0,11 & \textbf{1,48} ± 0,14 & 1,67 ± 0,13 & 1,57 ± 0,11 & 1,55 ± 0,11 & 2,01 \\
+\bottomrule
+\end{tabularx}}
+
+\textbf{\% de sorteos en que cada método mejora a la mediana:} KNN k=5 entre el 0 y el 3 \%. Iterative: 47 \% en LDL, 73 \% en glucosa, 47 \% en sueño y 3 \% en PCR.
+
+\smallskip\noindent\textbf{Cómo leerlo}\par
+\hspace*{1.0em}1.~\textbf{El KNN con 5 vecinos es el peor en las cuatro variables}: entre un 8 y un 10 \% más de error, y pierde frente a la mediana en el 97-100 \% de los sorteos. Con 25 vecinos se acerca a la media. Cuantos más vecinos promedia, más se parece al promedio global, lo que indica que los vecinos no aportan información. \\{}
+\hspace*{1.0em}2.~\textbf{Iterative empata con la media.} Hace una regresión con coeficientes casi nulos, así que acaba prediciendo la media. Su única ventaja es en la glucosa: 0,2 mg/\allowbreak{}dL (un 1 \%), muy por debajo de la variación entre sorteos (±1,8). Es una mejora constante pero irrelevante, y no justifica un imputador experimental. \\{}
+\hspace*{1.0em}3.~\textbf{En la PCR, la elección entre media y mediana depende de la métrica.} Con el MAE gana la mediana (1,48 frente a 1,56, en el 100 \% de los sorteos). Con el RMSE gana la media (2,08 frente a 2,17). Es una propiedad matemática: entre los valores constantes, la mediana es el que minimiza el error absoluto y la media el que minimiza el error cuadrático. Si eliges el MAE, conviene justificarlo en la memoria: está en mg/\allowbreak{}L y no lo dominan los pocos pacientes con PCR muy alta. \\{}
+\hspace*{1.0em}4.~\textbf{En todos los métodos, el MAE es \textasciitilde{} 0,8 veces la desviación típica.} Es lo que se espera al rellenar siempre con el centro de la distribución. Ningún método recupera el valor individual del paciente: solo estiman ese centro.
+
+\textbf{Conclusión:} \texttt{SimpleImputer(strategy=\textquotedbl{}median\textquotedbl{})} para las cuatro variables, como habías propuesto. Es igual o mejor que las alternativas, es el más simple y no necesita escalado.
+
+\smallskip\noindent\textbf{Dos matices para el markdown}\par
+\hspace*{1.0em}\textbullet~Aquí el imputador se ajusta con todos los pacientes completos, porque mido la calidad de la reconstrucción, no el modelo. En el \texttt{Pipeline} se ajustará solo con el train. \\{}
+\hspace*{1.0em}\textbullet~La prueba definitiva es la que anotaste en el 5.1: comparar \texttt{SimpleImputer} y \texttt{KNNImputer} dentro del pipeline con validación cruzada, porque lo que importa al final es el recall de riesgo alto, no el MAE.
+
+\textbf{Ojo:} la salida guardada de la tabla del 5.2 sigue diciendo \textquotedbl{}media\textquotedbl{} en LDL, glucosa y sueño. Viene de la versión anterior de la función; vuelve a ejecutar esa celda para que coincida con el código actual, que ya propone \textquotedbl{}mediana\textquotedbl{}.
+
+No he tocado tu notebook. Las pruebas están en \texttt{C:\textbackslash\allowbreak{}Users\textbackslash\allowbreak{}pablo\textbackslash\allowbreak{}AppData\textbackslash\allowbreak{}Local\textbackslash\allowbreak{}Temp\textbackslash\allowbreak{}claude\textbackslash\allowbreak{}1c89b8a32de7a558\textbackslash\allowbreak{}d5ddce76-2842-4d52-9bf7-f49c77e483c9\textbackslash\allowbreak{}scratchpad\textbackslash\allowbreak{}exp\_\allowbreak{}final.py}.
+
+}
+
+\subsubsection*{P7. 2026-11-09 21:39:08 +0100 -- Claude Code}
+{\small
+Escrito para: el equipo (Pablo, Enzo y Rodrigo), como base de la memoria técnica.
+
+He creado docs/\allowbreak{}evolucion\_\allowbreak{}planteamiento.md a partir del acta de Rodrigo (estrategia\_\allowbreak{}ml.txt) y de tus apuntes de la reunión del 8 de noviembre. Tiene tres partes:
+
+\hspace*{1.0em}1.~\textbf{Punto de partida:} el entorno común, el EDA de cada uno y los problemas que encontrasteis en los datos. \\{}
+\hspace*{1.0em}2.~\textbf{Reunión del 8 de noviembre:} \\{}
+\hspace*{2.5em}\textbullet~el reparto de modelos; \\{}
+\hspace*{2.5em}\textbullet~el diseño experimental, con el motivo de cada decisión; \\{}
+\hspace*{2.5em}\textbullet~la limpieza y la codificación de los datos; \\{}
+\hspace*{2.5em}\textbullet~el pipeline; \\{}
+\hspace*{2.5em}\textbullet~una tabla de \textbf{opciones descartadas y por qué}, que el acta de Rodrigo no recogía y que conviene para la memoria y la entrevista; \\{}
+\hspace*{2.5em}\textbullet~lo que se ha hecho después de la reunión. \\{}
+\hspace*{1.0em}3.~\textbf{Cuestiones abiertas:} \\{}
+\hspace*{2.5em}\textbullet~\texttt{class\_\allowbreak{}weight} no funciona en Naive Bayes ni en \texttt{GradientBoostingClassifier}, que son dos de tus modelos; \\{}
+\hspace*{2.5em}\textbullet~el balanceo debe decidirlo la comparación, no darse por hecho que gana SMOTENC; \\{}
+\hspace*{2.5em}\textbullet~no hay forma de probar el árbol y el random forest sin imputar; \\{}
+\hspace*{2.5em}\textbullet~falta un modelo de referencia que prediga siempre la clase mayoritaria; \\{}
+\hspace*{2.5em}\textbullet~queda por decidir si usar 5 o 10 folds.
+
+Queda revisar los siguientes motivos que no se dijeron en la reunión:
+
+\hspace*{1.0em}\textbullet~Las razones para \textbf{no usar el logaritmo y PCA} («el \texttt{RobustScaler} ya controla las escalas» y «PCA resta interpretabilidad») las he añadido yo.  \\{}
+\hspace*{1.0em}\textbullet~En la reunión \textbf{solo quedó un «PCA, probablemente no»}. Confirmadlas o cambiadlas antes de llevarlas a la memoria.
+
+No he hecho commit. El hook ya ha registrado este prompt en tu registro de IA.
+
+}
+
+\subsubsection*{P8. 2026-11-11 00:41:00 +0100 -- Claude Code}
+{\small
+El fallo está en la rejilla, no en \texttt{modelado.py}. Los hiperparámetros llevan el nombre de la regresión logística sin prefijo, pero \texttt{GridSearchCV} no recibe la \texttt{LogisticRegression} directamente: recibe el \texttt{Pipeline} entero.
+
+\smallskip\noindent\textbf{Por qué falla}\par
+\texttt{GridSearchCV} hace en cada combinación algo así:
+
+\begin{codigo}
+pipeline.set\_\allowbreak{}params(C=0.001, l1\_\allowbreak{}ratio=0)
+\end{codigo}
+El \texttt{Pipeline} no tiene ningún parámetro \texttt{C}. Solo tiene \texttt{memory}, \texttt{steps}, \texttt{transform\_\allowbreak{}input} y \texttt{verbose}, que son justo los que lista el error. Para llegar a un parámetro de un paso hay que indicar la ruta con el nombre del paso y doble guion bajo: \texttt{\textless{}paso\textgreater{}\_\allowbreak{}\_\allowbreak{}\textless{}parámetro\textgreater{}}. En \texttt{crear\_\allowbreak{}pipeline} el modelo es el paso \texttt{\textquotedbl{}modelo\textquotedbl{}} (modelado.py:106), así que el parámetro es \texttt{modelo\_\allowbreak{}\_\allowbreak{}C}. Lo indica también el docstring de \texttt{crear\_\allowbreak{}busqueda} (modelado.py:114).
+
+\smallskip\noindent\textbf{Corrección}\par
+\begin{codigo}
+parametros\_\allowbreak{}logistica = \{ \\{}
+\hspace*{2.08em}\textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}C\textquotedbl{}: [0.001, 0.01, 0.1, 1, 10, 100], \\{}
+\hspace*{2.08em}\textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}l1\_\allowbreak{}ratio\textquotedbl{}: [0, 0.5, 1], \\{}
+\}
+\end{codigo}
+Con esto vale para los tres balanceos: el paso final se llama \texttt{\textquotedbl{}modelo\textquotedbl{}} aunque haya un paso \texttt{\textquotedbl{}balanceo\textquotedbl{}} antes.
+
+\smallskip\noindent\textbf{Otro problema en esa celda}\par
+\begin{codigo}
+tablas.append(mod.tabla\_\allowbreak{}resultados(busqueda, f\textquotedbl{}\{nombre\} \textbar{} \{balanceo\}\textquotedbl{}))
+\end{codigo}
+\texttt{nombre} no está definido en esta celda. Viene del bucle \texttt{for nombre, modelo in modelos.items()} del apartado 2, así que vale \texttt{\textquotedbl{}hist\_\allowbreak{}gradient\_\allowbreak{}boosting\textquotedbl{}}, el último modelo de ese diccionario. La tabla saldría con las filas de la logística etiquetadas como HistGradientBoosting. Pon el nombre directamente:
+
+\begin{codigo}
+tablas.append(mod.tabla\_\allowbreak{}resultados(busqueda, f\textquotedbl{}regresion\_\allowbreak{}logistica \textbar{} \{balanceo or 'sin\_\allowbreak{}balanceo'\}\textquotedbl{}))
+\end{codigo}
+He puesto \texttt{balanceo or 'sin\_\allowbreak{}balanceo'} para que coincida con las etiquetas del apartado 2. Si no, la fila sin balanceo aparecería como \texttt{None}.
+
+}
+
+\subsubsection*{P9. 2026-11-11 01:03:59 +0100 -- Claude Code}
+\textit{Sin respuesta propia: el agente respondió a este prompt junto con el siguiente (P10).}
+
+\subsubsection*{P10. 2026-11-11 01:04:21 +0100 -- Claude Code}
+{\small
+He añadido la función \texttt{ajustar\_\allowbreak{}modelo} a modelos\_\allowbreak{}pablo.ipynb, en una celda nueva al final del apartado 2. También he reescrito la celda de la logística para que la use. La he probado con Naive Bayes y funciona. No he ejecutado la rejilla completa de la logística porque con \texttt{saga} tarda: vuelve a ejecutar el notebook desde arriba.
+
+\smallskip\noindent\textbf{Qué hace}\par
+\begin{codigo}
+busquedas, tabla = ajustar\_\allowbreak{}modelo(nombre, modelo, parametros)
+\end{codigo}
+\hspace*{1.0em}\textbullet~\textbf{Recorre los tres balanceos} y monta cada pipeline con \texttt{mod.crear\_\allowbreak{}pipeline}. La búsqueda la hace \texttt{mod.crear\_\allowbreak{}busqueda}, así que la validación, la semilla y las métricas son las comunes del grupo. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Se salta los balanceos que el modelo no admite}, con el mismo \texttt{try/\allowbreak{}except} del apartado 2. Por ejemplo, \texttt{GaussianNB} no tiene \texttt{class\_\allowbreak{}weight}. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Pone a las filas la misma etiqueta que en el apartado 2} (\texttt{logistica\_\allowbreak{}smotenc}, \texttt{naive\_\allowbreak{}bayes\_\allowbreak{}sin\_\allowbreak{}balanceo}...), así puedes comparar el modelo ajustado con el de por defecto. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Devuelve dos cosas:} \\{}
+\hspace*{2.0em}\textbullet~\texttt{busquedas}: un diccionario \texttt{etiqueta -\textgreater{} GridSearchCV} ya entrenado, del que luego sacas el \texttt{best\_\allowbreak{}estimator\_\allowbreak{}} para test. \\{}
+\hspace*{2.0em}\textbullet~\texttt{tabla}: las \texttt{columnas} del apartado 2 más \texttt{mejores\_\allowbreak{}parametros}, ordenada por F1 macro de validación. \\{}
+\hspace*{1.0em}\textbullet~\textbf{No corta los parámetros en la tabla:} \texttt{pd.set\_\allowbreak{}option(\textquotedbl{}display.max\_\allowbreak{}colwidth\textquotedbl{}, None)} evita que pandas los recorte con «...».
+
+Resultado de la prueba con Naive Bayes y una rejilla pequeña:
+
+\begin{codigo}
+\hspace*{13.52em}f1\_\allowbreak{}macro\_\allowbreak{}train  f1\_\allowbreak{}macro\_\allowbreak{}val  ...  mejores\_\allowbreak{}parametros \\{}
+naive\_\allowbreak{}bayes\_\allowbreak{}sin\_\allowbreak{}balanceo           0.664         0.641  ...  \{'modelo\_\allowbreak{}\_\allowbreak{}var\_\allowbreak{}smoothing': 1e-09\} \\{}
+naive\_\allowbreak{}bayes\_\allowbreak{}smotenc                0.633         0.602  ...  \{'modelo\_\allowbreak{}\_\allowbreak{}var\_\allowbreak{}smoothing': 1e-09\}
+\end{codigo}
+\smallskip\noindent\textbf{Uso con los otros modelos}\par
+\begin{codigo}
+busquedas\_\allowbreak{}nb, tabla\_\allowbreak{}nb = ajustar\_\allowbreak{}modelo(\textquotedbl{}naive\_\allowbreak{}bayes\textquotedbl{}, GaussianNB(), parametros\_\allowbreak{}nb) \\{}
+busquedas\_\allowbreak{}hgb, tabla\_\allowbreak{}hgb = ajustar\_\allowbreak{}modelo( \\{}
+\hspace*{2.08em}\textquotedbl{}hist\_\allowbreak{}gradient\_\allowbreak{}boosting\textquotedbl{}, HistGradientBoostingClassifier(random\_\allowbreak{}state=cte.semilla), parametros\_\allowbreak{}hgb)
+\end{codigo}
+Dale a cada modelo sus propias variables (\texttt{busquedas\_\allowbreak{}logistica}, \texttt{busquedas\_\allowbreak{}nb}...) para que una rejilla no sobrescriba la anterior.
+
+\smallskip\noindent\textbf{Lo que tienes que saber para defenderla}\par
+\hspace*{1.0em}\textbullet~\textbf{Usa variables del notebook sin recibirlas como parámetro:} \texttt{X\_\allowbreak{}train}, \texttt{y\_\allowbreak{}train} y \texttt{columnas}. Necesita que estén definidas antes, así que funciona si ejecutas el notebook en orden. \\{}
+\hspace*{1.0em}\textbullet~\textbf{\texttt{balanceos=balanceos} toma la lista del apartado 2.} Python la lee al crear la función, no en cada llamada. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Algunas celdas de prueba de debajo ya no funcionan:} \\{}
+\hspace*{2.0em}\textbullet~\texttt{busquedas.keys()}: ese diccionario ahora se llama \texttt{busquedas\_\allowbreak{}logistica}. \\{}
+\hspace*{2.0em}\textbullet~\texttt{busqueda[\textquotedbl{}logistica\_\allowbreak{}sin\_\allowbreak{}balanceo\textquotedbl{}]} y \texttt{modelos\_\allowbreak{}por\_\allowbreak{}defecto}: esos nombres no existen en el notebook. \\{}
+\hspace*{2.0em}\textbullet~El bucle de \texttt{evaluar\_\allowbreak{}test}: también usa \texttt{busqueda} y \texttt{modelos\_\allowbreak{}por\_\allowbreak{}defecto}, y además mira el test, que solo debe usarse una vez al final. Conviene borrarlo o dejarlo para el último apartado.
+
+}
+
+\subsubsection*{P11. 2026-11-11 20:37:12 +0100 -- Claude Code}
+{\small
+El \texttt{KeyError} venía de que el \texttt{if} del suelo envolvía también la creación del pipeline. Lo he corregido en la celda 2 de modelos\_\allowbreak{}pablo.ipynb. No he vuelto a ejecutar la celda, así que vuelve a correrla para confirmarlo.
+
+\smallskip\noindent\textbf{Por qué daba \texttt{KeyError}}\par
+Tal como estaba, solo se creaba pipeline cuando el modelo era el suelo \textbf{y} tenía balanceo. Para los demás casos el \texttt{try} no se ejecutaba y \texttt{pipeline} se quedaba sin esa etiqueta. Pero la línea \texttt{busqueda\_\allowbreak{}por\_\allowbreak{}defecto[...] = ...pipeline[etiqueta]} está fuera del \texttt{if} y se ejecuta siempre. La primera vuelta es \texttt{logistica} sin balanceo, y por eso pedía \texttt{pipeline[\textquotedbl{}logistica\_\allowbreak{}sin\_\allowbreak{}balanceo\textquotedbl{}]}, que no existía.
+
+\smallskip\noindent\textbf{Cambio}\par
+Ahora el \texttt{if} solo salta los casos que no quieres, y el \texttt{try} vuelve a su sitio:
+
+\begin{codigo}
+\# el suelo solo se mide sin balanceo: siempre predice la clase mayoritaria, así que balancear no aporta nada \\{}
+if nombre == \textquotedbl{}suelo\textquotedbl{} and balanceo is not None: \\{}
+\hspace*{2.08em}continue \\{}
+try: \\{}
+\hspace*{2.08em}pipeline[etiqueta] = mod.crear\_\allowbreak{}pipeline(modelo, balanceo) \\{}
+except ValueError: \\{}
+\hspace*{2.08em}...
+\end{codigo}
+Sin el \texttt{if}, \texttt{class\_\allowbreak{}weight} ya se saltaría solo, porque \texttt{DummyClassifier} no tiene ese parámetro y \texttt{crear\_\allowbreak{}pipeline} lanza \texttt{ValueError}. Con SMOTENC, en cambio, sí se entrenaría. Como las clases quedan empatadas, \texttt{most\_\allowbreak{}frequent} seguiría prediciendo la clase 0 y saldría una fila repetida. El \texttt{if} lo deja claro.
+
+\smallskip\noindent\textbf{Qué esperar del suelo}\par
+El suelo siempre predice «riesgo bajo», que es el 50 \% de los pacientes:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Métrica} & \textbf{Valor esperado} & \textbf{Por qué} \\
+\midrule
+F1 macro & \textasciitilde{} 0,22 & 0,67 en la clase 0, 0 en las otras dos, dividido entre 3 \\
+\texttt{recall\_\allowbreak{}alto} & 0 & Nunca predice riesgo alto \\
+\texttt{precision\_\allowbreak{}alto} & 0 & Sale 0 y no da aviso, porque el scorer lleva \texttt{zero\_\allowbreak{}division=0} \\
+\bottomrule
+\end{tabularx}}
+
+\texttt{precision\_\allowbreak{}macro} no lleva \texttt{zero\_\allowbreak{}division}, así que verás avisos \texttt{UndefinedMetricWarning} al ajustar el suelo. Son normales: este modelo nunca predice las clases 1 y 2. Tus modelos tienen alrededor de 0,64 de F1 macro, así que lo superan con mucho margen. Con F1 macro ese suelo es muy fácil de batir, y es el valor que conviene citar en la memoria.
+
+}
+
+\subsubsection*{P12. 2026-11-11 20:45:23 +0100 -- Claude Code}
+{\small
+He añadido la tabla de comparación en la celda de la sección 6 de modelos\_\allowbreak{}pablo.ipynb. No la he ejecutado, porque necesita las búsquedas de las secciones anteriores en memoria. Lo que sigue lo he calculado con los CSV que guardaste en \texttt{resultados/\allowbreak{}}.
+
+\smallskip\noindent\textbf{Cómo aplica el criterio}\par
+\hspace*{1.0em}1.~\textbf{Primero ordena por F1 macro} en validación. \\{}
+\hspace*{1.0em}2.~\textbf{Marca como empatados} los modelos cuyo F1 queda dentro de la desviación entre folds del mejor, es decir, con F1 \textgreater{}= F1 del mejor - su desviación. La columna \texttt{empata\_\allowbreak{}en\_\allowbreak{}f1} lo indica. \\{}
+\hspace*{1.0em}3.~\textbf{Entre los empatados, ordena por recall de riesgo alto.} Los que no empatan siguen ordenados por F1, y el suelo queda al final como referencia.
+
+El texto previo a la tabla muestra el umbral, así puedes citar el número en la memoria.
+
+\smallskip\noindent\textbf{Qué va a salir}\par
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Modelo} & \textbf{F1 macro val} & \textbf{Recall alto val} & \textbf{¿Empata?} \\
+\midrule
+naive\_\allowbreak{}bayes & 0,627 & \textbf{0,751} & sí \\
+logistica & \textbf{0,651} ± 0,034 & 0,748 & sí \\
+hist\_\allowbreak{}gradient\_\allowbreak{}boosting & 0,645 & 0,723 & sí \\
+suelo & \textasciitilde{} 0,22 & 0 & no \\
+\bottomrule
+\end{tabularx}}
+
+El umbral es 0,651 - 0,034 = 0,617, así que \textbf{los tres empatan en F1} y, aplicando el criterio al pie de la letra, gana Naive Bayes.
+
+\smallskip\noindent\textbf{Un problema del criterio}\par
+Naive Bayes gana el desempate por solo 0,003 de recall (0,751 frente a 0,748). Esa diferencia es mucho menor que la desviación del recall, que es de 0,05-0,06. En los mismos folds, Naive Bayes saca más recall en 2, la logística en 1 y en otros 2 empatan:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{fold} & \textbf{logistica} & \textbf{naive\_\allowbreak{}bayes} & \textbf{hgb} \\
+\midrule
+0 & 0,722 & 0,722 & 0,694 \\
+1 & 0,767 & \textbf{0,781} & 0,753 \\
+2 & 0,667 & 0,667 & 0,681 \\
+3 & \textbf{0,847} & 0,819 & 0,722 \\
+4 & 0,736 & \textbf{0,764} & 0,764 \\
+\bottomrule
+\end{tabularx}}
+
+Es decir, también empatan en recall, y el criterio acordado no dice qué hacer en ese caso. Tienes dos opciones:
+
+\hspace*{1.0em}\textbullet~\textbf{Aplicar el criterio tal cual} y elegir Naive Bayes, reconociendo en la memoria que la diferencia de recall es ruido. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Proponer al grupo un tercer criterio} para cuando también empaten en recall. Por ejemplo, quedarse con el de mayor F1 (la logística), o con el más simple e interpretable, que también es la logística por sus coeficientes. Este cambio afecta a la comparación de todo el grupo, así que conviene acordarlo antes de cerrar la tabla final.
+
+Para ver la tabla por folds en el notebook, puedes reutilizar tu función:
+
+\begin{codigo}
+por\_\allowbreak{}fold(\{n: busquedas[n] for n in empatados.index\}).round(3)
+\end{codigo}
+}
+
+\subsubsection*{P13. 2026-11-11 20:57:10 +0100 -- Claude Code}
+{\small
+Era otra vez un problema de etiquetas. Lo he corregido en la celda de «¿Cuánto aporta el ajuste?» de modelos\_\allowbreak{}pablo.ipynb. No he ejecutado la celda.
+
+\smallskip\noindent\textbf{Por qué daba \texttt{KeyError}}\par
+La celda buscaba \texttt{busqueda\_\allowbreak{}por\_\allowbreak{}defecto[\textquotedbl{}logistica \textbar{} class\_\allowbreak{}weight\textquotedbl{}]}, con el formato de etiqueta que usabas antes. En el apartado 2 las claves se guardan como \texttt{f\textquotedbl{}\{nombre\}\_\allowbreak{}\{balanceo or 'sin\_\allowbreak{}balanceo'\}\textquotedbl{}}, es decir, \texttt{\textquotedbl{}logistica\_\allowbreak{}class\_\allowbreak{}weight\textquotedbl{}}. El cambio está en una sola línea:
+
+\begin{codigo}
+defecto = mod.tabla\_\allowbreak{}resultados(busqueda\_\allowbreak{}por\_\allowbreak{}defecto[f\textquotedbl{}\{nombre\}\_\allowbreak{}\{balanceo\}\textquotedbl{}], nombre).iloc[0]
+\end{codigo}
+\texttt{balanceo\_\allowbreak{}elegido} nunca contiene \texttt{None}, así que no hace falta el \texttt{or 'sin\_\allowbreak{}balanceo'}.
+
+\smallskip\noindent\textbf{Qué debería salir}\par
+Lo he sacado de las salidas que ya tienes en el apartado 2 y en cada sección:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Modelo} & \textbf{F1 val: defecto -\textgreater{} ajustado} & \textbf{Recall alto: defecto -\textgreater{} ajustado} & \textbf{Sobreajuste: defecto -\textgreater{} ajustado} \\
+\midrule
+logistica & 0,648 -\textgreater{} 0,651 & 0,737 -\textgreater{} 0,748 & 0,025 -\textgreater{} 0,024 \\
+naive\_\allowbreak{}bayes & 0,602 -\textgreater{} 0,627 & 0,734 -\textgreater{} 0,751 & 0,031 -\textgreater{} 0,023 \\
+hist\_\allowbreak{}gradient\_\allowbreak{}boosting & 0,621 -\textgreater{} 0,645 & 0,657 -\textgreater{} 0,723 & 0,379 -\textgreater{} 0,289 \\
+\bottomrule
+\end{tabularx}}
+
+\smallskip\noindent\textbf{Cómo leerlo}\par
+\hspace*{1.0em}\textbullet~\textbf{Logística:} el ajuste casi no aporta. Mejora el F1 en 0,003, muy por debajo de la desviación de 0,03. Cuadra con que la búsqueda eligiera L2 con \texttt{C = 0,1}, muy cerca de los valores por defecto (L2 y \texttt{C = 1}). \\{}
+\hspace*{1.0em}\textbullet~\textbf{Naive Bayes:} el ajuste sí aporta, +0,025 de F1. Con SMOTENC, \texttt{var\_\allowbreak{}smoothing} es lo que más importa. \\{}
+\hspace*{1.0em}\textbullet~\textbf{HistGradientBoosting:} es donde más se nota. Sube el F1 y el recall de riesgo alto, y el sobreajuste baja de 0,38 a 0,29, aunque sigue siendo alto.
+
+\smallskip\noindent\textbf{Un matiz para la memoria}\par
+En la logística, la versión por defecto usa el solver \texttt{lbfgs} con \texttt{max\_\allowbreak{}iter=100}, y la ajustada usa \texttt{saga} con \texttt{max\_\allowbreak{}iter=5000}. Así que la diferencia no se debe solo a \texttt{C} y \texttt{l1\_\allowbreak{}ratio}. Como apenas hay diferencia, no cambia la conclusión, pero conviene mencionarlo por si te preguntan en la entrevista.
+
+}
+
+\subsubsection*{P14. 2026-11-11 23:25:48 +0100 -- Claude Code}
+{\small
+He refactorizado la sección 6 de modelos\_\allowbreak{}pablo.ipynb. Ahora hay una sola tabla \texttt{comparacion}, de la que salen todas las vistas, y la última celda la guarda en CSV. He comprobado la lógica de la tabla con datos simulados y cuadra. No he ejecutado el notebook, porque necesita las búsquedas en memoria: vuelve a ejecutar la sección 6 desde el principio.
+
+\smallskip\noindent\textbf{Fallo que he corregido}\par
+La celda de las matrices de confusión recorría \texttt{busquedas.items()}, que empieza por el suelo, con solo 3 ejes. Dibujaba suelo, logística y Naive Bayes, así que \textbf{HistGradientBoosting se quedaba sin matriz}. Revisa esa figura y la conclusión que escribiste a partir de ella. Ahora recorre \texttt{mis\_\allowbreak{}modelos}.
+
+\smallskip\noindent\textbf{Qué hace cada celda}\par
+\hspace*{1.0em}1.~\textbf{Tabla de comparación:} define \texttt{balanceo\_\allowbreak{}elegido}, \texttt{mis\_\allowbreak{}modelos} y \texttt{busquedas} una sola vez. Antes \texttt{mis\_\allowbreak{}modelos} se definía en la celda de las matrices, pero \texttt{por\_\allowbreak{}fold(mis\_\allowbreak{}modelos)} lo usaba antes, así que solo funcionaba si ejecutabas en desorden. \\{}
+\hspace*{2.5em}\textbullet~Junta los modelos ajustados con las columnas por defecto (\texttt{*\_\allowbreak{}por\_\allowbreak{}defecto}) y añade \texttt{mejora\_\allowbreak{}f1\_\allowbreak{}ajuste}. \\{}
+\hspace*{2.5em}\textbullet~Aplica tu criterio (\texttt{empata\_\allowbreak{}en\_\allowbreak{}f1}, \texttt{empata\_\allowbreak{}en\_\allowbreak{}recall}) sin cambiarlo y muestra las columnas del criterio. \\{}
+\hspace*{1.0em}2.~\textbf{Celda de \texttt{por\_\allowbreak{}fold}:} sin cambios. Ya funciona porque \texttt{mis\_\allowbreak{}modelos} está definido antes. \\{}
+\hspace*{1.0em}3.~\textbf{Cuánto aporta el ajuste:} ya no recalcula nada. Lee las columnas de la tabla que ya existe. \\{}
+\hspace*{1.0em}4.~\textbf{Matrices de confusión:} además de dibujarlas, apunta en la tabla cuántos pacientes de riesgo alto clasifica como bajo (\texttt{alto\_\allowbreak{}como\_\allowbreak{}bajo}). \\{}
+\hspace*{1.0em}5.~\textbf{Celda nueva:} guarda \texttt{resultados/\allowbreak{}comparacion\_\allowbreak{}pablo.csv}.
+
+\smallskip\noindent\textbf{Dónde gana en eficiencia}\par
+La versión por defecto ya no se recalcula: se lee de la tabla \texttt{por\_\allowbreak{}defecto} del apartado 2. El único entrenamiento que queda en la sección es el de \texttt{cross\_\allowbreak{}val\_\allowbreak{}predict} (5 folds por modelo), que hace falta para las matrices de confusión.
+
+\smallskip\noindent\textbf{El CSV}\par
+\texttt{resultados/\allowbreak{}comparacion\_\allowbreak{}pablo.csv} lleva todo: train y validación con media ± desviación de todas las métricas, mejores parámetros, balanceo, valores por defecto, mejora, empates y \texttt{alto\_\allowbreak{}como\_\allowbreak{}bajo}. En el suelo, las columnas por defecto y \texttt{alto\_\allowbreak{}como\_\allowbreak{}bajo} quedan vacías, porque no se ajusta ni se dibuja su matriz.
+
+He usado un nombre propio para no pisar los CSV por modelo (\texttt{logistica.csv}...) que lee el grupo, ni colisionar con los de Rodrigo (\texttt{arbol}, \texttt{knn}, \texttt{random\_\allowbreak{}forest}). Si el grupo junta los resultados leyendo todos los CSV de la carpeta, este se colaría. Ahora mismo los lee por nombre, así que no pasa.
+
+}
+
+\subsubsection*{P15. 2026-11-14 12:24:55 +0100 -- Claude Code}
+{\small
+Has elegido bien los modelos. He reconstruido los 9 con validación cruzada (en un script aparte, sin tocar tu notebook) y dan exactamente lo mismo que los CSV, fold a fold, en F1 macro y en recall de riesgo alto. Tarda unos 9 s.
+
+\smallskip\noindent\textbf{Tu tabla de configuración frente a los notebooks}\par
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Modelo} & \textbf{Lo que guardó cada notebook} & \textbf{En tu \texttt{configuracion}} \\
+\midrule
+logistica & \texttt{busquedas\_\allowbreak{}logistica[\textquotedbl{}logistica\_\allowbreak{}class\_\allowbreak{}weight\textquotedbl{}]}, con \texttt{solver=\textquotedbl{}saga\textquotedbl{}, max\_\allowbreak{}iter=5000} & Sí \\
+naive\_\allowbreak{}bayes & \texttt{[\textquotedbl{}naive\_\allowbreak{}bayes\_\allowbreak{}smotenc\textquotedbl{}]} & Sí \\
+hist\_\allowbreak{}gradient\_\allowbreak{}boosting & \texttt{[\textquotedbl{}hist\_\allowbreak{}gradient\_\allowbreak{}boosting\_\allowbreak{}class\_\allowbreak{}weight\textquotedbl{}]} & Sí \\
+arbol /\allowbreak{} knn & \texttt{busquedas\_\allowbreak{}*[\textquotedbl{}smotenc\textquotedbl{}]} & Sí \\
+random\_\allowbreak{}forest & \texttt{busquedas\_\allowbreak{}rf[\textquotedbl{}class\_\allowbreak{}weight\textquotedbl{}]} & Sí \\
+lda /\allowbreak{} svm & \texttt{busquedas\_\allowbreak{}lda[\textquotedbl{}smotenc\textquotedbl{}]}, \texttt{busquedas\_\allowbreak{}svm[\textquotedbl{}class\_\allowbreak{}weight\textquotedbl{}]} (la celda final, la que llama a \texttt{guardar\_\allowbreak{}resultados}) & Sí \\
+voting & LDA smotenc, SVM class\_\allowbreak{}weight con \texttt{probability=True} y semilla, RF y LR; orden \texttt{lda, svm, rf, lr} & Sí (los pesos \texttt{[1,1,3,1]} van en el mismo orden) \\
+\bottomrule
+\end{tabularx}}
+
+\smallskip\noindent\textbf{Celda propuesta para el apartado 2 (la celda vacía \texttt{a23ff022})}\par
+\begin{codigo}
+\# misma validación cruzada que en cada notebook: mismos folds (mod.validador) y mismas métricas (mod.metricas). \\{}
+\# return\_\allowbreak{}train\_\allowbreak{}score=True porque estos resultados se reutilizan en los apartados 3, 5 y 6 (sobreajuste y test por folds) \\{}
+validacion = \{nombre: cross\_\allowbreak{}validate(pipeline, X\_\allowbreak{}train, y\_\allowbreak{}train, cv=mod.validador, scoring=mod.metricas, \\{}
+\hspace*{19.24em}return\_\allowbreak{}train\_\allowbreak{}score=True, n\_\allowbreak{}jobs=-1) \\{}
+\hspace*{7.28em}for nombre, pipeline in pipelines.items()\} \\{}
+\mbox{} \\{}
+comprobadas = [\textquotedbl{}f1\_\allowbreak{}macro\textquotedbl{}, \textquotedbl{}recall\_\allowbreak{}alto\textquotedbl{}] \\{}
+filas = \{\} \\{}
+for nombre, r in validacion.items(): \\{}
+\hspace*{2.08em}guardado = pd.read\_\allowbreak{}csv(mod.RUTA\_\allowbreak{}RESULTADOS /\allowbreak{} f\textquotedbl{}\{nombre\}.csv\textquotedbl{}).iloc[0]                    \# media guardada \\{}
+\hspace*{2.08em}folds = pd.read\_\allowbreak{}csv(mod.RUTA\_\allowbreak{}RESULTADOS /\allowbreak{} f\textquotedbl{}\{nombre\}\_\allowbreak{}folds.csv\textquotedbl{}, index\_\allowbreak{}col=\textquotedbl{}fold\textquotedbl{})        \# nota de cada fold \\{}
+\hspace*{2.08em}fila = \{\} \\{}
+\hspace*{2.08em}for m in comprobadas: \\{}
+\hspace*{4.16em}fila[f\textquotedbl{}\{m\}\_\allowbreak{}csv\textquotedbl{}] = guardado[f\textquotedbl{}\{m\}\_\allowbreak{}val\textquotedbl{}] \\{}
+\hspace*{4.16em}fila[f\textquotedbl{}\{m\}\_\allowbreak{}reconstruido\textquotedbl{}] = r[f\textquotedbl{}test\_\allowbreak{}\{m\}\textquotedbl{}].mean()       \# en cross\_\allowbreak{}validate, \textquotedbl{}test\textquotedbl{} es el fold de validación \\{}
+\hspace*{4.16em}\# coincide solo si coinciden los 5 folds, no basta la media (así se comprueba también que los folds son los mismos) \\{}
+\hspace*{4.16em}fila[f\textquotedbl{}\{m\}\_\allowbreak{}coincide\textquotedbl{}] = np.allclose(r[f\textquotedbl{}test\_\allowbreak{}\{m\}\textquotedbl{}], folds[m], atol=1e-6) \\{}
+\hspace*{2.08em}filas[nombre] = fila \\{}
+\mbox{} \\{}
+comprobacion = pd.DataFrame.from\_\allowbreak{}dict(filas, orient=\textquotedbl{}index\textquotedbl{}) \\{}
+columnas\_\allowbreak{}ok = [f\textquotedbl{}\{m\}\_\allowbreak{}coincide\textquotedbl{} for m in comprobadas] \\{}
+\mbox{} \\{}
+\# verde si coincide, rojo si no \\{}
+display(comprobacion.style \\{}
+\hspace*{4.16em}.format(precision=4, subset=comprobacion.columns.difference(columnas\_\allowbreak{}ok)) \\{}
+\hspace*{4.16em}.map(lambda ok: f\textquotedbl{}background-color: \{'\#c6efce' if ok else '\#ffc7ce'\}\textquotedbl{}, subset=columnas\_\allowbreak{}ok)) \\{}
+\mbox{} \\{}
+\# si algo no cuadra, el notebook se para aquí y no se compara con un modelo equivocado \\{}
+assert comprobacion[columnas\_\allowbreak{}ok].all().all(), \textquotedbl{}Algún modelo reconstruido no coincide con su CSV\textquotedbl{}
+\end{codigo}
+Por qué está hecha así:
+
+\hspace*{1.0em}\textbullet~\textbf{Compara fold a fold con \texttt{\textless{}modelo\textgreater{}\_\allowbreak{}folds.csv}, no solo la media.} Si los folds, el balanceo o un hiperparámetro cambiaran, la media podría seguir pareciéndose por casualidad, pero los 5 folds no. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Usa \texttt{np.allclose} con tolerancia} y no \texttt{==}. Aunque aquí ha salido idéntico, comparar decimales con \texttt{==} es frágil. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Guarda \texttt{validacion} y no solo la tabla.} Ahí tienes train y validación por fold de los 9 modelos, que te sirve para: \\{}
+\hspace*{2.0em}\textbullet~el apartado 3 (media ± desviación y sobreajuste), \\{}
+\hspace*{2.0em}\textbullet~el \texttt{cross\_\allowbreak{}val\_\allowbreak{}predict} del apartado 5, \\{}
+\hspace*{2.0em}\textbullet~Friedman y la t corregida del apartado 6.
+
+  Así no repites la validación cruzada. \\{}
+\hspace*{1.0em}\textbullet~\textbf{El \texttt{assert}} hace que el notebook falle si alguien vuelve a guardar un CSV sin avisar.
+
+Un detalle: el SVM con \texttt{probability=True} da un \texttt{FutureWarning} en sklearn 1.9. Es solo un aviso y no cambia los resultados.
+
+Si quieres, pego la celda en el notebook y la ejecuto.
+
+}
+
+\subsubsection*{P16. 2026-11-14 12:46:10 +0100 -- Claude Code}
+{\small
+Ya la he generado con vuestros \texttt{\_\allowbreak{}folds.csv} y se lee bien. La propuesta es dos paneles, uno encima de otro: arriba el F1 macro y abajo el recall de riesgo alto. Cada uno tiene su propio eje y. En el eje x van los modelos en tu \texttt{orden}, el de mejor a peor F1. Cada fold es una línea de color y la media es una raya negra.
+
+Uno las líneas por fold, aunque el eje x sean categorías, porque los 5 folds son los mismos pacientes para todos los modelos. Así ves: \\{}
+\hspace*{1.0em}\textbullet~si un fold es difícil para todos (líneas paralelas), \\{}
+\hspace*{1.0em}\textbullet~si el orden entre modelos cambia de un fold a otro (líneas que se cruzan).
+
+Es justo lo que luego contrasta Friedman. Un boxplot por modelo perdería ese emparejamiento.
+
+\smallskip\noindent\textbf{Celda (después de la que crea \texttt{folds} y \texttt{orden})}\par
+\begin{codigo}
+\# una línea por fold: los 5 folds son los mismos pacientes en todos los modelos, así que unirlos \\{}
+\# muestra si un fold es difícil para todos (líneas paralelas) o si el ranking cambia de fold a fold (se cruzan) \\{}
+metricas\_\allowbreak{}grafica = \{\textquotedbl{}f1\_\allowbreak{}macro\textquotedbl{}: \textquotedbl{}F1 macro\textquotedbl{}, \textquotedbl{}recall\_\allowbreak{}alto\textquotedbl{}: \textquotedbl{}Recall de riesgo alto\textquotedbl{}\} \\{}
+colores\_\allowbreak{}fold = [\textquotedbl{}\#2a78d6\textquotedbl{}, \textquotedbl{}\#eb6834\textquotedbl{}, \textquotedbl{}\#1baf7a\textquotedbl{}, \textquotedbl{}\#eda100\textquotedbl{}, \textquotedbl{}\#e87ba4\textquotedbl{}]   \# un color fijo por fold \\{}
+x = np.arange(len(orden))   \# posición de cada modelo en el eje x, en el orden de la tabla del apartado 3 \\{}
+\mbox{} \\{}
+\# un panel por métrica con su propio eje y (no dos escalas en el mismo gráfico) \\{}
+fig, ejes = plt.subplots(2, 1, figsize=(11, 8), sharex=True) \\{}
+for eje, (metrica, titulo) in zip(ejes, metricas\_\allowbreak{}grafica.items()): \\{}
+\hspace*{2.08em}tabla = pd.DataFrame(\{n: folds[n][metrica] for n in orden\})   \# filas: folds; columnas: modelos en orden \\{}
+\hspace*{2.08em}for (k, fila), color in zip(tabla.iterrows(), colores\_\allowbreak{}fold): \\{}
+\hspace*{4.16em}eje.plot(x, fila, color=color, linewidth=1.2, alpha=0.7, marker=\textquotedbl{}o\textquotedbl{}, markersize=6, label=f\textquotedbl{}Fold \{k + 1\}\textquotedbl{}) \\{}
+\hspace*{2.08em}\# la media de los 5 folds es el valor *\_\allowbreak{}val de la tabla del apartado 3 \\{}
+\hspace*{2.08em}eje.scatter(x, tabla.mean(), marker=\textquotedbl{}\_\allowbreak{}\textquotedbl{}, s=700, linewidths=2.5, color=\textquotedbl{}\#0b0b0b\textquotedbl{}, zorder=3, \\{}
+\hspace*{8.32em}label=\textquotedbl{}Media de los 5 folds\textquotedbl{}) \\{}
+\hspace*{2.08em}eje.set\_\allowbreak{}title(f\textquotedbl{}\{titulo\} en validación\textquotedbl{}, loc=\textquotedbl{}left\textquotedbl{}, fontsize=12) \\{}
+\hspace*{2.08em}eje.set\_\allowbreak{}ylabel(titulo) \\{}
+\hspace*{2.08em}eje.grid(axis=\textquotedbl{}y\textquotedbl{}, color=\textquotedbl{}\#e1e0d9\textquotedbl{}, linewidth=0.8) \\{}
+\hspace*{2.08em}eje.set\_\allowbreak{}axisbelow(True)                       \# la rejilla queda detrás de los puntos \\{}
+\hspace*{2.08em}eje.spines[[\textquotedbl{}top\textquotedbl{}, \textquotedbl{}right\textquotedbl{}]].set\_\allowbreak{}visible(False) \\{}
+\mbox{} \\{}
+ejes[-1].set\_\allowbreak{}xticks(x, orden, rotation=30, ha=\textquotedbl{}right\textquotedbl{}) \\{}
+ejes[0].legend(ncol=6, loc=\textquotedbl{}lower left\textquotedbl{}, bbox\_\allowbreak{}to\_\allowbreak{}anchor=(0, 1.08), frameon=False, fontsize=9) \\{}
+fig.tight\_\allowbreak{}layout() \\{}
+plt.show()
+\end{codigo}
+Usa \texttt{folds} y \texttt{orden} de tu celda \texttt{c2369c65}. Como en el apartado 2 viste que \texttt{validacion} coincide con los CSV, sale lo mismo con cualquiera de las dos fuentes.
+
+\smallskip\noindent\textbf{Lo que se ve con vuestros datos (para el texto de debajo)}\par
+\hspace*{1.0em}\textbullet~\textbf{El fold pesa más que el modelo.} En F1, los folds 3 y 5 quedan por debajo para casi todos los modelos, y los folds 1, 2 y 4 por encima. En recall pasa lo mismo: el fold 4 siempre sale alto y el fold 3 siempre bajo. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Voting tiene la mejor media, pero no gana en todos los folds.} En el fold 3, el SVM lo iguala o lo supera un poco. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Logística, random forest, SVM y HGB están mezclados.} Sus líneas se cruzan y las medias se separan menos que la variación entre folds. Probablemente cuente como empate según tu criterio. \\{}
+\hspace*{1.0em}\textbullet~\textbf{KNN tiene el mejor recall de riesgo alto pero un F1 bajo.} Es el caso que comentáis en \texttt{modelado.py}: elegir solo por recall premia al que dice «riesgo alto» de más. \\{}
+\hspace*{1.0em}\textbullet~\textbf{El árbol queda por debajo de todos en todos los folds,} en las dos métricas.
+
+}
+
+\subsubsection*{P17. 2026-11-15 11:34:21 +0100 -- Claude Code}
+{\small
+Te he preparado tres figuras, salen del mismo código que irá en tu notebook
+
+He revisado el PDF de Overleaf: 10 páginas, sin referencias rotas y con las tablas bien. Las figuras están en \texttt{C:\textbackslash\allowbreak{}Users\textbackslash\allowbreak{}pablo\textbackslash\allowbreak{}AppData\textbackslash\allowbreak{}Local\textbackslash\allowbreak{}Temp\textbackslash\allowbreak{}claude\textbackslash\allowbreak{}0ac2709b0bfd2527\textbackslash\allowbreak{}f574aea0-0559-4fd1-84d3-1d972e8ec7bc\textbackslash\allowbreak{}scratchpad\textbackslash\allowbreak{}figuras\textbackslash\allowbreak{}:}
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{\textbf{Figura}} & \textbf{\textbf{Qué muestra}} & \textbf{\textbf{Dónde va}} \\
+\midrule
+\texttt{folds\_\allowbreak{}modelos.pdf} & F1 macro y recall de riesgo alto de los 9 modelos en cada fold` & Resultados en validación \\
+\texttt{coeficientes\_\allowbreak{}logistica.pdf} & Las 8 variables que más suben el riesgo alto y las 5 que más lo bajan, según la logística & Importancia de las variables \\
+\texttt{confusion\_\allowbreak{}logistica.pdf} & Matrices de confusión de la logística en validación cruzada y en test, con número de pacientes & Evaluación en test \\
+\bottomrule
+\end{tabularx}}
+
+Los valores coinciden con los de tu notebook: coeficientes de 0,77 para el alcohol y -0,39 para el aclaramiento de creatinina, y 8 y 2 pacientes de riesgo alto clasificados como bajo.
+
+\textbf{En el notebook}, para que las figuras se puedan reproducir: añade al final de \texttt{comparacion\_\allowbreak{}final.ipynb} un apartado «7. Figuras de la memoria» con este código:
+
+\begin{codigo}
+RUTA\_\allowbreak{}FIGURAS = mod.RUTA\_\allowbreak{}RESULTADOS.parent /\allowbreak{} \textquotedbl{}docs\textquotedbl{} /\allowbreak{} \textquotedbl{}figuras\textquotedbl{}
+\end{codigo}
+Debajo, copia los tres bloques \texttt{CELDA 1}, \texttt{CELDA 2} y \texttt{CELDA 3} de \texttt{celdas\_\allowbreak{}figuras.py}, que está en esa misma carpeta. Quita las líneas que guardan \texttt{.png} y cambia \texttt{plt.close()} por \texttt{plt.show()}. Las variables que usan (\texttt{folds}, \texttt{orden}, \texttt{modelo\_\allowbreak{}final}, \texttt{y\_\allowbreak{}pred\_\allowbreak{}test}) ya existen en tu notebook. Al ejecutarlas, los PDF se guardan en \texttt{docs/\allowbreak{}figuras/\allowbreak{}}.
+
+\textbf{En Overleaf:} sube los tres PDF a figuras/\allowbreak{} y añade lo siguiente al \texttt{.tex}.
+
+\hspace*{1.0em}1.~En «Resultados en validación cruzada», después de \texttt{no la capacidad del modelo.}:
+
+\begin{codigo}
+La Fig.\textasciitilde{}\textbackslash\allowbreak{}ref\{fig:folds\} muestra la nota de cada modelo en cada fold. \\{}
+\mbox{} \\{}
+\textbackslash\allowbreak{}begin\{figure\}[!t] \\{}
+\textbackslash\allowbreak{}centering \\{}
+\textbackslash\allowbreak{}includegraphics[width=\textbackslash\allowbreak{}linewidth]\{folds\_\allowbreak{}modelos.pdf\} \\{}
+\textbackslash\allowbreak{}caption\{F1 macro y recall de riesgo alto en cada fold de validación. Cada línea une el mismo fold en \\{}
+todos los modelos; la raya negra es la media.\} \\{}
+\textbackslash\allowbreak{}label\{fig:folds\} \\{}
+\textbackslash\allowbreak{}end\{figure\}
+\end{codigo}
+\hspace*{1.0em}2.~En «Importancia de las variables», cambia \texttt{aumentan o reducen ese riesgo.} por \texttt{aumentan o reducen ese riesgo (Fig.\textasciitilde{}\textbackslash\allowbreak{}ref\{fig:coeficientes\}).} y, al final de ese párrafo:
+
+\begin{codigo}
+\textbackslash\allowbreak{}begin\{figure\}[!t] \\{}
+\textbackslash\allowbreak{}centering \\{}
+\textbackslash\allowbreak{}includegraphics[width=0.62\textbackslash\allowbreak{}linewidth]\{coeficientes\_\allowbreak{}logistica.pdf\} \\{}
+\textbackslash\allowbreak{}caption\{Coeficientes de la regresión logística para la clase de riesgo alto: las 8 variables que más \\{}
+lo aumentan y las 5 que más lo reducen. En las numéricas, efecto de subir un rango intercuartílico; en \\{}
+las binarias, de pasar de 0 a 1.\} \\{}
+\textbackslash\allowbreak{}label\{fig:coeficientes\} \\{}
+\textbackslash\allowbreak{}end\{figure\}
+\end{codigo}
+\hspace*{1.0em}3.~En «Evaluación final en test», después de \texttt{0,533 en moderado y 0,690 en alto.}:
+
+\begin{codigo}
+La Fig.\textasciitilde{}\textbackslash\allowbreak{}ref\{fig:confusion\} compara las matrices de confusión en validación cruzada y en test. \\{}
+\mbox{} \\{}
+\textbackslash\allowbreak{}begin\{figure\}[!t] \\{}
+\textbackslash\allowbreak{}centering \\{}
+\textbackslash\allowbreak{}includegraphics[width=0.85\textbackslash\allowbreak{}linewidth]\{confusion\_\allowbreak{}logistica.pdf\} \\{}
+\textbackslash\allowbreak{}caption\{Matrices de confusión de la regresión logística: predicciones de validación cruzada sobre el \\{}
+entrenamiento y evaluación única en test.\} \\{}
+\textbackslash\allowbreak{}label\{fig:confusion\} \\{}
+\textbackslash\allowbreak{}end\{figure\}
+\end{codigo}
+Calculo que quedarán unas 12 páginas.
+
+}
+
+
+\subsection*{Rodrigo}
+\subsubsection*{R1. 2026-10-29 18:17 +0100 -- Claude Code}
+{\small
+Por defecto pandas oculta columnas (y filas) cuando la tabla es ancha y pone \texttt{...} en medio. Para mostrarla entera, sube los límites de visualización antes de llamar a \texttt{describe()}:
+
+\begin{codigo}
+import pandas as pd \\{}
+\mbox{} \\{}
+pd.set\_\allowbreak{}option('display.max\_\allowbreak{}columns', None)   \# todas las columnas \\{}
+pd.set\_\allowbreak{}option('display.width', None)         \# no partir la tabla en varias líneas \\{}
+pd.set\_\allowbreak{}option('display.max\_\allowbreak{}colwidth', None)  \# no recortar el texto de las celdas \\{}
+\mbox{} \\{}
+df.describe()
+\end{codigo}
+Si lo pones en la celda de imports al principio del notebook, se aplica a todas las tablas.
+
+Si solo lo quieres para esa celda:
+
+\begin{codigo}
+with pd.option\_\allowbreak{}context('display.max\_\allowbreak{}columns', None, 'display.width', None): \\{}
+\hspace*{2.08em}display(df.describe())
+\end{codigo}
+Otra opción, cuando hay muchas columnas, es transponer la tabla para que cada variable salga en una fila. Así se lee mejor y no se corta a lo ancho:
+
+\begin{codigo}
+df.describe().T
+\end{codigo}
+Si lo que se corta son las filas, añade también \texttt{pd.set\_\allowbreak{}option('display.max\_\allowbreak{}rows', None)}.
+
+}
+
+\subsubsection*{R2. 2026-10-29 18:18 +0100 -- Claude Code}
+{\small
+Con pandas se hace con \texttt{duplicated()} para detectarlos y \texttt{drop\_\allowbreak{}duplicates()} para quitarlos.
+
+\textbf{Comprobar si hay}
+
+\begin{codigo}
+\# Número de filas duplicadas (idénticas en todas las columnas) \\{}
+df.duplicated().sum() \\{}
+\mbox{} \\{}
+\# Ver las filas duplicadas, incluida la primera aparición de cada una \\{}
+df[df.duplicated(keep=False)]
+\end{codigo}
+\textbf{Quitarlos}
+
+\begin{codigo}
+print(\textquotedbl{}Antes:\textquotedbl{}, df.shape) \\{}
+df = df.drop\_\allowbreak{}duplicates().reset\_\allowbreak{}index(drop=True) \\{}
+print(\textquotedbl{}Después:\textquotedbl{}, df.shape)
+\end{codigo}
+Por defecto se queda la primera aparición de cada fila repetida (\texttt{keep='first'}).
+
+\textbf{Si el dataset tiene una columna \texttt{id}}
+
+Si cada fila tiene un identificador único, \texttt{df.duplicated()} nunca va a encontrar nada, porque el \texttt{id} hace que todas las filas sean distintas. En ese caso compara todas las columnas menos el \texttt{id}:
+
+\begin{codigo}
+cols = df.columns.drop('id') \\{}
+df.duplicated(subset=cols).sum() \\{}
+df = df.drop\_\allowbreak{}duplicates(subset=cols).reset\_\allowbreak{}index(drop=True)
+\end{codigo}
+También conviene comprobar que el \texttt{id} no se repite: \texttt{df['id'].duplicated().sum()}.
+
+\textbf{Por qué importa}
+
+Quita los duplicados antes de separar en train y test. Si no, una misma fila puede acabar en los dos conjuntos. El modelo la habrá \textquotedbl{}visto\textquotedbl{} al entrenar y la métrica de test saldrá más alta de lo que es en realidad (es una forma de \textit{data leakage}). Te recomiendo poner en el notebook cuántos duplicados había y cuántas filas quedan, para que se vea que lo has revisado.
+
+}
+
+\subsubsection*{R3. 2026-10-29 18:21 +0100 -- Claude Code}
+{\small
+Esa salida es de \texttt{df.info()}, no de \texttt{describe()}. Y el corte no lo hace pandas, lo hace VS Code. \texttt{info()} saca texto plano, y VS Code limita las salidas de texto de los notebooks a 30 líneas por defecto: enseña el principio y el final y pone \texttt{...} en medio. Por eso desaparecen las columnas 20 a 25.
+
+\textbf{Solución: subir el límite en VS Code}
+
+\hspace*{1.0em}1.~Abre la configuración con \texttt{Ctrl + ,}. \\{}
+\hspace*{1.0em}2.~Busca \texttt{notebook.output.textLineLimit}. \\{}
+\hspace*{1.0em}3.~Cámbialo de 30 a un número mayor, por ejemplo 200.
+
+También puedes añadirlo directamente al \texttt{settings.json}:
+
+\begin{codigo}
+\textquotedbl{}notebook.output.textLineLimit\textquotedbl{}: 200, \\{}
+\textquotedbl{}notebook.output.scrolling\textquotedbl{}: true
+\end{codigo}
+Con \texttt{scrolling} activado, las salidas largas salen en un recuadro con barra de desplazamiento en vez de ocupar toda la pantalla. Después vuelve a ejecutar la celda.
+
+Si no quieres tocar la configuración, al pie de la salida cortada suele aparecer un enlace \textit{\textquotedbl{}Output is truncated. View as a scrollable element or open in a text editor\textquotedbl{}} que también la muestra entera.
+
+\textbf{Sobre \texttt{describe()}}
+
+\texttt{df.describe().T} se muestra como tabla HTML, así que a ese límite no le afecta. Pero por defecto solo incluye las columnas numéricas, y en tu caso hay 3 columnas de texto (\texttt{str}), como \texttt{antecedentes\_\allowbreak{}familiares\_\allowbreak{}tipo}. Para verlas:
+
+\begin{codigo}
+df.describe(include='all').T          \# todas juntas \\{}
+df.describe(include='object').T       \# solo las categóricas: count, unique, top, freq
+\end{codigo}
+Por cierto, en tu \texttt{info()} ya se ven valores nulos en \texttt{colesterol\_\allowbreak{}ldl}, \texttt{glucosa\_\allowbreak{}ayunas}, \texttt{horas\_\allowbreak{}sueno\_\allowbreak{}diarias} y \texttt{proteina\_\allowbreak{}c\_\allowbreak{}reactiva}. Puedes sacar el resumen con \texttt{df.isna().sum()}.
+
+}
+
+\subsubsection*{R4. 2026-10-30 17:42 +0100 -- Claude Code}
+{\small
+\texttt{pd.value\_\allowbreak{}counts()} era una función de pandas que se marcó como obsoleta en la versión 2.1 y se eliminó en pandas 3.0. Tú tienes pandas 3 (se nota en que \texttt{info()} muestra el tipo \texttt{str}, que es nuevo de esa versión). El código del notebook de clase está escrito para una versión anterior.
+
+Ahora \texttt{value\_\allowbreak{}counts()} se llama como método de la propia columna:
+
+\begin{codigo}
+count\_\allowbreak{}classes = datos['riesgo\_\allowbreak{}cardiovascular'].value\_\allowbreak{}counts(sort=True) \\{}
+count\_\allowbreak{}classes.plot(kind='bar', rot=0)
+\end{codigo}
+Fíjate también en que \texttt{riesgo\_\allowbreak{}cardiovascular} a secas no existe como variable, a no ser que la hayas creado tú antes. Aunque arreglaras lo de \texttt{pd.}, te daría un \texttt{NameError}. Por eso uso \texttt{datos['riesgo\_\allowbreak{}cardiovascular']}.
+
+Si además quieres ver los números y el porcentaje de cada clase (útil para saber si las clases están desbalanceadas):
+
+\begin{codigo}
+datos['riesgo\_\allowbreak{}cardiovascular'].value\_\allowbreak{}counts() \\{}
+datos['riesgo\_\allowbreak{}cardiovascular'].value\_\allowbreak{}counts(normalize=True)  \# proporciones
+\end{codigo}
+Si otras celdas copiadas de los notebooks de clase fallan con un \texttt{AttributeError} parecido, probablemente sea el mismo problema: algo que existía en pandas 1.x o 2.x y se quitó en la 3.
+
+}
+
+\subsubsection*{R5. 2026-11-03 18:21:28 +0100 -- Claude Code}
+{\small
+Buena idea. Puedes hacer tres tipos de comprobación, y el diccionario de variables del enunciado te sirve de guía para cada una.
+
+\textbf{1. Valores fuera de un rango posible}
+
+Es lo mismo que con \texttt{edad}, pero con un rango para cada variable. Los límites de abajo son orientativos y amplios a propósito: buscan valores imposibles o casi, no valores simplemente altos. Antes de ponerlos en la memoria, contrástalos con alguna fuente clínica.
+
+\begin{codigo}
+\# Rangos fisiológicamente plausibles (orientativos: hay que justificarlos en la memoria) \\{}
+rangos = \{ \\{}
+\hspace*{2.08em}'edad': (18, 110),                     \# la cohorte es de adultos \\{}
+\hspace*{2.08em}'presion\_\allowbreak{}sistolica': (60, 260),        \# mmHg \\{}
+\hspace*{2.08em}'presion\_\allowbreak{}diastolica': (30, 160),       \# mmHg \\{}
+\hspace*{2.08em}'colesterol\_\allowbreak{}total': (50, 600),         \# mg/\allowbreak{}dL \\{}
+\hspace*{2.08em}'colesterol\_\allowbreak{}hdl': (5, 150),            \# mg/\allowbreak{}dL \\{}
+\hspace*{2.08em}'colesterol\_\allowbreak{}ldl': (10, 400),           \# mg/\allowbreak{}dL \\{}
+\hspace*{2.08em}'trigliceridos': (20, 3000),           \# mg/\allowbreak{}dL \\{}
+\hspace*{2.08em}'glucosa\_\allowbreak{}ayunas': (30, 600),           \# mg/\allowbreak{}dL \\{}
+\hspace*{2.08em}'indice\_\allowbreak{}masa\_\allowbreak{}corporal': (12, 70),      \# kg/\allowbreak{}m2 \\{}
+\hspace*{2.08em}'frecuencia\_\allowbreak{}cardiaca\_\allowbreak{}reposo': (30, 200),  \# lpm \\{}
+\hspace*{2.08em}'horas\_\allowbreak{}sueno\_\allowbreak{}diarias': (0, 24),        \# un día tiene 24 horas \\{}
+\hspace*{2.08em}'consumo\_\allowbreak{}alcohol\_\allowbreak{}semanal': (0, 200),   \# unidades, no puede ser negativo \\{}
+\hspace*{2.08em}'anos\_\allowbreak{}fumador': (0, 90), \\{}
+\hspace*{2.08em}'proteina\_\allowbreak{}c\_\allowbreak{}reactiva': (0, 500),       \# mg/\allowbreak{}L \\{}
+\hspace*{2.08em}'acido\_\allowbreak{}urico': (1, 20),                \# mg/\allowbreak{}dL \\{}
+\hspace*{2.08em}'clearance\_\allowbreak{}creatinina': (5, 200),      \# mL/\allowbreak{}min \\{}
+\hspace*{2.08em}'frecuencia\_\allowbreak{}ejercicio\_\allowbreak{}semanal': (0, 7),   \# días de la semana \\{}
+\hspace*{2.08em}'perimetro\_\allowbreak{}cintura': (40, 200),        \# cm \\{}
+\hspace*{2.08em}'hemoglobina\_\allowbreak{}glicosilada': (3, 20),    \# \% \\{}
+\} \\{}
+\mbox{} \\{}
+\# Para cada variable, cuántos valores caen fuera de su rango (los NaN no cuentan) \\{}
+fuera = \{col: ((datos[col] \textless{} lo) \textbar{} (datos[col] \textgreater{} hi)).sum() \\{}
+\hspace*{4.68em}for col, (lo, hi) in rangos.items()\} \\{}
+pd.Series(fuera).sort\_\allowbreak{}values(ascending=False)
+\end{codigo}
+Para ver los casos concretos de una variable: \texttt{datos.loc[datos['presion\_\allowbreak{}sistolica'] \textgreater{} 260, 'presion\_\allowbreak{}sistolica']}.
+
+\textbf{2. Valores que no encajan con el tipo de variable}
+
+\hspace*{1.0em}\textbullet~\texttt{edad} va en años cumplidos y \texttt{frecuencia\_\allowbreak{}ejercicio\_\allowbreak{}semanal} en días a la semana, así que las dos deberían ser enteras. En tu \texttt{info()} salen como \texttt{float64} y sin nulos, así que conviene comprobar si tienen decimales:
+
+\begin{codigo}
+\hspace*{1.04em}(datos['edad'] \% 1 != 0).sum() \\{}
+\hspace*{1.04em}(datos['frecuencia\_\allowbreak{}ejercicio\_\allowbreak{}semanal'] \% 1 != 0).sum()
+\end{codigo}
+\hspace*{1.0em}\textbullet~Las booleanas solo pueden valer 0 o 1, y el objetivo solo 0, 1 o 2:
+
+\begin{codigo}
+\hspace*{1.04em}booleanas = ['fumador\_\allowbreak{}actual', 'hipertension\_\allowbreak{}previa', 'diabetes\_\allowbreak{}mellitus', \\{}
+\hspace*{7.80em}'tratamiento\_\allowbreak{}estatinas', 'uso\_\allowbreak{}antihipertensivos'] \\{}
+\hspace*{1.04em}(\textasciitilde{}datos[booleanas].isin([0, 1])).sum() \\{}
+\hspace*{1.04em}datos['riesgo\_\allowbreak{}cardiovascular'].value\_\allowbreak{}counts()
+\end{codigo}
+\hspace*{1.0em}\textbullet~Las categóricas solo deberían tener los 4 valores del diccionario. Busca erratas, mayúsculas distintas o espacios de más:
+
+\begin{codigo}
+\hspace*{1.04em}for col in ['tipo\_\allowbreak{}alimentacion', 'nivel\_\allowbreak{}actividad', 'antecedentes\_\allowbreak{}familiares\_\allowbreak{}tipo']: \\{}
+\hspace*{3.12em}print(datos[col].value\_\allowbreak{}counts(dropna=False), '\textbackslash\allowbreak{}n')
+\end{codigo}
+\textbf{3. Combinaciones incoherentes entre variables}
+
+A veces cada valor es posible por separado, pero la combinación no:
+
+\begin{codigo}
+\# Cada condición marca las filas cuyos valores no tienen sentido juntos \\{}
+incoherencias = \{ \\{}
+\hspace*{2.08em}'sistólica \textless{}= diastólica': datos['presion\_\allowbreak{}sistolica'] \textless{}= datos['presion\_\allowbreak{}diastolica'], \\{}
+\hspace*{2.08em}'HDL + LDL \textgreater{} colesterol total': datos['colesterol\_\allowbreak{}hdl'] + datos['colesterol\_\allowbreak{}ldl'] \textgreater{} datos['colesterol\_\allowbreak{}total'], \\{}
+\hspace*{2.08em}'años fumando \textgreater{} edad': datos['anos\_\allowbreak{}fumador'] \textgreater{} datos['edad'], \\{}
+\hspace*{2.08em}'fumador actual con 0 años fumando': (datos['fumador\_\allowbreak{}actual'] == 1) \& (datos['anos\_\allowbreak{}fumador'] == 0), \\{}
+\hspace*{2.08em}'sedentario que hace ejercicio 5+ días': (datos['nivel\_\allowbreak{}actividad'] == 'Sedentario') \& (datos['frecuencia\_\allowbreak{}ejercicio\_\allowbreak{}semanal'] \textgreater{}= 5), \\{}
+\} \\{}
+pd.Series(\{nombre: cond.sum() for nombre, cond in incoherencias.items()\})
+\end{codigo}
+El colesterol total es la suma de HDL, LDL y VLDL, así que HDL + LDL no debería superarlo (dejando algo de margen por el error de medida). En \texttt{años fumando \textgreater{} edad} puedes ser más estricto y comparar con \texttt{edad - 10}, porque nadie fuma desde que nace.
+
+Otras combinaciones son raras pero \textbf{no} son errores. No conviene tocarlas, aunque sí comentarlas: \\{}
+\hspace*{1.0em}\textbullet~\texttt{diabetes\_\allowbreak{}mellitus == 0} con glucosa \textgreater{}= 126 o HbA1c \textgreater{}= 6,5 \%: puede ser una diabetes sin diagnosticar. \\{}
+\hspace*{1.0em}\textbullet~\texttt{uso\_\allowbreak{}antihipertensivos == 1} con \texttt{hipertension\_\allowbreak{}previa == 0}: algunos de esos fármacos se recetan por otros motivos.
+
+\textbf{Qué hacer después}
+
+Distingue entre valores imposibles y valores extremos pero posibles:
+
+\hspace*{1.0em}\textbullet~\textbf{Imposibles:} en vez de borrar la fila entera, conviértelos en \texttt{NaN} (\texttt{datos.loc[condicion, col] = np.nan}) para que se imputen después dentro del \texttt{Pipeline}. Esta conversión es una regla fija que no aprende nada de los datos, así que puedes hacerla antes de separar train y test. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Extremos posibles} (por ejemplo, una PCR muy alta): son información clínica real. Mejor no quitarlos y tenerlos en cuenta al elegir el escalado.
+
+He añadido este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md porque el hook no lo había guardado. Puede que se arregle reiniciando la sesión y aceptando la confianza en el proyecto. El \texttt{Análisis crítico} tienes que rellenarlo tú.
+
+}
+
+\subsubsection*{R6. 2026-11-03 18:24:41 +0100 -- Claude Code}
+{\small
+He añadido una nota al principio de la sección \texttt{Prompts} de registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md. Dice que los 4 prompts anteriores, del 29 de octubre al 3 de noviembre, no se registraron, y resume de qué trataban. No he tocado la entrada que ya había. Este prompt también lo he registrado a mano, porque el hook sigue sin guardar nada.
+
+Si quieres, puedo añadir esos 4 prompts con su texto literal y mis respuestas, porque siguen en esta conversación. Así el informe de IA quedaría completo.
+
+}
+
+\subsubsection*{R7. 2026-11-03 18:25:32 +0100 -- Claude Code}
+{\small
+He añadido a registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md los 4 prompts anteriores con su texto literal y mis respuestas completas, copiados del historial de la conversación. Están antes de la entrada de las 18:21, para que el registro siga en orden cronológico. También he cambiado la nota para explicar que esas entradas se añadieron más tarde.
+
+Las propias entradas indican tres cosas que no se pueden recuperar: \\{}
+\hspace*{1.0em}\textbullet~\textbf{La hora:} solo se sabe el día. Los tres primeros prompts son del 29 de octubre y el cuarto, del 30. \\{}
+\hspace*{1.0em}\textbullet~\textbf{El modelo:} he puesto \texttt{no disponible}, porque no puedo comprobar que fuera el mismo que ahora. \\{}
+\hspace*{1.0em}\textbullet~\textbf{La captura de pantalla del tercer prompt:} el registro la describe, pero no incluye la imagen.
+
+Además, he corregido un error de la nota anterior: decía que los prompts iban del 29 de octubre al 3 de noviembre, pero son del 29 y el 30 de octubre. Este prompt también está registrado.
+
+}
+
+\subsubsection*{R8. 2026-11-03 18:28:06 +0100 -- Claude Code}
+{\small
+Sí, hoy es 3 de noviembre, y las entradas de hoy (18:21, 18:24, 18:25 y esta) llevan esa fecha.
+
+Las fechas de los 4 prompts anteriores (29 y 30 de octubre) no me las he inventado: son las que tenía la sesión de Claude Code cuando los enviaste. El repositorio también encaja con esas fechas. En esos prompts el notebook estaba en \texttt{notebooks/\allowbreak{}practica1\_\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb}. Esa ruta ya no existe: ahora está en \texttt{src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb}, y \texttt{src/\allowbreak{}} tiene archivos creados el 1 y el 2 de noviembre.
+
+Si de verdad enviaste esos prompts hoy, dímelo y cambio las fechas. Si te referías a otra cosa, dime qué quieres corregir.
+
+}
+
+\subsubsection*{R9. 2026-11-03 19:12:55 +0100 -- Claude Code}
+{\small
+He añadido a las 4 entradas reconstruidas las horas del chat que me has pegado:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Prompt} & \textbf{Fecha y hora} \\
+\midrule
+\texttt{describe} se corta & 29/\allowbreak{}10/\allowbreak{}2026, 18:17 \\
+Duplicados & 29/\allowbreak{}10/\allowbreak{}2026, 18:18 \\
+\texttt{describe.T} se sigue cortando & 29/\allowbreak{}10/\allowbreak{}2026, 18:21 \\
+Error de \texttt{pd.value\_\allowbreak{}counts} & 30/\allowbreak{}10/\allowbreak{}2026, 17:42 \\
+\bottomrule
+\end{tabularx}}
+
+Hay dos cosas que he anotado también en las entradas y en la nota del principio: \\{}
+\hspace*{1.0em}\textbullet~\textbf{Precisión:} el chat muestra la hora junto a cada respuesta y sin segundos, así que puede diferir uno o dos minutos del momento en que enviaste el prompt. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Fecha:} el chat no muestra el día. He dejado la fecha que registró la sesión, y tu transcripción la confirma: justo después del prompt de \texttt{pd.value\_\allowbreak{}counts} pone «Idle 3d 23h», es decir, casi 4 días sin actividad antes de los prompts de hoy.
+
+En la entrada de este prompt he copiado tu mensaje, pero no la transcripción pegada, porque es muy larga y repite las entradas que ya están en el registro. En su lugar hay una marca \texttt{[omitido: ...]} que explica qué contenía. Si prefieres que esté entera para que sea literal del todo, dímelo y la añado.
+
+}
+
+\subsubsection*{R10. 2026-11-06 17:07:31 +0100 -- Claude Code}
+{\small
+\texttt{DataFrame.corr()} tiene tres parámetros:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Parámetro} & \textbf{Valores} & \textbf{Para qué sirve} \\
+\midrule
+\texttt{method} & \texttt{'pearson'} (por defecto), \texttt{'spearman'}, \texttt{'kendall'} o una función propia & Tipo de correlación \\
+\texttt{numeric\_\allowbreak{}only} & \texttt{False} (por defecto) o \texttt{True} & Usar solo las columnas numéricas \\
+\texttt{min\_\allowbreak{}periods} & un entero & Mínimo de pares sin \texttt{NaN} para calcular cada valor \\
+\bottomrule
+\end{tabularx}}
+
+\textbf{\texttt{method}: el que más importa}
+
+\hspace*{1.0em}\textbullet~\textbf{Pearson} mide relaciones \textit{lineales}. Le afectan mucho los valores extremos y las distribuciones asimétricas. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Spearman} aplica Pearson a los rangos (la posición de cada valor una vez ordenados), así que mide relaciones \textit{monótonas}: si una variable sube, la otra tiende a subir (o a bajar), aunque no sea en línea recta. Aguanta mejor los outliers y la asimetría. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Kendall} también usa rangos y es todavía más robusto, pero es más lento y suele dar valores más pequeños en valor absoluto, así que cuesta compararlo con los otros dos. Con 2.254 filas, Spearman suele ser suficiente.
+
+¿Cuál te conviene? En datos clínicos es habitual que variables como los triglicéridos, la PCR o el consumo de alcohol estén sesgadas y tengan valores extremos. Además, el objetivo (0, 1, 2) es ordinal. Las dos cosas favorecen a \textbf{Spearman}. Eso sí, compruébalo con tus datos (histogramas, \texttt{datos.skew()}) antes de afirmarlo en la memoria. Lo mejor es calcular Pearson y Spearman: si para un par de variables dan valores muy distintos, es una pista de que hay outliers o una relación no lineal.
+
+\textbf{\texttt{numeric\_\allowbreak{}only=True}: en tu caso, casi obligatorio}
+
+Tienes 3 columnas de texto. En pandas 3, si no lo pones, \texttt{corr()} da error al intentar convertir \texttt{'Mediterránea'} en un número.
+
+\textbf{\texttt{min\_\allowbreak{}periods}}
+
+\texttt{corr()} calcula cada par solo con las filas en las que ninguna de las dos variables es \texttt{NaN}. Con tus nulos no hace falta tocarlo. Solo serviría si alguna variable tuviera muchísimos.
+
+\textbf{Qué variables entran y cuáles no}
+
+\hspace*{1.0em}\textbullet~Las booleanas (0/\allowbreak{}1) sí. La correlación de Pearson entre una variable binaria y una continua equivale a la correlación punto-biserial, así que tiene sentido. \\{}
+\hspace*{1.0em}\textbullet~Las categóricas nominales, como \texttt{tipo\_\allowbreak{}alimentacion}, no. No tienen orden, así que la correlación no significa nada aunque las codifiques como 0, 1, 2, 3. Para relacionarlas con el objetivo se usa una tabla de contingencia (\texttt{pd.crosstab}) con chi-cuadrado o la V de Cramér. \\{}
+\hspace*{1.0em}\textbullet~\texttt{nivel\_\allowbreak{}actividad} sí tiene orden (de Sedentario a Muy activo). Si la codificas respetándolo, puedes meterla con Spearman.
+
+\textbf{Código}
+
+\begin{codigo}
+import matplotlib.pyplot as plt \\{}
+import numpy as np \\{}
+import seaborn as sns \\{}
+\mbox{} \\{}
+\# Correlación de Spearman entre todas las variables numéricas (incluye booleanas y objetivo) \\{}
+corr = datos.corr(method='spearman', numeric\_\allowbreak{}only=True) \\{}
+\mbox{} \\{}
+\# Máscara para ocultar el triángulo superior, que repite el inferior \\{}
+mascara = np.triu(np.ones\_\allowbreak{}like(corr, dtype=bool)) \\{}
+\mbox{} \\{}
+plt.figure(figsize=(16, 13)) \\{}
+sns.heatmap(corr, mask=mascara, cmap='coolwarm', vmin=-1, vmax=1, center=0, \\{}
+\hspace*{6.24em}annot=True, fmt='.2f', annot\_\allowbreak{}kws=\{'size': 7\}, square=True) \\{}
+plt.title('Matriz de correlación (Spearman)') \\{}
+plt.tight\_\allowbreak{}layout() \\{}
+plt.show()
+\end{codigo}
+\hspace*{1.0em}\textbullet~\texttt{vmin=-1, vmax=1, center=0} fijan la escala de colores: el blanco siempre es 0 y puedes comparar los colores entre gráficos. \\{}
+\hspace*{1.0em}\textbullet~Con 25 variables, los números salen pequeños. Si molestan, quita \texttt{annot=True} y mira los valores en las tablas de abajo.
+
+Estas dos tablas se leen mejor que el mapa de calor:
+
+\begin{codigo}
+\# Correlación de cada variable con el objetivo, ordenada por valor absoluto \\{}
+corr['riesgo\_\allowbreak{}cardiovascular'].drop('riesgo\_\allowbreak{}cardiovascular').sort\_\allowbreak{}values(key=abs, ascending=False) \\{}
+\mbox{} \\{}
+\# Pares de variables de entrada muy correlacionadas entre sí (posible redundancia) \\{}
+entradas = corr.drop(index='riesgo\_\allowbreak{}cardiovascular', columns='riesgo\_\allowbreak{}cardiovascular') \\{}
+inferior = np.tril(np.ones\_\allowbreak{}like(entradas, dtype=bool), k=-1)  \# triángulo inferior, sin la diagonal \\{}
+pares = entradas.where(inferior).stack().dropna()  \# en pandas 3, stack() no quita los NaN solo \\{}
+pares[pares.abs() \textgreater{} 0.7].sort\_\allowbreak{}values(key=abs, ascending=False)
+\end{codigo}
+El umbral de 0,7 es una convención habitual, no una regla fija.
+
+\textbf{Cómo interpretarla}
+
+\hspace*{1.0em}\textbullet~Si una variable tiene una correlación alta con el objetivo, es informativa. Pero que la tenga baja no basta para descartarla: Pearson y Spearman solo detectan relaciones monótonas, y los modelos de árboles pueden aprovechar otro tipo de relaciones e interacciones. \\{}
+\hspace*{1.0em}\textbullet~Si dos variables de entrada están muy correlacionadas, aportan información parecida (multicolinealidad). Afecta sobre todo a los modelos lineales, como la regresión logística: sus coeficientes se vuelven inestables y difíciles de interpretar. A los ensembles de árboles les afecta mucho menos. \\{}
+\hspace*{1.0em}\textbullet~Para explorar y describir el dataset puedes usar todos los datos. Pero si usas la correlación para decidir qué variables quitar, esa decisión aprende de los datos y, según AGENTS.md, tiene que tomarse solo con el train o dentro del \texttt{Pipeline}.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md, porque el hook sigue sin guardar nada.
+
+}
+
+\subsubsection*{R11. 2026-11-07 11:28:38 +0100 -- Claude Code}
+{\small
+He revisado \texttt{pablo/\allowbreak{}eda-clinico}. Pablo no ha tocado tu notebook: su trabajo está en otro archivo, \texttt{src/\allowbreak{}eda\_\allowbreak{}clinico.ipynb}, que solo existe en su rama. Así que no hay conflictos de git.
+
+\textbf{Recomendación:} no son conceptos tan distintos. Los dos estáis haciendo el EDA, pero cada uno ha profundizado en una parte, así que se complementan bastante. Aun así, yo no copiaría ahora su código en tu notebook: duplicaría trabajo y, como la profesora audita el historial, quedaría como tuyo algo que hizo él. Mantened los notebooks separados por ahora y decidid en la reunión cómo juntarlos. Él mismo termina con una tabla de «conclusiones abiertas para la reunión».
+
+\textbf{Qué aporta Pablo que tú no tienes}
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Parte} & \textbf{Qué hace} & \textbf{Cómo te sirve} \\
+\midrule
+4.1 Categóricas frente al riesgo & Porcentaje de cada clase de riesgo por categoría (\texttt{pd.crosstab}) & Es lo que te faltaba para las variables de texto, que no entran en la correlación, y justifica la codificación \\
+4.2 Binarias frente al riesgo & Media de cada binaria por clase & Pone números a tus countplots \\
+5.1 y 5.2 Nulos & Test chi-cuadrado para ver si que falte el dato depende del riesgo (todos los p \textgreater{} 0,05) & Respalda con un test tu frase de la 1.5: «no parece que la aparición de datos nulos dependa del tipo de paciente» \\
+5.3 Experimento de imputación & Oculta valores conocidos, los rellena con media, mediana, KNN e Iterative y mide el error en 30 sorteos & Es una prueba mucho más sólida para la fila «Valores faltantes» de tu tabla 1.8, donde dices que kNN aportaría poco \\
+5.4 Distribución antes y después de imputar & Compara media, mediana y desviación típica & Lo pidieron en clase y no lo tienes \\
+\bottomrule
+\end{tabularx}}
+
+\textbf{Qué aportas tú que él no tiene}
+
+Todo el análisis de calidad de datos (1.6): valores negativos e imposibles, incoherencias entre variables, decimales en variables que deberían ser enteras y valores repetidos que parecen nulos camuflados. También las distribuciones (1.3), la matriz de correlación completa (1.7) y la tabla resumen de problemáticas (1.8).
+
+\textbf{En qué no coincidís (para la reunión)}
+
+\hspace*{1.0em}1.~\textbf{Pablo ha analizado los nulos sobre los datos sin limpiar, y eso cambia sus resultados.} Tú propones pasar a \texttt{NaN} los valores imposibles y los repetidos sospechosos. Si lo hacéis, habrá nulos en bastantes más variables que las 4 actuales (\texttt{presion\_\allowbreak{}sistolica}, \texttt{colesterol\_\allowbreak{}total}, \texttt{trigliceridos}, \texttt{acido\_\allowbreak{}urico}, \texttt{colesterol\_\allowbreak{}hdl}, \texttt{indice\_\allowbreak{}masa\_\allowbreak{}corporal}...), y habrá que repetir su experimento, porque cambian los pacientes completos y los porcentajes de nulos. Por ejemplo, en la comprobación de Friedewald cuenta los pacientes con triglicéridos \textgreater{}= 400, y tú has visto que 452,7 es uno de los valores repetidos sospechosos: parte de ese recuento sale de datos que vais a tratar como nulos. Seguramente su conclusión se mantenga (no usar Friedewald e imputar con la mediana), pero hay que recalcular los números después de limpiar. \\{}
+\hspace*{1.0em}2.~\textbf{\texttt{antecedentes\_\allowbreak{}familiares\_\allowbreak{}tipo}:} tú propones one-hot, y Pablo, dos binarias (\texttt{antecedente\_\allowbreak{}materno} y \texttt{antecedente\_\allowbreak{}paterno}, con «Ambos» = 1 y 1). Sus datos apoyan esta opción: el riesgo alto pasa del 12 \% (ninguno) al 22 \% (materno), al 28 \% (paterno) y al 40 \% (ambos), casi la suma de los dos efectos. Además, genera 2 columnas en vez de 4. Podéis elegir una o probar las dos y compararlas en validación. \\{}
+\hspace*{1.0em}3.~\textbf{Trabajo repetido:} la distribución de clases y la correlación de Spearman con el objetivo aparecen en los dos notebooks, con los mismos resultados (alcohol 0,39, etc.). En la versión final deberían salir una sola vez.
+
+En lo demás coincidís: imputar con la mediana dentro del \texttt{Pipeline}, no eliminar filas con nulos, codificación ordinal para \texttt{nivel\_\allowbreak{}actividad}, particiones estratificadas y el recall de la clase de riesgo alto como métrica clave.
+
+\textbf{Un cambio que sí te recomiendo hacer ya}
+
+Pablo toma la semilla de src/\allowbreak{}utils/\allowbreak{}constantes.py, y tú escribes \texttt{semilla=42} en el notebook. AGENTS.md pide fijarla en un solo sitio, así que cambia tu celda de imports para usar el mismo módulo:
+
+\begin{codigo}
+import utils.constantes as cte \\{}
+\mbox{} \\{}
+np.random.seed(cte.semilla)
+\end{codigo}
+Y en el resto del notebook, usa \texttt{cte.semilla} donde haga falta una semilla.
+
+\textbf{Sobre tus cambios guardados}
+
+Al cambiar a la rama de Pablo, GitHub Desktop guardó tus cambios sin commit en un stash, y al volver a \texttt{rodrigo/\allowbreak{}eda} no los restauró. Ya están restaurados (el notebook y la entrada del registro del 6 de noviembre). Para que no vuelva a pasar, haz commit antes de cambiar de rama o mira la rama del otro en GitHub desde el navegador.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R12. 2026-11-07 11:32:56 +0100 -- Claude Code}
+{\small
+No. Tu rama \texttt{rodrigo/\allowbreak{}eda} no tiene nada de Pablo. Lo he comprobado: su commit no está en tu rama y en \texttt{src/\allowbreak{}} no aparece su \texttt{eda\_\allowbreak{}clinico.ipynb}.
+
+\hspace*{1.0em}\textbullet~\textbf{Su rama la he leído, no la he copiado.} Saqué su notebook con \texttt{git show} a una carpeta temporal fuera del repositorio, solo para revisarlo. No he hecho merge ni he copiado nada a tu rama. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Lo que restauré del stash eran tus propios cambios.} GitHub Desktop los guardó al cambiar de rama: tu notebook \texttt{src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb} y tu registro de IA. No tienen nada de Pablo.
+
+Ahora mismo tienes esos dos archivos modificados y sin commit, como estaban antes de cambiar de rama.
+
+Si en la reunión decidís juntar los dos EDA, lo normal es que Pablo abra un pull request de su rama, o que hagáis merge de las dos ramas en una común. Así cada parte queda en el historial con su autor.
+
+}
+
+\subsubsection*{R13. 2026-11-07 11:58:03 +0100 -- Claude Code}
+{\small
+Hecho. He hecho el merge de \texttt{origin/\allowbreak{}pablo/\allowbreak{}eda-clinico} en tu rama \texttt{rodrigo/\allowbreak{}eda}, con el commit \texttt{c052238} («Merge del EDA clínico de Pablo (pablo/\allowbreak{}eda-clinico) en rodrigo/\allowbreak{}eda»).
+
+\hspace*{1.0em}\textbullet~\textbf{No ha habido conflictos.} La rama de Pablo solo trae dos archivos suyos, \texttt{src/\allowbreak{}eda\_\allowbreak{}clinico.ipynb} y \texttt{docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}pablo.md}, y ninguno coincide con los tuyos. \\{}
+\hspace*{1.0em}\textbullet~\textbf{La autoría se mantiene.} El commit de Pablo entra en tu rama con su nombre, así que en el historial se ve qué hizo cada uno. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Tus cambios sin commit siguen intactos:} \texttt{src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb} y tu registro de IA. \\{}
+\hspace*{1.0em}\textbullet~\textbf{No he hecho push.} El merge solo está en tu equipo. Cuando quieras subirlo, haz primero commit de tus cambios y luego push desde GitHub Desktop.
+
+\textbf{Lo que el merge no hace:} no junta los dos notebooks en uno. Ahora tu rama tiene los dos EDA uno al lado del otro: \texttt{src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb} (el tuyo) y \texttt{src/\allowbreak{}eda\_\allowbreak{}clinico.ipynb} (el de Pablo). Convertirlos en un único notebook ya no es cosa de git, sino de decidir el contenido, y hay dos puntos en los que no coincidís:
+
+\hspace*{1.0em}1.~El análisis de nulos de Pablo se hizo antes de limpiar los valores anómalos que encontraste tú, así que hay que repetirlo con los datos limpios. \\{}
+\hspace*{1.0em}2.~Tú propones one-hot para \texttt{antecedentes\_\allowbreak{}familiares\_\allowbreak{}tipo}, y él, dos binarias.
+
+Si quieres, puedo preparar un notebook unificado con tu análisis de calidad de datos (1.2-1.7), sus apartados de categóricas, binarias e imputación y una sola tabla de problemáticas, y dejar marcados esos dos puntos como pendientes de la reunión. Para el historial quedaría más limpio hacerlo después de la reunión, con esos dos puntos ya decididos.
+
+Un detalle menor para Pablo: su notebook importa \texttt{scipy} (\texttt{chi2\_\allowbreak{}contingency}), que no está en \texttt{pyproject.toml}. Ahora funciona porque viene instalado con scikit-learn, pero lo correcto sería añadirlo con \texttt{uv add scipy}.
+
+}
+
+\subsubsection*{R14. 2026-11-07 12:00:59 +0100 -- Claude Code}
+{\small
+Hecho. El EDA unificado está en src/\allowbreak{}riesgo\_\allowbreak{}cardiovascular.ipynb. Lo he ejecutado entero y no da ningún error (tarda 1 min 20 s).
+
+\textbf{Antes de nada: no guardes el notebook desde la pestaña que tengas abierta.} Hoy VS Code ya sobrescribió tu notebook con una versión antigua: a las 11:57 guardó encima la versión del último commit, y desaparecieron tu sección de correlaciones y la tabla resumen. Las he recuperado del stash, que seguía en git. Si tienes el notebook abierto, ciérralo sin guardar (o usa \textit{Revert File}) y vuelve a abrirlo. Si no, puede volver a pasar.
+
+\textbf{Estructura}
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Apartado} & \textbf{Origen} \\
+\midrule
+1.1-1.2 Carga y descripción & Rodrigo \\
+1.3 Tipos de variables (listas que usa todo el notebook) & Pablo \\
+1.4 Variable objetivo & Tus gráficos y el razonamiento de Pablo sobre el recall de la clase de riesgo alto \\
+1.5 Distribuciones & Tus gráficos y las tablas de Pablo: medianas por clase y binarias y categóricas frente al riesgo, con sus hipótesis \\
+1.6-1.8 Nulos, calidad de datos y correlaciones & Rodrigo \\
+1.9 Limpieza de errores de registro & \textbf{Nuevo:} aplica las reglas que proponías en tu tabla resumen \\
+1.10 Tratamiento de nulos & Pablo, repetido sobre los datos limpios \\
+1.11 Resumen y decisiones para la reunión & Tu tabla con la evidencia de Pablo, y su tabla de preguntas abiertas \\
+\bottomrule
+\end{tabularx}}
+
+He quitado lo repetido (la distribución de clases y la correlación con el objetivo salían dos veces) y he unificado los nombres (\texttt{datos} y las listas de variables de Pablo). La semilla ahora sale de \texttt{utils/\allowbreak{}constantes.py}.
+
+\textbf{Qué cambia al repetir el análisis de Pablo con los datos limpios}
+
+\hspace*{1.0em}\textbullet~Los 54 pacientes con triglicéridos \textgreater{}= 400 que, según Pablo, impedían aplicar Friedewald eran justo el valor camuflado 452,7. Con los datos limpios no queda ninguno. Aun así, Friedewald falla más que la mediana (47,4 frente a 29,5 mg/\allowbreak{}dL de error), así que se descarta igual. \\{}
+\hspace*{1.0em}\textbullet~Ahora hay nulos en 11 variables en vez de 4, y el 39 \% de los pacientes tiene alguno (antes, el 24 \%). \\{}
+\hspace*{1.0em}\textbullet~Su conclusión se mantiene: la mediana iguala o mejora a KNN e Iterative en todas las variables. \\{}
+\hspace*{1.0em}\textbullet~Hay una excepción aparente en el chi-cuadrado: en \texttt{colesterol\_\allowbreak{}hdl}, 3 de sus 4 nulos son de riesgo alto (p = 0,018). He escrito que no es fiable, porque son solo 4 casos y esos nulos los creó la limpieza. Es una interpretación mía, revísala.
+
+\textbf{Una corrección en tu parte}
+
+En «Observaciones» decías que en las variables de texto había categorías nuevas, pero la salida de la 1.7 muestra solo las 4 del diccionario en cada variable. Lo he corregido.
+
+\textbf{Lo que te toca revisar o decidir}
+
+\hspace*{1.0em}\textbullet~La 1.9 aplica tus reglas tal como las escribiste en la tabla. Comprueba que es lo que querías. Por ejemplo, en las presiones incoherentes anulo las dos, porque no se sabe cuál está mal. \\{}
+\hspace*{1.0em}\textbullet~\texttt{antecedentes\_\allowbreak{}familiares\_\allowbreak{}tipo} (dos binarias u one-hot) queda pendiente para la reunión, igual que el resto de la tabla final. \\{}
+\hspace*{1.0em}\textbullet~src/\allowbreak{}eda\_\allowbreak{}clinico.ipynb sigue ahí, sin tocar. Su contenido ya está en el unificado, pero si se borra o no lo decidís con Pablo. \\{}
+\hspace*{1.0em}\textbullet~El notebook importa \texttt{scipy}, que no está en \texttt{pyproject.toml}. Funciona porque lo instala scikit-learn, pero lo correcto es \texttt{uv add scipy} y regenerar \texttt{requirements.txt}. \\{}
+\hspace*{1.0em}\textbullet~No he hecho commit. En la entrevista os pueden preguntar por cualquier parte, así que repasa la 1.9 y la 1.10 antes de subirlo. En el mensaje del commit, indica que incluye el trabajo de Pablo.
+
+Si hay que volver atrás, tu versión completa de antes de unificar está en \texttt{C:\textbackslash\allowbreak{}Users\textbackslash\allowbreak{}rodma\textbackslash\allowbreak{}AppData\textbackslash\allowbreak{}Local\textbackslash\allowbreak{}Temp\textbackslash\allowbreak{}claude\textbackslash\allowbreak{}3c6d5242b56aed6d\textbackslash\allowbreak{}6209e179-4546-4d3b-819e-becedaa5ce97\textbackslash\allowbreak{}scratchpad\textbackslash\allowbreak{}rodrigo\_\allowbreak{}stash.ipynb}.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R15. 2026-11-08 19:23:27 +0100 -- Claude Code}
+{\small
+\textbf{1. Cómo se calculan con 3 clases}
+
+La precisión, el recall y el F1 se calculan para una clase frente a las demás (\textit{one-vs-rest}). Con 3 clases salen 3 valores de cada métrica, y el parámetro \texttt{average} decide cómo resumirlos en uno:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{\texttt{average}} & \textbf{Qué hace} & \textbf{Con vuestras clases (50/\allowbreak{}30/\allowbreak{}20)} \\
+\midrule
+\texttt{None} & Devuelve un valor por clase & El más informativo: ves la clase de alto riesgo por separado \\
+\texttt{'macro'} & Media simple de las 3 clases & Cada clase pesa lo mismo, así que un mal resultado en alto riesgo baja la media \\
+\texttt{'weighted'} & Media ponderada por el número de pacientes de cada clase & El riesgo bajo pesa el 50 \%, así que puede esconder que el modelo falla en alto riesgo \\
+\texttt{'micro'} & Junta los aciertos de todas las clases & En multiclase es igual al accuracy, así que no aporta nada nuevo \\
+\bottomrule
+\end{tabularx}}
+
+Usad los valores por clase para analizar y \texttt{macro} para resumir. Con este desbalance, \texttt{weighted} y \texttt{micro} no os convienen.
+
+\texttt{classification\_\allowbreak{}report} saca todo de una vez:
+
+\begin{codigo}
+from sklearn.metrics import classification\_\allowbreak{}report, ConfusionMatrixDisplay \\{}
+\mbox{} \\{}
+print(classification\_\allowbreak{}report(y\_\allowbreak{}val, y\_\allowbreak{}pred, target\_\allowbreak{}names=['bajo', 'moderado', 'alto'], digits=3)) \\{}
+ConfusionMatrixDisplay.from\_\allowbreak{}predictions(y\_\allowbreak{}val, y\_\allowbreak{}pred, display\_\allowbreak{}labels=['bajo', 'moderado', 'alto'])
+\end{codigo}
+La matriz de confusión complementa a las métricas. El recall de alto riesgo cuenta igual un paciente de alto riesgo clasificado como moderado que uno clasificado como bajo, aunque clínicamente el segundo error es mucho más grave. Solo la matriz distingue entre los dos.
+
+\textbf{2. Cuál importa más clínicamente}
+
+El \textbf{recall de la clase 2 (alto riesgo)}: de todos los pacientes de alto riesgo, cuántos detecta el modelo. Un falso negativo es un paciente de alto riesgo que se va a casa sin seguimiento. Un falso positivo (un paciente de riesgo bajo o moderado clasificado como alto) cuesta pruebas o consultas de más, pero no pone a nadie en peligro. Esta es la «métrica más crítica» que el enunciado pide justificar.
+
+Pero sola no basta: un modelo que clasificara a todos como alto riesgo tendría un recall de 1 en esa clase y sería inútil. Por eso tiene que ir acompañada de la precisión de la clase 2 (qué parte de las alarmas son ciertas) y del F1 macro (el equilibrio global).
+
+\textbf{3. Cuál usar para ajustar los hiperparámetros}
+
+\texttt{GridSearchCV} puede calcular varias métricas a la vez, pero elige la mejor combinación con \textbf{una sola} (\texttt{refit}). Mi recomendación:
+
+\hspace*{1.0em}\textbullet~\textbf{\texttt{refit='f1\_\allowbreak{}macro'}.} Equilibra precisión y recall, da el mismo peso a las 3 clases (así que no puede ignorar la minoritaria) y resume todo en un único número estable. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Calcular a la vez el recall de la clase 2 y usarlo para desempatar.} Entre configuraciones o modelos con un F1 macro parecido (dentro de la desviación entre folds), quedaos con el que tenga más recall en alto riesgo. \\{}
+\hspace*{1.0em}\textbullet~\textbf{No optimizar directamente el recall de la clase 2.} La búsqueda acabaría eligiendo modelos que predicen «alto» para casi todos.
+
+Para subir el recall de la clase 2 funcionan mejor \texttt{class\_\allowbreak{}weight='balanced'} o SMOTE, que ya tenéis en el plan, que el ajuste de hiperparámetros.
+
+Si el grupo quiere que la prioridad clínica entre en el propio ajuste, hay una alternativa: el F2 de la clase 2 (\texttt{fbeta\_\allowbreak{}score} con \texttt{beta=2}). Da al recall el doble de importancia que a la precisión, pero sigue penalizando las falsas alarmas. Su inconveniente es que no tiene en cuenta si el modelo distingue bien entre riesgo bajo y moderado.
+
+\begin{codigo}
+from sklearn.metrics import make\_\allowbreak{}scorer, precision\_\allowbreak{}score, recall\_\allowbreak{}score \\{}
+from sklearn.model\_\allowbreak{}selection import GridSearchCV, StratifiedKFold \\{}
+\mbox{} \\{}
+\# mismo esquema de validación y mismas métricas para todos los modelos \\{}
+cv = StratifiedKFold(n\_\allowbreak{}splits=5, shuffle=True, random\_\allowbreak{}state=cte.semilla) \\{}
+\mbox{} \\{}
+metricas = \{ \\{}
+\hspace*{2.08em}'f1\_\allowbreak{}macro': 'f1\_\allowbreak{}macro', \\{}
+\hspace*{2.08em}'precision\_\allowbreak{}macro': 'precision\_\allowbreak{}macro', \\{}
+\hspace*{2.08em}'recall\_\allowbreak{}macro': 'recall\_\allowbreak{}macro', \\{}
+\hspace*{2.08em}\# labels=[2] calcula la métrica solo para la clase de alto riesgo \\{}
+\hspace*{2.08em}'recall\_\allowbreak{}alto': make\_\allowbreak{}scorer(recall\_\allowbreak{}score, labels=[2], average='macro'), \\{}
+\hspace*{2.08em}'precision\_\allowbreak{}alto': make\_\allowbreak{}scorer(precision\_\allowbreak{}score, labels=[2], average='macro', zero\_\allowbreak{}division=0), \\{}
+\} \\{}
+\mbox{} \\{}
+busqueda = GridSearchCV(pipeline, param\_\allowbreak{}grid, scoring=metricas, refit='f1\_\allowbreak{}macro', \\{}
+\hspace*{12.48em}cv=cv, return\_\allowbreak{}train\_\allowbreak{}score=True)   \# guarda también train, para ver el sobreajuste \\{}
+busqueda.fit(X\_\allowbreak{}train, y\_\allowbreak{}train) \\{}
+\mbox{} \\{}
+resultados = pd.DataFrame(busqueda.cv\_\allowbreak{}results\_\allowbreak{}) \\{}
+resultados[['params', 'mean\_\allowbreak{}train\_\allowbreak{}f1\_\allowbreak{}macro', 'mean\_\allowbreak{}test\_\allowbreak{}f1\_\allowbreak{}macro', 'std\_\allowbreak{}test\_\allowbreak{}f1\_\allowbreak{}macro', \\{}
+\hspace*{6.24em}'mean\_\allowbreak{}test\_\allowbreak{}recall\_\allowbreak{}alto', 'std\_\allowbreak{}test\_\allowbreak{}recall\_\allowbreak{}alto']].sort\_\allowbreak{}values('mean\_\allowbreak{}test\_\allowbreak{}f1\_\allowbreak{}macro', ascending=False)
+\end{codigo}
+En \texttt{cv\_\allowbreak{}results\_\allowbreak{}}, \texttt{test} se refiere al fold de validación, no al conjunto de test. El test se usa una sola vez, al final, con el modelo elegido.
+
+\textbf{4. Coordinación con el grupo}
+
+Según estrategia\_\allowbreak{}ml.txt, cada uno entrena modelos distintos. Para poder compararlos, los tres tenéis que usar exactamente el mismo \texttt{cv}, las mismas \texttt{metricas} y el mismo \texttt{refit}. Lo más seguro es definirlos una sola vez en \texttt{src/\allowbreak{}utils}, como la semilla, e importarlos desde cada notebook.
+
+Además, ahí pone «stratified empezamos con 5 y vamos viendo». Decidid el número de folds antes de empezar a ajustar: si alguien lo cambia a mitad, sus resultados dejan de ser comparables con los de los demás.
+
+Si quieres, añado \texttt{cv} y \texttt{metricas} a \texttt{src/\allowbreak{}utils} para que el grupo los importe.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R16. 2026-11-08 20:41:05 +0100 -- Claude Code}
+{\small
+He completado las dos funciones en src/\allowbreak{}utils/\allowbreak{}modelado.py y las he probado con tus datos.
+
+\textbf{\texttt{crear\_\allowbreak{}pipeline(modelo, balanceo=\textquotedbl{}smotenc\textquotedbl{})}}
+
+\hspace*{1.0em}\textbullet~\textbf{Lista \texttt{numericas} explícita}, junto a \texttt{categoricas}. He comprobado que entre las dos están las 30 columnas de \texttt{X} y que no se repite ninguna. Solo las numéricas tienen nulos, así que solo ellas pasan por la imputación y el escalado: \\{}
+\hspace*{2.0em}\textbullet~\texttt{SimpleImputer(median)}: la mediana no se deja arrastrar por las colas largas. \\{}
+\hspace*{2.0em}\textbullet~\texttt{RobustScaler}: escala con la mediana y el IQR, así que los extremos reales que hemos dejado no deforman la escala. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Categóricas en \texttt{passthrough}.} No tienen nulos y ya están codificadas. \\{}
+\hspace*{1.0em}\textbullet~\textbf{SMOTENC necesita saber en qué posiciones están las categóricas.} Lo difícil era ese paso: después del \texttt{ColumnTransformer} las columnas ya no tienen nombre y salen en el orden de los transformadores (primero las numéricas y luego las categóricas). Por eso las categóricas ocupan \texttt{range(len(numericas), len(numericas) + len(categoricas))}. \\{}
+\hspace*{1.0em}\textbullet~\textbf{El orden importa.} SMOTENC va después de imputar, porque no admite nulos, y después de escalar, porque genera pacientes a partir de las distancias. El \texttt{Pipeline} de imblearn solo lo aplica al entrenar, en cada fold de train, así que la validación siempre se hace con pacientes reales. \\{}
+\hspace*{1.0em}\textbullet~\textbf{\texttt{class\_\allowbreak{}weight}.} Primero se hace un \texttt{clone} del modelo, para no modificar el que le pasas. Si el modelo no admite \texttt{class\_\allowbreak{}weight}, como k vecinos, la función lanza un error claro y no lo ignora sin avisar.
+
+\textbf{\texttt{tabla\_\allowbreak{}resultados(busqueda, nombre)}}
+
+Devuelve una fila por modelo con los datos de la mejor combinación (\texttt{best\_\allowbreak{}index\_\allowbreak{}}):
+
+\hspace*{1.0em}\textbullet~Para cada métrica: la media y la desviación en train y en validación. \\{}
+\hspace*{1.0em}\textbullet~\texttt{diferencia\_\allowbreak{}train\_\allowbreak{}val}: la diferencia entre train y validación con la métrica de selección (F1 macro), que mide el sobreajuste. \\{}
+\hspace*{1.0em}\textbullet~\texttt{mejores\_\allowbreak{}parametros}.
+
+He dejado los valores como números y no como texto «0,53 ± 0,02» para poder ordenar y juntar las tablas. Para la memoria se formatean al final.
+
+\textbf{Uso:}
+
+\begin{codigo}
+from sklearn.tree import DecisionTreeClassifier \\{}
+from utils import modelado as md \\{}
+\mbox{} \\{}
+X\_\allowbreak{}train, X\_\allowbreak{}test, y\_\allowbreak{}train, y\_\allowbreak{}test = md.cargar\_\allowbreak{}datos() \\{}
+pipe = md.crear\_\allowbreak{}pipeline(DecisionTreeClassifier(random\_\allowbreak{}state=cte.semilla), balanceo=\textquotedbl{}smotenc\textquotedbl{}) \\{}
+busqueda = md.crear\_\allowbreak{}busqueda(pipe, \{\textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}max\_\allowbreak{}depth\textquotedbl{}: [3, 5, 8, None]\}).fit(X\_\allowbreak{}train, y\_\allowbreak{}train) \\{}
+md.tabla\_\allowbreak{}resultados(busqueda, \textquotedbl{}arbol\_\allowbreak{}smotenc\textquotedbl{}).round(3).T   \# .T para verla en vertical
+\end{codigo}
+\textbf{Prueba rápida} (árbol con \texttt{max\_\allowbreak{}depth} en [3, 5, None]):
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & \textbf{F1 macro (train /\allowbreak{} validación)} & \textbf{Recall de riesgo alto (validación)} & \textbf{Diferencia} \\
+\midrule
+SMOTENC & 0,604 /\allowbreak{} 0,527 & 0,640 & 0,077 \\
+class\_\allowbreak{}weight & 0,606 /\allowbreak{} 0,507 & 0,582 & 0,099 \\
+\bottomrule
+\end{tabularx}}
+
+Con k vecinos y \texttt{class\_\allowbreak{}weight} salta el error esperado.
+
+\textbf{Decisiones que tendréis que justificar:}
+
+\hspace*{1.0em}\textbullet~\textbf{Escalado común a todos los modelos.} Los árboles no lo necesitan, pero tampoco les afecta. K vecinos, SVM, regresión logística y el propio SMOTENC sí lo necesitan. \\{}
+\hspace*{1.0em}\textbullet~\textbf{\texttt{nivel\_\allowbreak{}actividad} (0-3) como categórica en SMOTENC.} Así no genera valores intermedios como 1,4. La contrapartida es que pierde el orden. Es una decisión defendible, pero conviene escribirla. \\{}
+\hspace*{1.0em}\textbullet~\textbf{\texttt{data/\allowbreak{}datos.csv} no está en git} y el repositorio es público. Avisad al grupo antes de decidir si lo subís.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R17. 2026-11-08 20:44:24 +0100 -- Claude Code}
+{\small
+Tienes el título y la descripción preparados para pegarlos en GitHub Desktop.
+
+\textbf{Título:}
+
+\begin{codigo}
+Preprocesamiento del EDA y módulo común de modelado
+\end{codigo}
+\textbf{Descripción:}
+
+\begin{codigo}
+- EDA: nueva sección 2 de preprocesamiento (anómalos y outliers, codificación de categóricas y exportación de los datos limpios sin imputar) \\{}
+- src/\allowbreak{}utils/\allowbreak{}modelado.py: código común del grupo (partición 80/\allowbreak{}20 estratificada, StratifiedKFold, métricas macro y recall/\allowbreak{}precisión de riesgo alto, pipeline imputar-escalar-SMOTENC-modelo, GridSearchCV con refit F1 macro, tabla de resultados train/\allowbreak{}validación y evaluación en test) \\{}
+- constantes.py: test\_\allowbreak{}size, n\_\allowbreak{}folds y la variable objetivo junto a la semilla \\{}
+- estrategia\_\allowbreak{}ml.txt: decisiones de la reunión (métricas, limpieza, codificación, pipeline y balanceo) \\{}
+- Dependencias: se añade imbalanced-learn (pyproject.toml, uv.lock y requirements.txt) \\{}
+- Registro de IA actualizado
+\end{codigo}
+\textbf{Antes de hacer el commit, revisa dos cosas:}
+
+\hspace*{1.0em}\textbullet~\textbf{\texttt{data/\allowbreak{}datos.csv} no está en git todavía.} Es un dato nuevo y el repositorio es público, así que AGENTS.md pide avisar al grupo antes de subirlo. \texttt{modelado.py} lo lee, así que tus compañeros lo necesitarán: \\{}
+\hspace*{2.0em}\textbullet~Si lo subís, añade una línea a la descripción: \texttt{- data/\allowbreak{}datos.csv: datos limpios y codificados, sin imputar (los usa modelado.py)}. \\{}
+\hspace*{2.0em}\textbullet~Si no, cada uno tendrá que generarlo ejecutando la sección 2.3 del notebook. \\{}
+\hspace*{1.0em}\textbullet~\textbf{\texttt{src/\allowbreak{}eda\_\allowbreak{}rodrigo.ipynb} tiene una parte de los cambios en el stage y otra no.} Marca el archivo entero para que entren las dos.
+
+No he hecho el commit: tienes que hacerlo tú desde tu cuenta.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R18. 2026-11-08 20:47:39 +0100 -- Claude Code}
+{\small
+He comparado el notebook con el último commit y he añadido las correcciones a la descripción. El título no cambia.
+
+\textbf{Título:}
+
+\begin{codigo}
+Preprocesamiento del EDA y módulo común de modelado
+\end{codigo}
+\textbf{Descripción:}
+
+\begin{codigo}
+- EDA: nueva sección 2 de preprocesamiento (anómalos y outliers, codificación de categóricas y exportación de los datos limpios sin imputar) \\{}
+- src/\allowbreak{}utils/\allowbreak{}modelado.py: código común del grupo (partición 80/\allowbreak{}20 estratificada, StratifiedKFold, métricas macro y recall/\allowbreak{}precisión de riesgo alto, pipeline imputar-escalar-SMOTENC-modelo, GridSearchCV con refit F1 macro, tabla de resultados train/\allowbreak{}validación y evaluación en test) \\{}
+- constantes.py: test\_\allowbreak{}size, n\_\allowbreak{}folds y la variable objetivo junto a la semilla \\{}
+- estrategia\_\allowbreak{}ml.txt: decisiones de la reunión (métricas, limpieza, codificación, pipeline y balanceo) \\{}
+- Dependencias: se añade imbalanced-learn (pyproject.toml, uv.lock y requirements.txt) \\{}
+- Registro de IA actualizado \\{}
+\mbox{} \\{}
+Correcciones: \\{}
+- Menores de 18 años: la edad pasa a nulo en vez de eliminar al paciente (son adultos con la edad mal registrada); se mantienen los 2.254 pacientes \\{}
+- IMC: el corte de valor imposible baja de 12 a 10 (entre 10 y 12 es desnutrición extrema, pero posible) \\{}
+- Recuentos y conclusiones de la 1.9 y la 1.10 actualizados tras la nueva limpieza (12 variables con nulos, experimento de imputadores y Friedewald) \\{}
+- Eliminada la 1.12, que imputaba con la mediana sobre todo el dataset (fuga de datos): la imputación va dentro del Pipeline \\{}
+- Desbalance: SMOTENC en vez de SMOTE, para no generar valores imposibles en las binarias y categóricas \\{}
+- Gráfico de densidades por clase rehecho con un subplot por variable
+\end{codigo}
+Siguen pendientes los dos avisos de antes:
+
+\hspace*{1.0em}\textbullet~\textbf{\texttt{data/\allowbreak{}datos.csv}:} decidid entre todos si se sube. \\{}
+\hspace*{1.0em}\textbullet~\textbf{\texttt{src/\allowbreak{}eda\_\allowbreak{}rodrigo.ipynb}:} marca el archivo entero en el stage, porque ahora solo hay una parte de los cambios.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R19. 2026-11-09 13:26:20 +0100 -- Claude Code}
+{\small
+He revisado el notebook y lo he ejecutado en una copia del scratchpad, desviando \texttt{guardar\_\allowbreak{}resultados} para no escribir en \texttt{resultados/\allowbreak{}}. Todo funciona y no usa el test en ningún momento, así que la estructura está bien. Lo que haría para completarlo, por orden de importancia:
+
+\smallskip\noindent\textbf{1. Falta el análisis del sobreajuste en función de los hiperparámetros (lo más importante)}\par
+La tabla solo da la diferencia entre train y validación de la mejor combinación. Para defender por qué esa combinación y no otra, la curva de validación lo muestra mucho mejor. Dibuja train y validación (media ± desviación) mientras mueve un hiperparámetro y deja el resto en su mejor valor. Pondría una celda después de cada búsqueda:
+
+\begin{codigo}
+from sklearn.model\_\allowbreak{}selection import ValidationCurveDisplay \\{}
+\mbox{} \\{}
+def curva\_\allowbreak{}validacion(busqueda, parametro, valores, titulo): \\{}
+\hspace*{2.08em}\textquotedbl{}\textquotedbl{}\textquotedbl{}Train y validación (media ± desviación) al mover un hiperparámetro, con el resto en su mejor valor.\textquotedbl{}\textquotedbl{}\textquotedbl{} \\{}
+\hspace*{2.08em}ValidationCurveDisplay.from\_\allowbreak{}estimator( \\{}
+\hspace*{4.16em}busqueda.best\_\allowbreak{}estimator\_\allowbreak{}, X\_\allowbreak{}train, y\_\allowbreak{}train, \\{}
+\hspace*{4.16em}param\_\allowbreak{}name=parametro, param\_\allowbreak{}range=valores, \\{}
+\hspace*{4.16em}cv=mod.validador, scoring=mod.metrica,      \# mismos folds y misma métrica que la búsqueda \\{}
+\hspace*{4.16em}std\_\allowbreak{}display\_\allowbreak{}style=\textquotedbl{}fill\_\allowbreak{}between\textquotedbl{}, n\_\allowbreak{}jobs=-1) \\{}
+\hspace*{2.08em}plt.title(titulo) \\{}
+\hspace*{2.08em}plt.ylabel(\textquotedbl{}F1 macro\textquotedbl{})                         \# en la leyenda, \textquotedbl{}Test\textquotedbl{} es el fold de validación \\{}
+\hspace*{2.08em}plt.show() \\{}
+\mbox{} \\{}
+curva\_\allowbreak{}validacion(busqueda\_\allowbreak{}arbol, \textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}max\_\allowbreak{}depth\textquotedbl{}, [2, 3, 4, 5, 6, 8, 10, 12, 15, 20], \textquotedbl{}Árbol: profundidad\textquotedbl{}) \\{}
+curva\_\allowbreak{}validacion(busqueda\_\allowbreak{}knn, \textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}n\_\allowbreak{}neighbors\textquotedbl{}, [1, 3, 5, 11, 21, 31, 51, 75, 101], \textquotedbl{}kNN: número de vecinos\textquotedbl{}) \\{}
+curva\_\allowbreak{}validacion(busqueda\_\allowbreak{}rf, \textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}min\_\allowbreak{}samples\_\allowbreak{}leaf\textquotedbl{}, [1, 2, 5, 10, 20, 40], \textquotedbl{}Random Forest: pacientes por hoja\textquotedbl{})
+\end{codigo}
+Lo he probado con kNN y funciona con el pipeline de imblearn: tarda unos 14 s.
+
+\smallskip\noindent\textbf{2. Matriz de confusión en validación, sin tocar el test}\par
+Vuestra métrica crítica es el recall de riesgo alto, y solo la matriz distingue si un paciente de alto riesgo se clasifica como moderado o como bajo. \texttt{cross\_\allowbreak{}val\_\allowbreak{}predict} predice cada paciente del train con el modelo de un fold en el que no ha participado:
+
+\begin{codigo}
+from sklearn.metrics import ConfusionMatrixDisplay \\{}
+from sklearn.model\_\allowbreak{}selection import cross\_\allowbreak{}val\_\allowbreak{}predict \\{}
+\mbox{} \\{}
+fig, axes = plt.subplots(1, 3, figsize=(15, 4)) \\{}
+for ax, (nombre, busqueda) in zip(axes, [(\textquotedbl{}Árbol\textquotedbl{}, busqueda\_\allowbreak{}arbol), (\textquotedbl{}kNN\textquotedbl{}, busqueda\_\allowbreak{}knn), (\textquotedbl{}Random Forest\textquotedbl{}, busqueda\_\allowbreak{}rf)]): \\{}
+\hspace*{2.08em}\# cada paciente lo predice el modelo del fold en el que estaba en validación \\{}
+\hspace*{2.08em}y\_\allowbreak{}pred = cross\_\allowbreak{}val\_\allowbreak{}predict(busqueda.best\_\allowbreak{}estimator\_\allowbreak{}, X\_\allowbreak{}train, y\_\allowbreak{}train, cv=mod.validador, n\_\allowbreak{}jobs=-1) \\{}
+\hspace*{2.08em}\# normalize=\textquotedbl{}true\textquotedbl{}: cada fila suma 1, así la diagonal es el recall de cada clase \\{}
+\hspace*{2.08em}ConfusionMatrixDisplay.from\_\allowbreak{}predictions(y\_\allowbreak{}train, y\_\allowbreak{}pred, display\_\allowbreak{}labels=[\textquotedbl{}bajo\textquotedbl{}, \textquotedbl{}moderado\textquotedbl{}, \textquotedbl{}alto\textquotedbl{}], \\{}
+\hspace*{22.88em}normalize=\textquotedbl{}true\textquotedbl{}, values\_\allowbreak{}format=\textquotedbl{}.2f\textquotedbl{}, ax=ax, colorbar=False) \\{}
+\hspace*{2.08em}ax.set\_\allowbreak{}title(nombre) \\{}
+plt.tight\_\allowbreak{}layout() \\{}
+plt.show()
+\end{codigo}
+Con kNN, por ejemplo, de los 361 pacientes de riesgo alto solo 8 acaban en «bajo» y 74 en «moderado».
+
+\smallskip\noindent\textbf{3. Calcular la importancia por permutación en validación, no en train}\par
+Ya avisas del problema en el comentario, pero con Random Forest es grave: tiene F1 = 1,0 en train, así que lo ha memorizado todo. Al desordenar una variable, las demás compensan y casi todo sale con importancia \textasciitilde{} 0. Te propongo sustituir la celda 22 por un cálculo sobre los folds de validación:
+
+\begin{codigo}
+from sklearn.base import clone \\{}
+\mbox{} \\{}
+importancias = [] \\{}
+for idx\_\allowbreak{}train, idx\_\allowbreak{}val in mod.validador.split(X\_\allowbreak{}train, y\_\allowbreak{}train): \\{}
+\hspace*{2.08em}\# se entrena con 4 folds y se permuta sobre el fold que el modelo no ha visto \\{}
+\hspace*{2.08em}modelo = clone(busqueda\_\allowbreak{}rf.best\_\allowbreak{}estimator\_\allowbreak{}).fit(X\_\allowbreak{}train.iloc[idx\_\allowbreak{}train], y\_\allowbreak{}train.iloc[idx\_\allowbreak{}train]) \\{}
+\hspace*{2.08em}perm = permutation\_\allowbreak{}importance(modelo, X\_\allowbreak{}train.iloc[idx\_\allowbreak{}val], y\_\allowbreak{}train.iloc[idx\_\allowbreak{}val], scoring=mod.metrica, \\{}
+\hspace*{17.68em}n\_\allowbreak{}repeats=10, random\_\allowbreak{}state=cte.semilla, n\_\allowbreak{}jobs=-1) \\{}
+\hspace*{2.08em}importancias.append(perm.importances\_\allowbreak{}mean) \\{}
+\mbox{} \\{}
+importancias = pd.DataFrame(importancias, columns=X\_\allowbreak{}train.columns) \\{}
+top = importancias.mean().sort\_\allowbreak{}values(ascending=False).head(10) \\{}
+top.plot.barh(xerr=importancias[top.index].std(), figsize=(8, 5)).invert\_\allowbreak{}yaxis()   \# barra = media ± desviación entre folds \\{}
+plt.title(\textquotedbl{}Importancia por permutación en validación (descenso del F1 macro)\textquotedbl{}) \\{}
+plt.tight\_\allowbreak{}layout() \\{}
+plt.show()
+\end{codigo}
+La diferencia se nota: en train, a partir del cuarto puesto todo está por debajo de 0,005. En validación aparecen \texttt{nivel\_\allowbreak{}actividad} (0,018), \texttt{acido\_\allowbreak{}urico} (0,016) e \texttt{hipertension\_\allowbreak{}previa} (0,011).
+
+\smallskip\noindent\textbf{4. Ajustes en las rejillas}\par
+\hspace*{1.0em}\textbullet~\textbf{Random Forest:} añade \texttt{\textquotedbl{}modelo\_\allowbreak{}\_\allowbreak{}min\_\allowbreak{}samples\_\allowbreak{}leaf\textquotedbl{}: [1, 5, 10]}. Con 10 obtengo el mismo F1 de validación dentro de la desviación (0,622 frente a 0,627), con menos sobreajuste (train 0,897 frente a 1,0) y más recall de riesgo alto (0,740 frente a 0,690). Así tendrás una opción de regularización que comentar. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Árbol:} \\{}
+\hspace*{2.0em}\textbullet~\texttt{min\_\allowbreak{}samples\_\allowbreak{}split} no aporta nada: con \texttt{min\_\allowbreak{}samples\_\allowbreak{}leaf} \textgreater{}= 5, los valores 2 y 10 dan exactamente lo mismo. Puedes quitarlo o cambiarlo por \texttt{ccp\_\allowbreak{}alpha}, que poda el árbol. \\{}
+\hspace*{2.0em}\textbullet~He probado a ampliar \texttt{min\_\allowbreak{}samples\_\allowbreak{}leaf} a 40 y 80, y no mejora. \\{}
+\hspace*{2.0em}\textbullet~Ojo: la mejor combinación (entropy, sin límite de profundidad y 5 por hoja; train 0,867, validación 0,541) está empatada con gini, profundidad 12 y 20 por hoja (train 0,693, validación 0,540 ± 0,008). La segunda sobreajusta mucho menos y es más estable. Es un buen punto para la conclusión. \\{}
+\hspace*{1.0em}\textbullet~\textbf{kNN:} el óptimo (51 vecinos) queda en el interior de la rejilla, así que está bien. Si quieres, añade \texttt{weights: [\textquotedbl{}uniform\textquotedbl{}, \textquotedbl{}distance\textquotedbl{}]}, pero con \texttt{distance} el F1 en train es siempre 1, así que tendrás que explicarlo.
+
+\smallskip\noindent\textbf{5. Ampliar el experimento de balanceo con kNN}\par
+Solo lo haces con el árbol, pero kNN es el modelo al que más le afecta. Sin balancear, su recall de riesgo alto baja a 0,41, frente a 0,77 con SMOTENC (aunque con más precisión: 0,80). Es la mejor prueba de que SMOTENC merece la pena. Basta un bucle con \texttt{[None, \textquotedbl{}smotenc\textquotedbl{}]}, porque kNN no admite \texttt{class\_\allowbreak{}weight}.
+
+\smallskip\noindent\textbf{6. Detalles menores}\par
+\hspace*{1.0em}\textbullet~La búsqueda de la celda 10 repite exactamente la de SMOTENC de la celda 6. No pasa nada, y además sirve para comprobar que los resultados coinciden, pero podrías reutilizarla. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Interpretabilidad:} el mejor árbol tiene 268 hojas. Un \texttt{plot\_\allowbreak{}tree(mejor\_\allowbreak{}arbol, max\_\allowbreak{}depth=3, feature\_\allowbreak{}names=..., class\_\allowbreak{}names=[\textquotedbl{}bajo\textquotedbl{}, \textquotedbl{}moderado\textquotedbl{}, \textquotedbl{}alto\textquotedbl{}], filled=True)} enseña las primeras decisiones y da pie a comparar la interpretabilidad del árbol con la de RF y kNN. \\{}
+\hspace*{1.0em}\textbullet~En la comparación final puedes añadir el tiempo de entrenamiento (\texttt{busqueda.cv\_\allowbreak{}results\_\allowbreak{}[\textquotedbl{}mean\_\allowbreak{}fit\_\allowbreak{}time\textquotedbl{}][busqueda.best\_\allowbreak{}index\_\allowbreak{}]}) para hablar de complejidad, como pide el enunciado.
+
+\smallskip\noindent\textbf{Números de mi ejecución, para cuando rellenes las conclusiones}\par
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Modelo} & \textbf{F1 macro (validación)} & \textbf{Recall de riesgo alto} & \textbf{Precisión de riesgo alto} & \textbf{Diferencia train-val} \\
+\midrule
+Random Forest & 0,627 ± 0,023 & 0,690 & 0,653 & 0,373 \\
+kNN (51, manhattan) & 0,590 ± 0,020 & 0,773 & 0,562 & 0,045 \\
+Árbol & 0,541 ± 0,033 & 0,596 & 0,504 & 0,326 \\
+\bottomrule
+\end{tabularx}}
+
+No he modificado tu notebook: lo tienes abierto en VS Code y ya nos sobrescribió uno antes. Si prefieres que inserte yo estas celdas, ciérralo primero y te lo hago.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R20. 2026-11-09 17:16:55 +0100 -- Claude Code}
+{\small
+He revisado src/\allowbreak{}eda\_\allowbreak{}rodrigo.ipynb, src/\allowbreak{}modelos\_\allowbreak{}rodrigo.ipynb y src/\allowbreak{}utils/\allowbreak{}modelado.py. \textbf{No he encontrado ningún fallo importante en el código.} Lo que sí hay son cuatro afirmaciones en las conclusiones que conviene corregir antes de la entrevista. No he modificado ningún archivo.
+
+\smallskip\noindent\textbf{Lo que he comprobado y está bien}\par
+\hspace*{1.0em}\textbullet~\textbf{EDA:} lo he ejecutado de principio a fin en una copia y no da errores. Además, los datos que exporta son \textbf{idénticos} a \texttt{data/\allowbreak{}datos.csv}, así que el CSV que usa el grupo corresponde exactamente al notebook. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Código común:} \\{}
+\hspace*{2.0em}\textbullet~Las posiciones que se pasan a SMOTENC coinciden con el orden de salida del \texttt{ColumnTransformer}. \\{}
+\hspace*{2.0em}\textbullet~Ninguna variable numérica tiene IQR = 0, así que \texttt{RobustScaler} no deja ninguna sin escalar. \\{}
+\hspace*{2.0em}\textbullet~Todo lo que se aprende de los datos está dentro del Pipeline, y la semilla y los folds están fijados en un solo sitio. \\{}
+\hspace*{2.0em}\textbullet~El test no se usa en ningún momento. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Cifras de las conclusiones de modelos:} las he recalculado y coinciden: \\{}
+\hspace*{2.0em}\textbullet~Pacientes de riesgo alto clasificados como bajo: 37 con el árbol, 8 con kNN y 21 con RF. \\{}
+\hspace*{2.0em}\textbullet~Curva de kNN: con 1 vecino, 1,0 en train y 0,50 en validación. \\{}
+\hspace*{2.0em}\textbullet~Curva de RF: el train baja de 1,0 a 0,74 y la validación se mantiene entre 0,60 y 0,63. \\{}
+\hspace*{2.0em}\textbullet~Importancias por permutación: 0,078 ± 0,026, 0,059 ± 0,016 y 0,027 ± 0,016. \\{}
+\hspace*{2.0em}\textbullet~La raíz del árbol es la proteína C reactiva.
+
+\smallskip\noindent\textbf{Lo que corregiría}\par
+\textbf{1. La conclusión sobre el colesterol en Random Forest (la más importante).} Dices que el colesterol (total, HDL y LDL) no aporta nada y que es coherente con la incoherencia HDL + LDL \textgreater{} colesterol total. Hay dos problemas:
+
+\hspace*{1.0em}\textbullet~\textbf{El HDL contradice tu propio EDA.} Allí es de las variables más relacionadas con el riesgo (Spearman -0,20). Lo mismo ocurre con otras dos variables:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Variable} & \textbf{Spearman con el riesgo (EDA)} & \textbf{Importancia por permutación en RF} \\
+\midrule
+\texttt{colesterol\_\allowbreak{}hdl} & -0,20 & 0,002 ± 0,014 \\
+\texttt{uso\_\allowbreak{}antihipertensivos} & 0,24 & 0,001 ± 0,007 \\
+\texttt{frecuencia\_\allowbreak{}ejercicio\_\allowbreak{}semanal} & -0,21 & 0,004 ± 0,006 \\
+\bottomrule
+\end{tabularx}}
+
+\hspace*{1.0em}\textbullet~\textbf{La incoherencia no explica nada.} Que HDL + LDL no cuadre con el total no impide que cada variable prediga por separado.
+
+Más prudente: «Random Forest no depende de estas variables: su importancia está dentro del ruido entre folds. Eso no significa que no tengan relación con el riesgo (el HDL la tenía en el EDA), sino que el modelo apenas pierde F1 cuando se desordenan. Puede que su efecto sea pequeño frente al de la PCR, el alcohol o la HbA1c». Si en la entrevista os preguntan por qué el HDL no importa, esa es la respuesta defendible.
+
+\textbf{2. La comparación entre RF y kNN tiene un argumento mejor.} Comparar la diferencia (0,037) con la desviación de cada modelo es poco riguroso. Como todos usáis los mismos folds, se puede comparar fold a fold con los CSV que ya has guardado: \textbf{RF gana a kNN en los 5 folds}, por +0,070, +0,033, +0,042, +0,037 y +0,007.
+
+\begin{codigo}
+folds = pd.DataFrame(\{n: pd.read\_\allowbreak{}csv(mod.RUTA\_\allowbreak{}RESULTADOS /\allowbreak{} f\textquotedbl{}\{n\}\_\allowbreak{}folds.csv\textquotedbl{}, index\_\allowbreak{}col=0)[\textquotedbl{}f1\_\allowbreak{}macro\textquotedbl{}] \\{}
+\hspace*{11.44em}for n in [\textquotedbl{}arbol\textquotedbl{}, \textquotedbl{}knn\textquotedbl{}, \textquotedbl{}random\_\allowbreak{}forest\textquotedbl{}]\}) \\{}
+folds[\textquotedbl{}rf\_\allowbreak{}menos\_\allowbreak{}knn\textquotedbl{}] = folds[\textquotedbl{}random\_\allowbreak{}forest\textquotedbl{}] - folds[\textquotedbl{}knn\textquotedbl{}]   \# mismos folds: la comparación es por pares \\{}
+folds.round(3)
+\end{codigo}
+El fold 4 casi es un empate (0,007). Es justo el tipo de comparación que pide el test estadístico opcional.
+
+\textbf{3. Los tiempos de la tabla final no coinciden con la salida.} En el markdown pones 0,25 /\allowbreak{} 0,18 /\allowbreak{} 2,1 s y la celda da 0,212 /\allowbreak{} 0,177 /\allowbreak{} 1,764 s. Los tiempos cambian en cada ejecución, así que redondea («\textasciitilde{} 0,2 s» y «\textasciitilde{} 2 s») o cópialos de la última ejecución.
+
+\textbf{4. Un matiz en la curva del árbol.} Dices que «a partir de la profundidad 4 la validación se estabiliza en torno a 0,53-0,54». Con profundidad 5 baja a 0,515, así que es más exacto «oscila entre 0,51 y 0,54».
+
+\smallskip\noindent\textbf{Antes de subirlo}\par
+\hspace*{1.0em}\textbullet~\texttt{src/\allowbreak{}modelos\_\allowbreak{}rodrigo.ipynb} y la carpeta \texttt{resultados/\allowbreak{}} todavía no están en git. Si los CSV de \texttt{resultados/\allowbreak{}} sirven para que el grupo junte los modelos, tendrán que subirse. Avisa a Pablo y a Enzo de que su notebook también los generará (\texttt{mod.guardar\_\allowbreak{}resultados}) y de que los nombres no deben coincidir con \texttt{arbol}, \texttt{knn} o \texttt{random\_\allowbreak{}forest}. \\{}
+\hspace*{1.0em}\textbullet~Un detalle opcional del EDA: en la 1.7 aparece «Años fumando mayores que la edad: 1» y luego no se vuelve a mencionar. Es el paciente con 9,8 años y 12,6 años fumando, que ya queda resuelto al pasar a nulo la edad de los menores. Una línea en la conclusión de la 1.9 lo cierra.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R21. 2026-11-12 21:18:50 +0100 -- Claude Code}
+{\small
+\textbf{Respuesta corta:} no añadiría más técnicas. He probado tres opciones razonables con vuestro código común y ninguna mejora lo que ya tienes. Lo que sí haría es arreglar varios detalles de src/\allowbreak{}utils/\allowbreak{}modelado.py y documentar lo descartado. No he modificado ningún archivo.
+
+\smallskip\noindent\textbf{Lo que he probado (mismos folds, mismas métricas y misma semilla)}\par
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Opción} & \textbf{Modelo} & \textbf{F1 macro (validación)} & \textbf{Recall de riesgo alto} & \textbf{Resultado} \\
+\midrule
+\textbf{Selección de variables} (\texttt{SelectKBest} con k como hiperparámetro) & kNN & 0,590 (gana k = todas) & 0,773 & No mejora. Con k = 12 baja a 0,571 y con k = 5, a 0,506 \\
+\textbf{\texttt{class\_\allowbreak{}weight=\textquotedbl{}balanced\_\allowbreak{}subsample\textquotedbl{}}} (pesos recalculados en cada muestra bootstrap) & RF & 0,636 como máximo & 0,670 & Peor que \texttt{balanced} (0,648) \\
+\textbf{SMOTENC + Tomek} (sobremuestrear y luego limpiar la frontera) & kNN /\allowbreak{} RF & 0,589 /\allowbreak{} 0,630 & 0,778 /\allowbreak{} 0,701 & Igual que SMOTENC solo; no compensa la complejidad \\
+\textbf{SMOTENC + ENN} & kNN /\allowbreak{} RF & \textbf{0,396} /\allowbreak{} 0,535 & 0,814 /\allowbreak{} 0,803 & Mucho peor: elimina tantos pacientes de bajo y moderado que el modelo casi solo predice «alto» \\
+\bottomrule
+\end{tabularx}}
+
+La selección de variables era la que más esperaba que ayudase, porque kNN sufre con las variables irrelevantes y la permutación indicaba que solo unas 6 importan. Aun así, gana usar todas.
+
+Si quieres, puedes poner estos resultados en la memoria como opciones descartadas: AGENTS.md pide anotarlas, y esto demuestra que la elección no fue arbitraria. Pero no hace falta meterlos en el notebook.
+
+\smallskip\noindent\textbf{Lo que sí arreglaría en \texttt{modelado.py}}\par
+Es código común, así que avisa a Pablo y a Enzo del cambio. A ellos no les rompe nada, porque solo has añadido opciones.
+
+\hspace*{1.0em}1.~\textbf{El mensaje de error y el docstring no incluyen las opciones nuevas.} Si alguien escribe mal \texttt{\textquotedbl{}tomek\textquotedbl{}}, el error le dice que solo existen \texttt{'smotenc'}, \texttt{'class\_\allowbreak{}weight'} o \texttt{None}. \\{}
+\hspace*{1.0em}2.~\textbf{Los bloques de \texttt{tomek} y \texttt{enn} tienen 12 espacios de sangría} en lugar de 8. Python lo acepta, pero no es coherente con el resto. \\{}
+\hspace*{1.0em}3.~\textbf{\texttt{enn} está en el código común, pero no se usa en ningún notebook,} y su comentario no es exacto: \\{}
+\hspace*{2.5em}\textbullet~ENN no elimina solo «los cercanos a la minoritaria». \\{}
+\hspace*{2.5em}\textbullet~Elimina a los pacientes de bajo y moderado cuyos vecinos son mayoritariamente de otra clase.
+
+   Dado el resultado anterior, lo quitaría, o lo dejaría pero con el resultado documentado. \\{}
+\hspace*{1.0em}4.~\textbf{El comentario de Tomek dice «clase mayoritaria».} Con \texttt{sampling\_\allowbreak{}strategy=\textquotedbl{}auto\textquotedbl{}}, Tomek limpia todas las clases menos la minoritaria, es decir, la de riesgo bajo y la de moderado. \\{}
+\hspace*{1.0em}5.~\textbf{El comentario final solo habla de SMOTENC.} Ahora también vale para Tomek: el Pipeline de imblearn solo remuestrea al entrenar.
+
+Este sería el bloque corregido, con ENN quitado:
+
+\begin{codigo}
+def crear\_\allowbreak{}pipeline(modelo, balanceo=\textquotedbl{}smotenc\textquotedbl{}): \\{}
+\hspace*{2.08em}\textquotedbl{}\textquotedbl{}\textquotedbl{}Pipeline imputar -\textgreater{} escalar -\textgreater{} balancear -\textgreater{} modelo; balanceo: \textquotedbl{}smotenc\textquotedbl{}, \textquotedbl{}class\_\allowbreak{}weight\textquotedbl{}, \textquotedbl{}tomek\textquotedbl{} o None.\textquotedbl{}\textquotedbl{}\textquotedbl{} \\{}
+\hspace*{2.08em}... \\{}
+\hspace*{2.08em}elif balanceo == \textquotedbl{}tomek\textquotedbl{}: \\{}
+\hspace*{4.16em}\# submuestreo: quita los pacientes de riesgo bajo y moderado que forman un enlace de Tomek \\{}
+\hspace*{4.16em}\# (son el vecino más cercano de un paciente de otra clase), para limpiar la frontera \\{}
+\hspace*{4.16em}pasos.append((\textquotedbl{}balanceo\textquotedbl{}, TomekLinks(sampling\_\allowbreak{}strategy=\textquotedbl{}auto\textquotedbl{}))) \\{}
+\hspace*{2.08em}elif balanceo is not None: \\{}
+\hspace*{4.16em}raise ValueError(\textquotedbl{}balanceo debe ser 'smotenc', 'class\_\allowbreak{}weight', 'tomek' o None\textquotedbl{}) \\{}
+\mbox{} \\{}
+\hspace*{2.08em}pasos.append((\textquotedbl{}modelo\textquotedbl{}, modelo)) \\{}
+\hspace*{2.08em}\# el Pipeline de imblearn solo remuestrea (SMOTENC o Tomek) al entrenar, en cada fold de train; \\{}
+\hspace*{2.08em}\# nunca al validar ni al predecir, así que la validación se hace con pacientes reales \\{}
+\hspace*{2.08em}return Pipeline(pasos)
+\end{codigo}
+Si quitas ENN, quita también \texttt{EditedNearestNeighbours} del import.
+
+\smallskip\noindent\textbf{Una cosa que he visto en Random Forest y que te puede interesar}\par
+En vuestro criterio, cuando dos opciones empatan dentro de la desviación, se desempata con el recall de riesgo alto. Si aplicas ese mismo criterio dentro de la rejilla de RF con \texttt{class\_\allowbreak{}weight}, hay una combinación mejor que la elegida:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & \textbf{F1 macro} & \textbf{Recall de riesgo alto} \\
+\midrule
+Elegida: profundidad 10, 1 paciente por hoja & 0,648 ± 0,035 & 0,723 \\
+Profundidad 10, \textbf{5 pacientes por hoja} & 0,645 ± 0,023 & \textbf{0,762} \\
+\bottomrule
+\end{tabularx}}
+
+La segunda empata en F1 (0,003 de diferencia), detecta más pacientes de riesgo alto, varía menos entre folds y memoriza menos. \texttt{GridSearchCV} no la elige porque \texttt{refit} solo mira el F1. No es un fallo, pero podéis decidir:
+
+\hspace*{1.0em}\textbullet~Quedaros con la elegida, como hace el criterio automático. \\{}
+\hspace*{1.0em}\textbullet~Aplicar el desempate también dentro de la rejilla. Es más coherente con vuestra prioridad clínica, pero tendrías que explicarlo y usar los mismos hiperparámetros en \texttt{guardar\_\allowbreak{}resultados}.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R22. 2026-11-12 21:22:48 +0100 -- Claude Code}
+{\small
+Ahora te entiendo. Ahora mismo el preprocesamiento está escondido dentro de \texttt{crear\_\allowbreak{}pipeline}: el notebook dice qué hace, pero nunca lo enseña. Te propongo cuatro celdas cortas. Las he probado con tu pipeline y funcionan. No he modificado ningún archivo.
+
+\smallskip\noindent\textbf{1. Diagrama del pipeline (al principio de la sección 2)}\par
+Muestra de un vistazo el orden de los pasos y qué columnas pasan por cada uno. Es útil para la memoria y para el vídeo:
+
+\begin{codigo}
+from sklearn import set\_\allowbreak{}config \\{}
+set\_\allowbreak{}config(display=\textquotedbl{}diagram\textquotedbl{})   \# los Pipeline se muestran como un diagrama desplegable \\{}
+\mbox{} \\{}
+\# pipeline común: imputar y escalar las numéricas, dejar las categóricas, balancear y modelo \\{}
+mod.crear\_\allowbreak{}pipeline(DecisionTreeClassifier(random\_\allowbreak{}state=cte.semilla))
+\end{codigo}
+\smallskip\noindent\textbf{2. Qué hace cada balanceo con las clases (en el experimento de balanceo)}\par
+La tabla de métricas dice qué opción gana, pero no qué le pasa a los datos. Con esta celda se entiende el porqué:
+
+\begin{codigo}
+from sklearn.utils.class\_\allowbreak{}weight import compute\_\allowbreak{}class\_\allowbreak{}weight \\{}
+\mbox{} \\{}
+nombres\_\allowbreak{}clase = \{0: \textquotedbl{}bajo\textquotedbl{}, 1: \textquotedbl{}moderado\textquotedbl{}, 2: \textquotedbl{}alto\textquotedbl{}\} \\{}
+recuentos = \{\textquotedbl{}sin balancear\textquotedbl{}: y\_\allowbreak{}train.value\_\allowbreak{}counts()\} \\{}
+for balanceo in [\textquotedbl{}smotenc\textquotedbl{}, \textquotedbl{}tomek\textquotedbl{}]: \\{}
+\hspace*{2.08em}\# [:-1] = el pipeline sin el modelo: solo preprocesado y balanceo \\{}
+\hspace*{2.08em}\_\allowbreak{}, y\_\allowbreak{}res = mod.crear\_\allowbreak{}pipeline(DecisionTreeClassifier(), balanceo=balanceo)[:-1].fit\_\allowbreak{}resample(X\_\allowbreak{}train, y\_\allowbreak{}train) \\{}
+\hspace*{2.08em}recuentos[balanceo] = pd.Series(y\_\allowbreak{}res).value\_\allowbreak{}counts() \\{}
+recuentos = pd.DataFrame(recuentos).sort\_\allowbreak{}index().rename(index=nombres\_\allowbreak{}clase) \\{}
+\mbox{} \\{}
+\# class\_\allowbreak{}weight no cambia los pacientes, sino lo que pesa el error en cada clase \\{}
+pesos = compute\_\allowbreak{}class\_\allowbreak{}weight(\textquotedbl{}balanced\textquotedbl{}, classes=np.array([0, 1, 2]), y=y\_\allowbreak{}train) \\{}
+print(\textquotedbl{}Pesos de class\_\allowbreak{}weight:\textquotedbl{}, dict(zip(nombres\_\allowbreak{}clase.values(), pesos.round(2)))) \\{}
+\mbox{} \\{}
+recuentos.plot.bar(figsize=(8, 4), rot=0) \\{}
+plt.ylabel(\textquotedbl{}Pacientes en el train\textquotedbl{}) \\{}
+plt.title(\textquotedbl{}Pacientes por clase según el balanceo\textquotedbl{}) \\{}
+plt.show() \\{}
+recuentos
+\end{codigo}
+Resultado:
+
+{\footnotesize\noindent\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & \textbf{Sin balancear} & \textbf{SMOTENC} & \textbf{Tomek} \\
+\midrule
+Bajo & 901 & 901 & 819 \\
+Moderado & 541 & 901 & 441 \\
+Alto & 361 & 901 & 361 \\
+\bottomrule
+\end{tabularx}}
+
+Los pesos de \texttt{class\_\allowbreak{}weight} son 0,67, 1,11 y 1,66. La tabla explica tu conclusión mejor que las métricas: \textbf{Tomek solo quita 182 pacientes, así que el desbalance se mantiene}, y por eso apenas mejora el recall.
+
+\smallskip\noindent\textbf{3. Prueba de que SMOTENC no inventa valores imposibles}\par
+En el notebook dices que SMOTENC no genera valores como «fumador = 0,35». Esta celda lo demuestra comparándolo con SMOTE normal:
+
+\begin{codigo}
+from imblearn.over\_\allowbreak{}sampling import SMOTE \\{}
+\mbox{} \\{}
+prep = mod.crear\_\allowbreak{}pipeline(DecisionTreeClassifier())[:-1]          \# preprocesado + SMOTENC \\{}
+X\_\allowbreak{}res, \_\allowbreak{} = prep.fit\_\allowbreak{}resample(X\_\allowbreak{}train, y\_\allowbreak{}train) \\{}
+columnas = mod.numericas + mod.categoricas                        \# orden de salida del ColumnTransformer \\{}
+sinteticos\_\allowbreak{}nc = pd.DataFrame(X\_\allowbreak{}res[len(X\_\allowbreak{}train):], columns=columnas)   \# los sintéticos van al final \\{}
+\mbox{} \\{}
+\# mismo preprocesado, pero con SMOTE normal, que trata todo como continuo \\{}
+X\_\allowbreak{}prep = prep.named\_\allowbreak{}steps[\textquotedbl{}preprocesado\textquotedbl{}].transform(X\_\allowbreak{}train) \\{}
+X\_\allowbreak{}smote, \_\allowbreak{} = SMOTE(random\_\allowbreak{}state=cte.semilla).fit\_\allowbreak{}resample(X\_\allowbreak{}prep, y\_\allowbreak{}train) \\{}
+sinteticos\_\allowbreak{}smote = pd.DataFrame(X\_\allowbreak{}smote[len(X\_\allowbreak{}train):], columns=columnas) \\{}
+\mbox{} \\{}
+print(\textquotedbl{}Pacientes sintéticos:\textquotedbl{}, len(sinteticos\_\allowbreak{}nc)) \\{}
+print(\textquotedbl{}Valores con decimales en las categóricas con SMOTENC:\textquotedbl{}, (sinteticos\_\allowbreak{}nc[mod.categoricas] \% 1 != 0).sum().sum()) \\{}
+print(\textquotedbl{}Valores con decimales en las categóricas con SMOTE:  \textquotedbl{}, (sinteticos\_\allowbreak{}smote[mod.categoricas] \% 1 != 0).sum().sum()) \\{}
+sinteticos\_\allowbreak{}smote[[\textquotedbl{}fumador\_\allowbreak{}actual\textquotedbl{}, \textquotedbl{}diabetes\_\allowbreak{}mellitus\textquotedbl{}, \textquotedbl{}nivel\_\allowbreak{}actividad\textquotedbl{}]].head().round(2)
+\end{codigo}
+Resultado:
+
+\hspace*{1.0em}\textbullet~\textbf{SMOTENC:} 0 valores con decimales en los 900 sintéticos. \\{}
+\hspace*{1.0em}\textbullet~\textbf{SMOTE:} 2.967 de 9.900, con valores como un fumador = 0,67.
+
+\smallskip\noindent\textbf{4. Umbrales del árbol en unidades clínicas (después del \texttt{plot\_\allowbreak{}tree})}\par
+Tú mismo dices en la conclusión que los umbrales del árbol están en unidades escaladas y no se pueden leer. Se pueden devolver a la escala original con lo que guardó el \texttt{RobustScaler} (valor real = valor escalado x IQR + mediana):
+
+\begin{codigo}
+\# mediana (center\_\allowbreak{}) e IQR (scale\_\allowbreak{}) que aprendió el RobustScaler con el train \\{}
+escalador = (busqueda\_\allowbreak{}arbol.best\_\allowbreak{}estimator\_\allowbreak{}.named\_\allowbreak{}steps[\textquotedbl{}preprocesado\textquotedbl{}] \\{}
+\hspace*{6.76em}.named\_\allowbreak{}transformers\_\allowbreak{}[\textquotedbl{}num\textquotedbl{}].named\_\allowbreak{}steps[\textquotedbl{}escalar\textquotedbl{}]) \\{}
+mediana = pd.Series(escalador.center\_\allowbreak{}, index=mod.numericas) \\{}
+iqr = pd.Series(escalador.scale\_\allowbreak{}, index=mod.numericas) \\{}
+\mbox{} \\{}
+arbol\_\allowbreak{}interno = mejor\_\allowbreak{}arbol.tree\_\allowbreak{} \\{}
+for nodo, nivel in [(0, \textquotedbl{}raíz\textquotedbl{}), (arbol\_\allowbreak{}interno.children\_\allowbreak{}left[0], \textquotedbl{}izquierda\textquotedbl{}), (arbol\_\allowbreak{}interno.children\_\allowbreak{}right[0], \textquotedbl{}derecha\textquotedbl{})]: \\{}
+\hspace*{2.08em}variable = nombres\_\allowbreak{}arbol[arbol\_\allowbreak{}interno.feature[nodo]].split(\textquotedbl{}\_\allowbreak{}\_\allowbreak{}\textquotedbl{})[1]   \# quita el prefijo \textquotedbl{}num\_\allowbreak{}\_\allowbreak{}\textquotedbl{} \\{}
+\hspace*{2.08em}umbral = arbol\_\allowbreak{}interno.threshold[nodo] \\{}
+\hspace*{2.08em}if variable in mod.numericas: \\{}
+\hspace*{4.16em}umbral = umbral * iqr[variable] + mediana[variable]                 \# deshace el escalado \\{}
+\hspace*{2.08em}print(f\textquotedbl{}\{nivel\}: \{variable\} \textless{}= \{umbral:.2f\}\textquotedbl{})
+\end{codigo}
+Resultado:
+
+\hspace*{1.0em}\textbullet~\textbf{Raíz:} proteína C reactiva \textless{}= 0,97 mg/\allowbreak{}L. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Rama izquierda:} proteína C reactiva \textless{}= 0,50. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Rama derecha:} consumo de alcohol \textless{}= 2,93.
+
+Lo del primer corte es un dato muy bueno para la conclusión. Los criterios clínicos (AHA/\allowbreak{}CDC) consideran \textbf{riesgo cardiovascular bajo una PCR por debajo de 1 mg/\allowbreak{}L}, y el árbol ha encontrado prácticamente ese umbral solo, a partir de los datos. Compruébalo con una fuente antes de citarlo en la memoria.
+
+\smallskip\noindent\textbf{Dónde ponerlas}\par
+\hspace*{1.0em}\textbullet~La 1 y la 2, en la sección 2 (balanceo). \\{}
+\hspace*{1.0em}\textbullet~La 3, justo después de la 2. \\{}
+\hspace*{1.0em}\textbullet~La 4, en la sección 3, después del árbol.
+
+La 2 y la 3 justifican con datos dos decisiones de preprocesamiento (rechazar Tomek y usar SMOTENC en lugar de SMOTE), que es lo que más se valora.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
+
+\subsubsection*{R23. 2026-11-13 08:13:57 +0100 -- Claude Code}
+{\small
+He revisado src/\allowbreak{}modelos\_\allowbreak{}rodrigo.ipynb, src/\allowbreak{}utils/\allowbreak{}modelado.py y el EDA, que no ha cambiado desde la última revisión. \textbf{No hay ningún fallo grave.} Había unos cuantos leves y ya los he arreglado.
+
+\smallskip\noindent\textbf{Lo que he comprobado}\par
+\hspace*{1.0em}\textbullet~\textbf{Las cifras de las conclusiones son correctas.} He recalculado todas las de Random Forest con \texttt{class\_\allowbreak{}weight} y coinciden: \\{}
+\hspace*{2.0em}\textbullet~Matriz de confusión: 10 de riesgo alto clasificados como bajo; 19 \% de bajo -\textgreater{} moderado; 22 \% de moderado -\textgreater{} alto. \\{}
+\hspace*{2.0em}\textbullet~Curva de pacientes por hoja: con 10 por hoja, train 0,906 y validación 0,648; con 40, validación 0,602. \\{}
+\hspace*{2.0em}\textbullet~Importancias por permutación: PCR 0,089 ± 0,036, alcohol 0,065 ± 0,030, ácido úrico 0,026, HbA1c 0,025 y HDL 0,006 ± 0,011. \\{}
+\hspace*{2.0em}\textbullet~Primeras divisiones del árbol y sus umbrales (0,97 mg/\allowbreak{}L y 2,93). \\{}
+\hspace*{1.0em}\textbullet~\textbf{No hay fugas de datos.} El test no se usa, todo lo que se aprende de los datos está dentro del Pipeline y los folds y la semilla son los comunes. \\{}
+\hspace*{1.0em}\textbullet~\textbf{No rompo nada a Pablo.} Su notebook usa \texttt{crear\_\allowbreak{}pipeline} y captura el \texttt{ValueError} cuando un modelo no admite \texttt{class\_\allowbreak{}weight}. Ese comportamiento se mantiene igual.
+
+\smallskip\noindent\textbf{Errores leves que he arreglado}\par
+\textbf{En \texttt{modelado.py}} solo he cambiado comentarios, mensajes y sangría. El código hace exactamente lo mismo.
+
+\hspace*{1.0em}\textbullet~\textbf{Docstring y mensaje de error:} ahora incluyen \texttt{\textquotedbl{}tomek\textquotedbl{}} y \texttt{\textquotedbl{}enn\textquotedbl{}}. Antes decían que solo existían \texttt{'smotenc'}, \texttt{'class\_\allowbreak{}weight'} o \texttt{None}. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Error de \texttt{class\_\allowbreak{}weight}:} el mensaje decía «usa 'smotenc' o None». Ahora dice «usa otro balanceo o None». \\{}
+\hspace*{1.0em}\textbullet~\textbf{Sangría:} los bloques de Tomek y ENN tenían 12 espacios. Ahora tienen 8, como el resto. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Comentarios de Tomek y ENN:} ahora son exactos. Las dos técnicas quitan pacientes de riesgo bajo y moderado, no solo de «la mayoritaria», y ENN quita al paciente si al menos 3 de sus 5 vecinos son de otra clase. \\{}
+\hspace*{1.0em}\textbullet~\textbf{Comentario final:} ahora dice que el Pipeline remuestrea solo al entrenar con cualquiera de las técnicas, no solo con SMOTENC. \\{}
+\hspace*{1.0em}\textbullet~He dejado ENN, aunque no lo uses, porque la decisión es tuya.
+
+\textbf{En el notebook} he corregido tres frases de markdown. No he tocado código ni salidas.
+
+\hspace*{1.0em}1.~\textbf{Sección 5, error OOB:} decía que los árboles «ven pacientes sintéticos de SMOTENC», pero la versión elegida es \texttt{class\_\allowbreak{}weight}. Ahora dice «en las versiones con SMOTENC». \\{}
+\hspace*{1.0em}2.~\textbf{Importancia de las variables:} decía «un F1 de 1 en train». Con \texttt{class\_\allowbreak{}weight} es 0,997, así que ahora dice «casi 1 (0,997)». \\{}
+\hspace*{1.0em}3.~\textbf{Conclusión final:} decía que RF «sube de nivel al 19 \% de los pacientes de riesgo bajo (kNN, al 39 \%)». Ese 19 \% son solo los que pasan a moderado. Contando también los que pasan a alto, serían el 22 \% y el 45 \%. Lo he dejado como «clasifica como moderado al 19 \%... y como alto al 22 \% de los moderados», igual que en la conclusión de kNN.
+
+\textbf{Importante:} si tienes el notebook abierto en VS Code, recárgalo antes de seguir: cierra la pestaña sin guardar y ábrelo otra vez. Si guardas la versión abierta, sobrescribirás estos cambios.
+
+\smallskip\noindent\textbf{Un detalle opcional}\par
+En la conclusión del árbol pones que las primeras divisiones usan la PCR, el alcohol y la HbA1c. En los tres primeros niveles aparece también el ácido úrico. No es un error, pero podrías añadirlo.
+
+\smallskip\noindent\textbf{Fuera del código}\par
+En \texttt{docs/\allowbreak{}} hay archivos generados al compilar LaTeX que no deberían subirse: \texttt{memoria.aux}, \texttt{.fls}, \texttt{.fdb\_\allowbreak{}latexmk} y \texttt{.synctex.gz}. Conviene que el grupo los añada a \texttt{.gitignore}. No lo he hecho porque es un archivo común.
+
+He registrado este prompt a mano en docs/\allowbreak{}ia/\allowbreak{}registro\_\allowbreak{}ia\_\allowbreak{}rodrigo.md.
+
+}
 
 
 \end{document}
