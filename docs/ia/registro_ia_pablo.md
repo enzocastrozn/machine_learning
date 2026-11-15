@@ -1340,3 +1340,87 @@ Usa `folds` y `orden` de tu celda `c2369c65`. Como en el apartado 2 viste que `v
 **Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
 
 ---
+
+## 2026-11-15 11:34:21 +0100 · Claude Code
+
+- **Captura:** automática (hook)
+- **Sesión:** e1ed3770
+
+**Prompt literal**
+
+````text
+Échale un vistazo al estado de la memoria con la que estoy trabajando en Overleaf, creo que le faltan figuras que me sirvan para respaldar mis conclusiones, ayudame con eso
+````
+
+**Modelo:** claude-opus-5-5 (versión de la herramienta: 2.1.323)
+
+**Respuesta final**
+
+````markdown
+Te he preparado tres figuras, salen del mismo código que irá en tu notebook
+
+He revisado el PDF de Overleaf: 10 páginas, sin referencias rotas y con las tablas bien. Las figuras están en `C:\Users\pablo\AppData\Local\Temp\claude\0ac2709b0bfd2527\f574aea0-0559-4fd1-84d3-1d972e8ec7bc\scratchpad\figuras\:`
+
+| **Figura** | **Qué muestra** | **Dónde va** |
+|---|---|---|
+| `folds_modelos.pdf` | F1 macro y recall de riesgo alto de los 9 modelos en cada fold` | Resultados en validación |
+| `coeficientes_logistica.pdf` | Las 8 variables que más suben el riesgo alto y las 5 que más lo bajan, según la logística | Importancia de las variables |
+| `confusion_logistica.pdf` | Matrices de confusión de la logística en validación cruzada y en test, con número de pacientes | Evaluación en test |
+
+Los valores coinciden con los de tu notebook: coeficientes de 0,77 para el alcohol y −0,39 para el aclaramiento de creatinina, y 8 y 2 pacientes de riesgo alto clasificados como bajo.
+
+**En el notebook**, para que las figuras se puedan reproducir: añade al final de `comparacion_final.ipynb` un apartado «7. Figuras de la memoria» con este código:
+
+```python
+RUTA_FIGURAS = mod.RUTA_RESULTADOS.parent / "docs" / "figuras"
+```
+
+Debajo, copia los tres bloques `CELDA 1`, `CELDA 2` y `CELDA 3` de `celdas_figuras.py`, que está en esa misma carpeta. Quita las líneas que guardan `.png` y cambia `plt.close()` por `plt.show()`. Las variables que usan (`folds`, `orden`, `modelo_final`, `y_pred_test`) ya existen en tu notebook. Al ejecutarlas, los PDF se guardan en `docs/figuras/`.
+
+**En Overleaf:** sube los tres PDF a figuras/ y añade lo siguiente al `.tex`.
+
+1. En «Resultados en validación cruzada», después de `no la capacidad del modelo.`:
+
+```latex
+La Fig.~\ref{fig:folds} muestra la nota de cada modelo en cada fold.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{folds_modelos.pdf}
+\caption{F1 macro y recall de riesgo alto en cada fold de validación. Cada línea une el mismo fold en
+todos los modelos; la raya negra es la media.}
+\label{fig:folds}
+\end{figure}
+```
+2. En «Importancia de las variables», cambia `aumentan o reducen ese riesgo.` por `aumentan o reducen ese riesgo (Fig.~\ref{fig:coeficientes}).` y, al final de ese párrafo:
+
+```latex
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.62\linewidth]{coeficientes_logistica.pdf}
+\caption{Coeficientes de la regresión logística para la clase de riesgo alto: las 8 variables que más
+lo aumentan y las 5 que más lo reducen. En las numéricas, efecto de subir un rango intercuartílico; en
+las binarias, de pasar de 0 a 1.}
+\label{fig:coeficientes}
+\end{figure}
+```
+3. En «Evaluación final en test», después de `0,533 en moderado y 0,690 en alto.`:
+
+```latex
+La Fig.~\ref{fig:confusion} compara las matrices de confusión en validación cruzada y en test.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.85\linewidth]{confusion_logistica.pdf}
+\caption{Matrices de confusión de la regresión logística: predicciones de validación cruzada sobre el
+entrenamiento y evaluación única en test.}
+\label{fig:confusion}
+\end{figure}
+```
+
+Calculo que quedarán unas 12 páginas.
+````
+
+**Análisis crítico:** _pendiente (qué se aceptó, qué se rechazó y cómo se corrigió)_
+
+---

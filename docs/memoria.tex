@@ -7,6 +7,7 @@
 \usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage{float}
 \renewcommand{\IEEEkeywordsname}{Palabras clave}
 \graphicspath{{figuras/}}
 
@@ -20,16 +21,31 @@
 
 \title{Predicción multiclase de riesgo cardiovascular en población adulta}
 
-\author{Enzo Castro, Rodrigo Martínez Jiménez y Pablo Sánchez Mérida
+\author{Enzo Alejandro Castro Rojas, Rodrigo Martínez Jiménez y Pablo Sánchez Mérida
 \thanks{Práctica 1 de Machine Learning.
 Máster Universitario en Inteligencia Artificial, Universidad de Murcia, curso 2026/2027.}}
 
 \maketitle
 
 \begin{abstract}
+Se clasifica el riesgo cardiovascular (bajo, moderado y alto) de 2.254 pacientes a partir de 27
+variables sociodemográficas, clínicas, analíticas y de estilo de vida.
+Tras corregir los errores de registro detectados en el análisis exploratorio, se comparan varias
+técnicas frente al desbalance de clases (sin balancear, \texttt{class\_weight}, SMOTENC, Tomek y ENN)
+en seis modelos base (árbol de decisión, kNN, regresión logística, Naive Bayes, LDA y SVC) y tres
+ensambles (Random Forest, HistGradientBoosting y \textit{voting}), con un mismo \textit{pipeline} y
+validación cruzada estratificada de 5 folds.
+Los modelos se comparan por F1 macro y, como métrica clínica, por el recall de la clase de riesgo alto.
+Los mejores empatan en F1 macro dentro de la variación entre folds, y se elige la regresión logística
+con \texttt{class\_weight} porque es la que menos pacientes de riesgo alto clasifica como bajo, apenas
+sobreajusta y es interpretable.
+En el conjunto de test obtiene un F1 macro de 0,680 y un recall de riesgo alto de 0,778, y solo
+clasifica como riesgo bajo a 2 de los 90 pacientes de riesgo alto.
 \end{abstract}
 
 \begin{IEEEkeywords}
+Riesgo cardiovascular, clasificación multiclase, desbalance de clases, SMOTENC, regresión logística,
+validación cruzada.
 \end{IEEEkeywords}
 
 \section{Introducción}
@@ -157,10 +173,10 @@ registrada, así que solo su edad se pasa a nulo y se conservan el resto de dato
 En cuanto al IMC solo se anula lo que es totalmente imposible (menos de 10); entre 10 y 12, estaría dentro de una
 desnutrición extrema, pero posible.
 La incoherencia entre HDL, LDL y colesterol total no se corrige, porque no se puede saber qué
-variable es la errónea y además, afecta a un cuartode los pacientes, por lo que se documenta como limitación del
+variable es la errónea y además, afecta a un cuarto de los pacientes, por lo que se documenta como limitación del
 dataset.
 
-\begin{table}[!t]
+\begin{table}[H]
 \caption{Errores de registro detectados y regla aplicada}
 \label{tab:limpieza}
 \centering
@@ -234,6 +250,9 @@ alto); SMOTENC~\cite{tema2,nb_desbalanceo}, que genera pacientes sintéticos de 
 minoritarias hasta igualarlas (901 por clase en el entrenamiento); y
 Tomek~\cite{nb_desbalanceo}, que elimina pacientes de las clases mayoritarias situados en la
 frontera con otra clase.
+En LDA y SVC se prueba también ENN (\textit{Edited Nearest Neighbours})~\cite{nb_desbalanceo}, que
+elimina los pacientes de las clases mayoritarias cuya clase no coincide con la de la mayoría de sus
+vecinos.
 Se utiliza SMOTENC y no SMOTE porque SMOTE interpola también las variables binarias y categóricas: con
 el mismo preprocesado, 2.967 de los 9.900 valores categóricos de sus pacientes sintéticos tenían
 decimales (por ejemplo, un fumador con valor 0,67), frente a ninguno con SMOTENC, que asigna la
@@ -305,24 +324,49 @@ Manhattan).
 No admite \texttt{class\_weight}, porque no aprende parámetros a los que se pueda dar peso: solo
 compara cada paciente con los del entrenamiento.
 
-\textit{Análisis Discriminante Lineal (LDA).} Se maximiza la separación entre los 3 tipos de riesgo
-al proyectar las variables de cada uno en un subespacio de dos dimensiones. Para ello primero se visualiza
-la normalidad de las distribuciones, que cumplen de acuerdo con las campanas de Gauss en el EDA,
-y con el boxplot con mediana centrada en en la caja y bigotes con distancia similar en la mayoría de variables.
-Se realiza un posible encogimiento de la matriz de covarianza (shrinkage) 
-para estabilizar el ruido en la relación de crecimiento de variables (none, automático,
-0.1, 0.5 y 0.9), además de un solver (lsqr o eigen) que admiten dicho encogimiento.
-Dado que no admite ponderación de costes mediante \texttt{class\_weight},
-el desbalance se trata con SMOTENC y Tomek.
+\textit{Regresión logística.} Combina las variables en una suma ponderada y la transforma en la
+probabilidad de cada nivel de riesgo; con tres clases, aprende un conjunto de coeficientes por clase.
+Encaja con lo observado en el análisis exploratorio: cada variable sube o baja el riesgo siempre en la
+misma dirección y apenas se relacionan entre sí, de modo que el riesgo se parece a una suma de
+efectos pequeños.
+Además, sus coeficientes indican qué variables aumentan o reducen el riesgo, lo que permite explicar
+el modelo al personal clínico.
+Se ajustan la fuerza de la regularización $C$ (de 0,001 a 100), que limita el tamaño de los
+coeficientes para evitar el sobreajuste, y su tipo (\texttt{l1\_ratio}: L2, L1 o una mezcla de
+ambas).
 
-\textit{Clasificador de Vectores de Soporte (SVC).} Se separa cada paciente de forma automática uno vs uno, 
-con kernel lineal y no lineal con RBF, polinómico y sigmoide,
-el objetivo es detectar separaciones que una separación lineal no captura.
-Las variables ingresan escaladas para que el kernel no se afecte por la magnitud de las variables.
-Se ajusta el parámetro de regularización $C$ ($0,1$, $1$, $10$, $100$), el coeficiente de los kernels
-($\gamma$ en RBF, poli y sigmoide: \textit{scale}, \textit{auto}, $0,01$, $0,1$) y el grado del polinomio ($2$ o $3$).
-Admite balaceo de clases mediante \texttt{class\_weight} para complementar la estrategia junto a
-enfoques de remuestreo como SMOTENC y Tomek.
+\textit{Naive Bayes.} Aplica el teorema de Bayes suponiendo que, dentro de cada clase, las variables
+son independientes entre sí y siguen una distribución normal (\texttt{GaussianNB}).
+La independencia rara vez se cumple del todo, pero aquí es una aproximación razonable, porque las
+correlaciones entre variables son muy bajas.
+Es el modelo más sencillo y sirve de referencia para el resto.
+Se ajusta \texttt{var\_smoothing} (de $10^{-9}$ a 1), que suma una pequeña varianza a todas las
+variables para estabilizar el cálculo.
+No admite \texttt{class\_weight}, así que se compara sin balancear, con SMOTENC y con Tomek.
+
+\textit{Análisis discriminante lineal (LDA).} Supone que cada clase sigue una distribución normal y
+que las tres comparten la misma matriz de covarianzas, lo que da lugar a fronteras lineales entre
+clases.
+Equivale a proyectar a los pacientes sobre los ejes (como máximo dos, uno menos que el número de
+clases) que más separan las medias de las clases en relación con la dispersión dentro de cada una.
+Aunque varias variables no son normales (algunas son asimétricas y otras binarias), LDA suele
+funcionar bien cuando la frontera entre clases es aproximadamente lineal.
+Se ajusta la contracción de la matriz de covarianzas (\textit{shrinkage}: sin contracción,
+automática, 0,1, 0,5 y 0,9), que la acerca a una matriz más sencilla para estimarla con menos ruido,
+con los dos \textit{solvers} que la admiten (\texttt{lsqr} y \texttt{eigen}).
+No admite \texttt{class\_weight}, así que se compara sin balancear, con SMOTENC, con Tomek y con ENN.
+
+\textit{Máquina de vectores de soporte (SVC).} Busca la frontera que separa las clases con el mayor
+margen posible, es decir, lo más lejos posible de los pacientes más cercanos de cada clase.
+Con \textit{kernels} no lineales (RBF, polinómico y sigmoide) puede trazar fronteras curvas que una
+separación lineal no captura.
+Con tres clases, entrena un clasificador para cada par de clases (uno contra uno) y combina sus votos.
+Necesita las variables escaladas, porque el margen se mide con distancias.
+Se ajustan $C$ (0,1, 1, 10 y 100), que regula cuánto se penalizan los pacientes mal clasificados
+(valores altos permiten fronteras más complejas y más sobreajuste), el coeficiente $\gamma$ de los
+\textit{kernels} no lineales (\textit{scale}, \textit{auto}, 0,01 y 0,1) y el grado del polinomio
+(2 o 3).
+Admite \texttt{class\_weight}, así que se compara con todas las técnicas de balanceo.
 
 \subsubsection{Modelos de ensamble}
 
@@ -337,7 +381,7 @@ Se ajustan el número de árboles (100 o 300), la profundidad máxima (5, 10 o s
 de variables que se prueban en cada división (la raíz cuadrada del total o la mitad) y el número
 mínimo de pacientes por hoja (1, 5 o 10).
 
-\textit{Voting,} Se combina el enfoque se clasificación por fronteras (LDA con SVC)
+\textit{Voting,} Se combina el enfoque de clasificación por fronteras (LDA con SVC)
 y los 2 mejores modelos base (Random Forest, Regresión Logística), para ello se agregan las decisiones 
 de los modelos base mediante dos estrategias posibles: \textit{voto duro} (\textit{hard}),
 que selecciona la clase predicha por mayoría simple de votos, y \textit{voto suave} (\textit{soft}),
@@ -346,13 +390,30 @@ Se intenta ir a favor de un modelo pesandolo con un valor considerable frente a 
 con 3 veces el peso sobre otro modelo, así como pesar todos los modelos por igual, 
 y una combinación de LDA y Regresión Logística con el triple de peso combinado, lo anterior porque se ha probado su capacidad individual.
 
-\subsection{Ajuste de hiperparámetros}
+\textit{HistGradientBoosting.} Es un ensamble de tipo \textit{boosting}~\cite{tema2,nb_ensambles}:
+añade árboles pequeños uno tras otro, y cada uno corrige los errores que dejan los anteriores.
+Puede captar relaciones no lineales e interacciones entre variables que la regresión logística no ve.
+Agrupa los valores de cada variable en intervalos (histogramas), lo que lo hace más rápido que
+\texttt{GradientBoostingClassifier} y, a diferencia de este, admite \texttt{class\_weight}.
+Se ajustan la tasa de aprendizaje (0,03 o 0,1), el número de árboles (100 o 300), su profundidad
+máxima (2, 3 o sin límite), el número mínimo de pacientes por hoja (20 o 50) y la regularización L2
+(0 o 1).
+
+\subsection{Ajuste de hiperparámetros y criterio de selección}\label{sec:ajuste}
 Todos los modelos se ajustan con búsqueda en rejilla (\texttt{GridSearchCV})~\cite{nb_metricas}
 sobre la validación cruzada.
 En cada combinación se calculan todas las métricas, en entrenamiento y en validación, y se elige la
 de mayor F1 macro.
-Con el mismo criterio se elige la técnica de balanceo de cada modelo: el F1 macro y, si la
-diferencia queda dentro de la desviación entre folds, se escoge por el recall de riesgo alto.
+La técnica de balanceo de cada modelo y, al final, el modelo definitivo se eligen con un mismo
+criterio en tres pasos:
+\begin{enumerate}
+\item Mayor F1 macro en validación. Se consideran empatados los modelos cuyo F1 macro queda dentro de
+la desviación entre folds del mejor.
+\item Entre los empatados, mayor recall de riesgo alto, con la misma regla de empate.
+\item Si el empate persiste, menos errores graves (pacientes de riesgo alto clasificados como bajo),
+menos sobreajuste y, por último, el modelo más sencillo e interpretable.
+\end{enumerate}
+El test no interviene en ninguna de estas decisiones.
 
 \subsection{Entorno y reproducibilidad}
 El código está en el repositorio de GitHub (\texttt{github.com/enzocastrozn/machine\_learning}), con
@@ -372,32 +433,44 @@ riesgo alto de 0,50 a 0,60; se elige SMOTENC por su mayor precisión en esa clas
 En kNN, SMOTENC mejora ambas métricas (F1 de 0,537 a 0,590 y recall de 0,41 a 0,77).
 En Random Forest, \texttt{class\_weight} obtiene el mejor F1 macro (0,648) y el mejor recall de
 riesgo alto (0,72).
+En la regresión logística, Naive Bayes y HistGradientBoosting todas las técnicas empatan en F1 macro,
+y decide el recall de riesgo alto: \texttt{class\_weight} lo sube de 0,67 a 0,75 en la logística y
+de 0,66 a 0,72 en HistGradientBoosting, y SMOTENC, de 0,68 a 0,75 en Naive Bayes, que no admite
+pesos.
+En la logística, \texttt{class\_weight} y SMOTENC empatan también en recall, y se elige
+\texttt{class\_weight} porque gana en F1 macro en los cinco folds sin crear pacientes sintéticos.
+En HistGradientBoosting, Tomek empata con \texttt{class\_weight} en los dos primeros pasos, pero
+clasifica como riesgo bajo a 22 pacientes de riesgo alto, frente a 15.
+En LDA y SVC el mayor F1 macro se obtiene sin balancear, pero esa opción queda por debajo en recall de
+riesgo alto; entre las empatadas, SMOTENC en LDA y \texttt{class\_weight} en SVC son las que menos
+pacientes de riesgo alto clasifican como bajo (9 frente a 17 con Tomek en LDA; 8 frente a 10 con
+SMOTENC y 18 con Tomek en SVC).
+ENN consigue el mayor recall de riesgo alto (0,82 y 0,81), pero elimina demasiados pacientes y su F1
+macro cae por debajo de 0,57, por lo que se descarta.
 Tomek no es la mejor opción en ningún modelo: solo elimina 182 pacientes de la frontera (82 de
 riesgo bajo y 100 moderados) y ninguno de riesgo alto, así que el desbalance se mantiene (819, 441 y
 361 pacientes).
 Se concluye para los modelos descritos anteriormente que no hay una técnica de balanceo mejor para todos,
 lo que justifica haberlas comparado en cada uno en lugar de fijar una sola técnica para todos.
 
-La 
-
-\begin{table}[!t]
+\begin{table}[H]
 \caption{F1 macro y, entre paréntesis, recall de riesgo alto en validación según la técnica de
 balanceo.
-En negrita, la técnica elegida en cada modelo}
+En negrita, la técnica elegida en cada modelo; --, técnica no aplicable o no probada}
 \label{tab:preprocesamiento}
 \centering
-\begin{tabular}{l c c c c}
+\begin{tabular}{l c c c c c}
 \hline
-Modelo & Sin balancear & \texttt{class\_weight} & SMOTENC & Tomek \\
+Modelo & Sin balancear & \texttt{class\_weight} & SMOTENC & Tomek & ENN \\
 \hline
-Árbol de decisión & 0,545 (0,50) & 0,532 (0,60) & \textbf{0,541 (0,60)} & 0,540 (0,52) \\
-kNN & 0,537 (0,41) & -- & \textbf{0,590 (0,77)} & 0,549 (0,49) \\
-Random Forest & 0,611 (0,56) & \textbf{0,648 (0,72)} & 0,627 (0,69) & 0,609 (0,68) \\
-LDA & 0.660 (0.68) & -- & \textbf{0.636	(0,75)} & 0.647 (0.71) \\
-SVC & 0.649 (0.67) & \textbf{0.648 (0.72)} & 0.636 (0,72) & 0.643 (0,69) \\
-Regresión Logística & X (X) & X (X) & X (X) & X (X) \\
-Naive Bayes & X (X) & X(X) & X (X) & X (X) \\
-HistGradientBoosting & X (X) & X (X) & X (X) & X (X) \\
+Árbol de decisión & 0,545 (0,50) & 0,532 (0,60) & \textbf{0,541 (0,60)} & 0,540 (0,52) & -- \\
+kNN & 0,537 (0,41) & -- & \textbf{0,590 (0,77)} & 0,549 (0,49) & -- \\
+Regresión logística & 0,647 (0,67) & \textbf{0,651 (0,75)} & 0,637 (0,75) & 0,636 (0,70) & -- \\
+Naive Bayes & 0,643 (0,68) & -- & \textbf{0,627 (0,75)} & 0,625 (0,70) & -- \\
+LDA & 0,660 (0,68) & -- & \textbf{0,636 (0,76)} & 0,647 (0,72) & 0,567 (0,82) \\
+SVC & 0,649 (0,68) & \textbf{0,648 (0,73)} & 0,636 (0,73) & 0,643 (0,70) & 0,556 (0,81) \\
+Random Forest & 0,611 (0,56) & \textbf{0,648 (0,72)} & 0,627 (0,69) & 0,609 (0,68) & -- \\
+HistGradientBoosting & 0,642 (0,66) & \textbf{0,645 (0,72)} & 0,638 (0,72) & 0,644 (0,71) & -- \\
 \hline
 \end{tabular}
 \end{table}
@@ -410,23 +483,47 @@ mayor recall de riesgo alto y solo clasifica como riesgo bajo a 8 de los 361 pac
 alto del entrenamiento, a costa de más falsas alarmas: su precisión de riesgo alto es de 0,56,
 frente a 0,65 en Random Forest.
 
-\begin{table}[!t]
+Con todos los modelos, el mayor F1 macro es el del \textit{voting} (0,670), seguido de la regresión
+logística (0,651), Random Forest y SVC (0,648) y HistGradientBoosting (0,645).
+Las diferencias entre ellos son menores que la desviación entre folds (en torno a 0,03), y la
+variación entre folds pesa más que la variación entre modelos: los folds 3 y 5 son los más difíciles
+para casi todos.
+Los modelos lineales (regresión logística, LDA y SVC, que sin balancear elige el \textit{kernel}
+lineal) obtienen resultados muy parecidos a los de los ensambles.
+Esto sugiere que la relación entre las variables y el riesgo es aproximadamente lineal y que el
+límite lo pone el solapamiento entre clases, no la capacidad del modelo. Todos superan con claridad 
+la referencia de predecir siempre riesgo bajo (F1 macro de 0,222).
+
+La Fig.~\ref{fig:folds} muestra la nota de cada modelo en cada fold.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{folds_modelos.pdf}
+\caption{F1 macro y recall de riesgo alto en cada fold de validación. Cada línea une el mismo fold en
+todos los modelos; la raya negra es la media.}
+\label{fig:folds}
+\end{figure}
+
+\begin{table}[H]
 \caption{Mejor configuración de cada modelo en validación cruzada (media $\pm$ desviación entre
-folds)}
+folds). Alto $\rightarrow$ bajo: pacientes de riesgo alto (de 361) clasificados como riesgo bajo.
+Train $-$ val.: diferencia de F1 macro entre entrenamiento y validación}
 \label{tab:resultados}
 \centering
-\begin{tabular}{l l c c c c}
+\begin{tabular}{l l c c c c c}
 \hline
-Modelo & Balanceo & F1 macro & Recall alto & Precisión alto & Alto $\rightarrow$ bajo \\
+Modelo & Balanceo & F1 macro & Recall alto & Precisión alto & Alto $\rightarrow$ bajo & Train $-$ val. \\
 \hline
-Árbol de decisión & SMOTENC & 0,541 $\pm$ 0,033 & 0,60 & 0,50 & 37 \\
-kNN & SMOTENC & 0,590 $\pm$ 0,020 & 0,77 & 0,56 & 8 \\
-Random Forest & \texttt{class\_weight} & 0,648 $\pm$ 0,035 & 0,72 & 0,65 & 10 \\
-LDA & SMOTENC & X $\pm$ X & X & X & X \\
-SVC & \texttt{class\_weight} & X $\pm$ X & X & X & X \\
-Regresión Logística & \texttt{X} & X $\pm$ X & X & X & X \\
-Naive Bayes & \texttt{X} & X $\pm$ X & X & X & X \\
-HistGradientBoosting & \texttt{X} & X $\pm$ X & X & X & X \\
+Árbol de decisión & SMOTENC & 0,541 $\pm$ 0,033 & 0,60 & 0,50 & 37 & 0,33 \\
+kNN & SMOTENC & 0,590 $\pm$ 0,020 & 0,77 & 0,56 & 8 & 0,05 \\
+Regresión logística & \texttt{class\_weight} & 0,651 $\pm$ 0,034 & 0,75 & 0,63 & 8 & 0,02 \\
+Naive Bayes & SMOTENC & 0,627 $\pm$ 0,029 & 0,75 & 0,60 & 9 & 0,02 \\
+LDA & SMOTENC & 0,636 $\pm$ 0,028 & 0,76 & 0,61 & 9 & 0,02 \\
+SVC & \texttt{class\_weight} & 0,648 $\pm$ 0,018 & 0,73 & 0,64 & 8 & 0,19 \\
+Random Forest & \texttt{class\_weight} & 0,648 $\pm$ 0,035 & 0,72 & 0,65 & 10 & 0,35 \\
+HistGradientBoosting & \texttt{class\_weight} & 0,645 $\pm$ 0,027 & 0,72 & 0,64 & 15 & 0,29 \\
+\textit{Voting} & El de cada modelo & 0,670 $\pm$ 0,029 & 0,75 & 0,68 & 10 & 0,25 \\
+Siempre riesgo bajo & -- & 0,222 $\pm$ 0,000 & 0,00 & -- & 361 & 0,00 \\
 \hline
 \end{tabular}
 \end{table}
@@ -442,11 +539,11 @@ preferible por su menor sobreajuste.
 En kNN se aprecia el compromiso entre sesgo y varianza: con un vecino el entrenamiento es perfecto y
 la validación se queda en 0,50; al aumentar el número de vecinos, la validación sube hasta estabilizarse
 entre 31 y 51, y el valor elegido (51) apenas sobreajusta (0,635 frente a 0,590).
-Random Forest alcanza 0,997 en entrenamiento, pero es el que mejor generaliza, con 0,107 más en
+Random Forest alcanza 0,997 en entrenamiento, pero es el que mejor generaliza de los modelos basados en árboles, con 0,107 más en
 validación que el árbol individual: cada árbol sobreajusta por separado, pero al promediar muchos
 árboles distintos se reduce la varianza, además, limitar a 10 los pacientes por hoja reduce su F1 de entrenamiento a 0,90 sin empeorar la validación.
 
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\linewidth]{curvas_validacion.pdf}
 \caption{Curvas de validación del árbol de decisión (profundidad máxima) y de kNN (número de
@@ -454,7 +551,68 @@ vecinos): F1 macro en entrenamiento y validación, con la media y la desviación
 \label{fig:curvas}
 \end{figure}
 
+En el resto de modelos se repite el mismo patrón (última columna de la Tabla~\ref{tab:resultados}).
+La regresión logística, Naive Bayes y LDA apenas sobreajustan (en torno a 0,02 de diferencia entre
+entrenamiento y validación).
+En la logística, la curva de validación de $C$ muestra subajuste cuando la regularización es muy
+fuerte ($C < 0{,}01$) y se estabiliza a partir de $C = 0{,}1$.
+HistGradientBoosting, en cambio, llega a 0,934 en entrenamiento: su validación alcanza el máximo con
+unos 100 árboles y, a partir de ahí, los árboles que se añaden solo memorizan pacientes.
+El SVC elegido, con \textit{kernel} RBF, sobreajusta 0,19, y el \textit{voting} hereda el
+sobreajuste de Random Forest, al que da el triple de peso (0,25).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{curvas_validacion_bayes_hgb_rl.pdf}
+\caption{Curvas de validación de Naive Bayes (\texttt{var\_smoothing}), HistGradientBoosting
+(iteraciones) y regresión logística ($C$): F1 macro en entrenamiento y validación, con la media y la
+desviación entre folds.}
+\label{fig:curvas_bayes_hgb_rl}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.35\linewidth]{curva_validacion_svc.png}
+\caption{Curva de validación del SVC (parámetro $C$): F1 macro en entrenamiento y validación, con la
+media y la desviación entre folds.}
+\label{fig:curva_validacion_svc}
+\end{figure}
+
 \subsection{Matrices de confusión y errores clínicamente graves}
+Para analizar los errores se usan las predicciones de validación cruzada
+(\texttt{cross\_val\_predict}): cada paciente del entrenamiento lo predice el modelo del fold en el que
+estaba en validación, sin usar el test.
+Con ellas se construye una única matriz de confusión por modelo.
+La Tabla~\ref{tab:errores} recoge, para los cinco modelos que siguen empatados tras los dos primeros
+pasos del criterio, cómo se clasifican los 361 pacientes de riesgo alto y cuántos pacientes de riesgo
+moderado se aciertan.
+
+\begin{table}[H]
+\caption{Errores en validación cruzada de los modelos finalistas: pacientes de riesgo alto (de 361)
+clasificados como bajo o como moderado, y acierto en la clase de riesgo moderado}
+\label{tab:errores}
+\centering
+\begin{tabular}{l c c c}
+\hline
+Modelo & Alto $\rightarrow$ bajo & Alto $\rightarrow$ moderado & Acierto en moderado \\
+\hline
+Regresión logística & 8 & 83 & 48~\% \\
+SVC & 8 & 90 & 49~\% \\
+\textit{Voting} & 10 & 79 & 48~\% \\
+Random Forest & 10 & 90 & 46~\% \\
+HistGradientBoosting & 15 & 85 & 50~\% \\
+\hline
+\end{tabular}
+\end{table}
+
+El error clínicamente más grave, clasificar a un paciente de riesgo alto como de riesgo bajo, es poco
+frecuente en todos (entre 8 y 15 de 361 pacientes, del 2 al 4~\%).
+La mayoría de los pacientes de riesgo alto que no se detectan se clasifican como de riesgo moderado,
+de modo que seguirían recibiendo cierto seguimiento.
+La clase más difícil es la de riesgo moderado: los modelos aciertan entre el 46 y el 50~\% de estos
+pacientes y confunden el resto con riesgo bajo (entre el 28 y el 32~\%) y con riesgo alto (entre el 20
+y el 24~\%).
+Es la clase intermedia y sus valores se solapan con los de las otras dos.
 
 \subsection{Importancia de las variables}
 La importancia por permutación~\cite{tema2,nb_ensambles} de Random Forest se calcula en los folds de
@@ -472,7 +630,7 @@ deshaciendo el escalado: su primer corte separa a los pacientes con una proteín
 0,97~mg/L, muy próximo al umbral de 1~mg/L que la AHA y los CDC emplean para el riesgo
 cardiovascular bajo.
 
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.62\linewidth]{importancia_rf.pdf}
 \caption{Importancia por permutación de las 10 variables más relevantes para Random Forest: descenso
@@ -480,26 +638,162 @@ medio del F1 macro en los folds de validación y su desviación.}
 \label{fig:importancia}
 \end{figure}
 
+En SVC y Voting la variable más importante es el consumo de alcohol semanal
+(Figs.~\ref{fig:importancia_svm} y~\ref{fig:importancia_voting}):
+aquella tiene una influencia sobre el F1 macro en torno a (0,05),
+le sigue casi al mismo nivel está nivel de actividad, sin embargo, en Voting, la variable proteína C reactiva
+varía y llega casi al mismo nivel que el consumo de alcohol, y la hemoglobina glicosilada presenta 
+comportamiento similar en ambos modelos, el resto de variables tienen un impacto menor y más homogéneo entre ellas.
+Las importancias son pequeñas en términos absolutos, la variable más relevante hace perder cinco
+puntos de F1 macro sobre un valor cercano a (0,65), y el resto, menos de tres.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\linewidth]{importancia_svm.pdf}
+\caption{Importancia por permutación de las 10 variables más relevantes para el SVC:
+descenso medio del F1 macro en los folds de validación y su desviación.}
+\label{fig:importancia_svm}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\linewidth]{importancia_voting.pdf}
+\caption{Importancia por permutación de las 10 variables más relevantes para Voting:
+descenso medio del F1 macro en los folds de validación y su desviación.}
+\label{fig:importancia_voting}
+\end{figure}
+
+En la regresión logística, el modelo elegido, los coeficientes de la clase de riesgo alto indican
+directamente qué variables aumentan o reducen ese riesgo (Fig.~\ref{fig:coeficientes}).
+Los que más lo aumentan son el consumo de alcohol (0,77), la dieta occidental (0,57), la hipertensión
+previa (0,53), la hemoglobina glicosilada (0,53) y los antecedentes familiares paternos (0,52); los
+que más lo reducen, el aclaramiento de creatinina ($-0{,}39$), la frecuencia de ejercicio
+($-0{,}39$) y el colesterol HDL ($-0{,}31$).
+En las variables numéricas, el coeficiente corresponde a subir un rango intercuartílico (por el
+\texttt{RobustScaler}) y en las binarias, a pasar de 0 a 1, por lo que sus tamaños no se comparan
+directamente.
+Coinciden en lo esencial con el análisis exploratorio y con Random Forest (alcohol y hemoglobina
+glicosilada), aunque la proteína C reactiva, la más importante en Random Forest, tiene en la
+logística un coeficiente moderado (0,26), posiblemente porque su efecto se concentra alrededor de un
+umbral y no es lineal.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\linewidth]{coeficientes_logistica.pdf}
+\caption{Coeficientes de la regresión logística para la clase de riesgo alto: las 8 variables que más
+lo aumentan y las 5 que más lo reducen. En las numéricas, efecto de subir un rango intercuartílico; en
+las binarias, de pasar de 0 a 1.}
+\label{fig:coeficientes}
+\end{figure}
+
 \subsection{Evaluación final en test}
+El modelo elegido con el criterio de la Sección~\ref{sec:ajuste}, la regresión logística con
+\texttt{class\_weight} (justificación en la Sección~\ref{sec:mejor}), se entrena con todo el
+conjunto de entrenamiento y se evalúa una sola vez en los 451 pacientes de test.
+El \textit{pipeline} vuelve a calcular la mediana, el escalado y los pesos de clase solo con el
+entrenamiento.
+
+\begin{table}[H]
+\caption{Regresión logística: validación cruzada (media $\pm$ desviación entre folds) frente a test}
+\label{tab:test}
+\centering
+\begin{tabular}{l c c}
+\hline
+Métrica & Validación & Test \\
+\hline
+F1 macro & 0,651 $\pm$ 0,034 & 0,680 \\
+Precisión macro & 0,644 $\pm$ 0,033 & 0,672 \\
+Recall macro & 0,663 $\pm$ 0,034 & 0,695 \\
+Recall de riesgo alto & 0,748 $\pm$ 0,059 & 0,778 \\
+Precisión de riesgo alto & 0,631 $\pm$ 0,055 & 0,619 \\
+\hline
+\end{tabular}
+\end{table}
+
+Todas las métricas quedan a menos de una desviación entre folds de su estimación en validación
+(Tabla~\ref{tab:test}).
+La diferencia, de hasta +0,03, se interpreta como la variación normal de una partición de 451
+pacientes y no como una mejora real; lo relevante es que el rendimiento no cae, lo que descarta
+sobreajuste y fuga de datos.
+Solo 2 de los 90 pacientes de riesgo alto se clasifican como riesgo bajo (2,2~\%, la misma
+proporción que en validación cruzada), y los otros 18 que no se detectan como riesgo alto se
+clasifican como moderado.
+La precisión de riesgo alto es de 0,619: de los 113 pacientes señalados como riesgo alto, 43 no lo
+son.
+Es la consecuencia esperada de \texttt{class\_weight}, que da más peso a no dejar escapar el riesgo
+alto aunque aumenten las falsas alarmas.
+Por clases, el F1 es de 0,816 en riesgo bajo, 0,533 en moderado y 0,690 en alto.
+
+La Fig.~\ref{fig:confusion} compara las matrices de confusión en validación cruzada y en test.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{confusion_logistica.pdf}
+\caption{Matrices de confusión de la regresión logística: predicciones de validación cruzada sobre el
+entrenamiento y evaluación única en test.}
+\label{fig:confusion}
+\end{figure}
 
 \section{Discusión y conclusiones}
 
-\subsection{Mejor modelo y justificación}
+\subsection{Mejor modelo y justificación}\label{sec:mejor}
+Al aplicar el criterio, empatan en F1 macro el \textit{voting}, la regresión logística, Random
+Forest, SVC y HistGradientBoosting (F1 macro de al menos 0,641, el del \textit{voting} menos su
+desviación), y los cinco siguen empatados en recall de riesgo alto (al menos 0,712).
+LDA, Naive Bayes, kNN y el árbol de decisión quedan fuera en el primer paso.
+En el tercero, la regresión logística y SVC son los que menos pacientes de riesgo alto clasifican como
+bajo (8 de 361), y entre los dos la logística sobreajusta mucho menos (0,024 frente a 0,185).
+Se elige, por tanto, la \textbf{regresión logística con \texttt{class\_weight}, $C = 0{,}1$ y
+regularización L2}.
+
+El \textit{voting} tiene el F1 macro más alto (0,670), pero su ventaja queda dentro de la variación
+entre folds, comete dos errores graves más y su diferencia entre entrenamiento y validación es diez
+veces mayor; su complejidad no se traduce en una mejora clara.
+LDA con SMOTENC sería la alternativa si se quisiera priorizar todavía más la detección del riesgo
+alto: tiene más recall en esa clase (0,759) y apenas sobreajusta, pero queda fuera en F1 macro
+(0,636), comete un error grave más que la logística y da más falsas alarmas (precisión de 0,611).
+Su ventaja en recall, unos 4 pacientes de 361, es menor que la variación entre folds.
 
 \subsection{Complejidad, interpretabilidad y robustez}
+La regresión logística es el modelo más sencillo de los finalistas: un coeficiente por variable y
+clase.
+Esos coeficientes permiten explicar al personal clínico qué factores aumentan el riesgo de cada
+paciente, algo que los ensambles solo ofrecen de forma indirecta, mediante la importancia por
+permutación.
+Es también el más robusto: su diferencia entre entrenamiento y validación es de 0,024, su desviación
+entre folds es comparable a la del resto y su rendimiento en test coincide con lo estimado.
+En el extremo opuesto, Random Forest, HistGradientBoosting y el \textit{voting} alcanzan entre 0,92 y
+1,00 de F1 macro en entrenamiento sin superar a la logística en validación: su capacidad adicional se
+dedica a memorizar pacientes.
+Que los modelos lineales igualen a los ensambles indica que, en este dataset, la frontera entre las
+clases es aproximadamente lineal.
 
 \subsection{Limitaciones del dataset}
+\begin{itemize}
+\item El solapamiento entre clases, sobre todo de la de riesgo moderado, limita a todos los modelos:
+ninguno acierta más de la mitad de los pacientes de riesgo moderado.
+\item Las variables parecen generadas de forma independiente: pares que clínicamente deberían estar
+relacionados apenas se correlacionan y, en el 25~\% de los pacientes, la suma de HDL y LDL supera al
+colesterol total. Las conclusiones clínicas deben tomarse con cautela.
+\item Tras la limpieza, el 39~\% de los pacientes tiene al menos un valor imputado.
+\item Con 1.803 pacientes de entrenamiento y 5 folds, la desviación entre folds (en torno a 0,03 en
+F1 macro) es del mismo orden que las diferencias entre los mejores modelos, por lo que no se puede
+afirmar que uno sea claramente superior por sus métricas. En el test, con 90 pacientes de riesgo alto,
+cada paciente supone más de un punto de recall.
+\end{itemize}
 
 \subsection{Posibles mejoras y trabajo futuro}
-
-1. En caso de requerir un modelo que tenga la máxima cobertura en riesgo alto, se podría utilizar un LDA, que requeriría además 
-de un filtrado de las variables categóricas binarias, eliminandolas para controlar la distribución normal de variables que no son continuas,
-aún cuando el modelo tenga la capacidad de procesarlas.
-
-2. Se pueden analizar matrices de confusión para cada uno de los trozos de entrenamiento, con el objetivo de evaluar la desviación de cada predicción, 
-así como la medición del F1 por clase predicha y no solamente a nivel macro.
-
-3. Se puede variar la cantidad de folds en cada procesamiento, por ejemplo, con 10 folds en un dataset pequeño como el tratado, los errores pueden tener menos peso.
+\begin{itemize}
+\item Ajustar el umbral de decisión de la clase de riesgo alto en la regresión logística, eligiéndolo
+con validación cruzada, para aumentar su recall a costa de más falsas alarmas si el uso clínico lo
+requiere. Es una alternativa a cambiar de modelo, como LDA, que utiliza otro enfoque matemático para
+ese mismo equilibrio.
+\item Repetir la validación cruzada con más folds para estimar mejor la
+variación entre folds y comprobar con test estadísticos si las diferencias entre los mejores modelos
+son significativas.
+\item Validar el modelo con datos de otros hospitales, dado que las variables de este dataset parecen
+generadas de forma independiente.
+\end{itemize}
 
 \bibliographystyle{IEEEtran}
 \bibliography{referencias}
